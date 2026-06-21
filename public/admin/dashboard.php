@@ -5,7 +5,7 @@ Auth::requireLogin();
 $pageTitle = 'Admin Dashboard';
 require __DIR__ . '/../../app/Views/admin/_header.php';
 ?>
-<h1>Welcome, <?= Security::e($_SESSION['admin_username']) ?></h1>
-<p>Use the nav above to manage opening hours. Pre-order management is added in a later step.</p>
+<h1>Välkommen, <?= Security::e($_SESSION['admin_username']) ?></h1>
+<p>Använd navigationsmenyn ovan för att hantera öppettider. Förbeställningshantering läggs till i en senare steg.</p>
 <?php
 require __DIR__ . '/../../app/Views/admin/_footer.php';

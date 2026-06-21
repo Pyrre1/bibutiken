@@ -12,8 +12,8 @@
     <strong>Bibutiken Admin</strong>
     <nav>
         <a href="/admin/dashboard.php">Dashboard</a>
-        <a href="/admin/hours.php">Opening Hours</a>
-        <a href="/admin/logout.php">Log out</a>
+        <a href="/admin/hours.php">Öppettider</a>
+        <a href="/admin/logout.php">Logga ut</a>
     </nav>
 </header>
 <main>

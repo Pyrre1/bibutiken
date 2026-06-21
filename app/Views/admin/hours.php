@@ -14,20 +14,20 @@
                 <input type="hidden" name="plan_id" value="<?= (int) $plan['id'] ?>">
 
                 <p class="form-mode-indicator">
-                    Editing: <?= $mode === 'default' ? 'Default Hours' : Security::e($plan['header_text'] ?? '') ?>
+                    Redigerar just nu: <?= $mode === 'default' ? 'Standardöppettider' : Security::e($plan['header_text'] ?? '') ?>
                 </p>
 
                 <label>Name / Header
                     <input type="text" name="header_text" value="<?= Security::e($plan['header_text'] ?? '') ?>">
                 </label>
                 <br>
-                <label>Free text 1
+                <label>Text placerad ovanför öppettiderna
                     <textarea name="free_text_1"><?= Security::e($plan['free_text_1'] ?? '') ?></textarea>
                 </label>
 
                 <?php if (!empty($plan['days'])): ?>
                     <table class="hours-days-table">
-                        <thead><tr><th>Day</th><th>Open?</th><th>Open time</th><th>Close time</th></tr></thead>
+                        <thead><tr><th>Dag</th><th>Öppet?</th><th>Öppnar</th><th>Stänger</th></tr></thead>
                         <tbody>
                         <?php foreach ($plan['days'] as $day): $d = $day['day_of_week']; $isOpen = !$day['closed'];
                             $openHour = $day['open_time'] ? substr($day['open_time'], 0, 2) : '09';

@@ -21,7 +21,7 @@ class HoursResolver
 
         $default = HoursPlan::getDefault();
         if (!$default) {
-            throw new RuntimeException('No default hours plan found — one must always exist.');
+            throw new RuntimeException('Ingen standardöppettid hittad — en sådan måste alltid existera.');
         }
 
         return $default;
