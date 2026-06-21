@@ -42,7 +42,7 @@ class HoursPlan
     public static function getAllWeekSpecific(): array
     {
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare("SELECT * FROM hours_plans WHERE type = 'week_specific' ORDER BY year DESC, week_number DESC");
+        $stmt = $pdo->prepare("SELECT * FROM hours_plans WHERE type = 'week_specific' ORDER BY year ASC, week_number ASC");
         $stmt->execute();
         return array_map([self::class, 'attachDays'], $stmt->fetchAll());
     }
@@ -56,12 +56,42 @@ class HoursPlan
         return $plan ? self::attachDays($plan) : null;
     }
 
+    public static function blankPlan(string $type): array
+    {
+        $days = [];
+        for ($d = 1; $d <= 7; $d++) {
+            $days[] = ['day_of_week' => $d, 'open_time' => null, 'close_time' => null, 'closed' => 1];
+        }
+
+        return [
+            'id' => null,
+            'type' => $type,
+            'header_text' => '',
+            'free_text_1' => '',
+            'free_text_2' => '',
+            'is_active' => 0,
+            'days' => $days,
+        ];
+    }
+
     private static function attachDays(array $plan): array
     {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare('SELECT * FROM hours_plan_days WHERE plan_id = ? ORDER BY day_of_week ASC');
         $stmt->execute([$plan['id']]);
-        $plan['days'] = $stmt->fetchAll();
+        $existing = $stmt->fetchAll();
+
+        $byDay = [];
+        foreach ($existing as $row) {
+            $byDay[$row['day_of_week']] = $row;
+        }
+
+        $days = [];
+        for ($d = 1; $d <= 7; $d++) {
+            $days[] = $byDay[$d] ?? ['day_of_week' => $d, 'open_time' => null, 'close_time' => null, 'closed' => 1];
+        }
+
+        $plan['days'] = $days;
         return $plan;
     }
 
@@ -69,12 +99,7 @@ class HoursPlan
     {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare('UPDATE hours_plans SET header_text = ?, free_text_1 = ?, free_text_2 = ? WHERE id = ?');
-        $stmt->execute([
-            $fields['header_text'] ?? null,
-            $fields['free_text_1'] ?? null,
-            $fields['free_text_2'] ?? null,
-            $id,
-        ]);
+        $stmt->execute([$fields['header_text'] ?? null, $fields['free_text_1'] ?? null, $fields['free_text_2'] ?? null, $id]);
     }
 
     public static function saveDays(int $planId, array $days): void
@@ -83,7 +108,6 @@ class HoursPlan
         $pdo->beginTransaction();
         try {
             $pdo->prepare('DELETE FROM hours_plan_days WHERE plan_id = ?')->execute([$planId]);
-
             $insert = $pdo->prepare(
                 'INSERT INTO hours_plan_days (plan_id, day_of_week, open_time, close_time, closed) VALUES (?, ?, ?, ?, ?)'
             );
@@ -144,7 +168,11 @@ class HoursPlan
 
     public static function deleteWeekSpecific(int $id): void
     {
-        // hours_plan_days rows are removed automatically via ON DELETE CASCADE.
         Database::getConnection()->prepare("DELETE FROM hours_plans WHERE id = ? AND type = 'week_specific'")->execute([$id]);
+    }
+
+    public static function deleteLongTerm(int $id): void
+    {
+        Database::getConnection()->prepare("DELETE FROM hours_plans WHERE id = ? AND type = 'long_term'")->execute([$id]);
     }
 }
