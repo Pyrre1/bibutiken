@@ -11,7 +11,7 @@
 <header class="admin-nav">
     <strong>Bibutiken Admin</strong>
     <nav>
-        <a href="/admin/dashboard.php">Dashboard</a>
+        <a href="/admin/dashboard.php">Översikt</a>
         <a href="/admin/hours.php">Öppettider</a>
         <a href="/admin/logout.php">Logga ut</a>
     </nav>

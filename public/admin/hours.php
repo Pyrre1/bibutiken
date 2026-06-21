@@ -12,13 +12,16 @@ $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!Security::validateCsrf($_POST['csrf_token'] ?? null)) {
-        $error = 'Invalid request, please try again.';
+        $error = 'Ogiltig begäran, försök igen.';
     } else {
         $action = $_POST['action'] ?? 'save_plan';
 
         if ($action === 'activate_long') {
-            HoursPlan::setActiveLongTerm((int) ($_POST['id'] ?? 0));
-            $message = 'Periodplan aktiverad.';
+            $id = (int) ($_POST['id'] ?? 0);
+            HoursPlan::setActiveLongTerm($id);
+            $activated = HoursPlan::getById($id);
+            $name = $activated['header_text'] !== '' ? $activated['header_text'] : 'periodplan';
+            $message = "Periodplan \"{$name}\" aktiverad.";
             $mode = 'default';
         } elseif ($action === 'deactivate_long') {
             HoursPlan::deactivateAllLongTerm();
@@ -26,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mode = 'default';
         } elseif ($action === 'delete_long') {
             HoursPlan::deleteLongTerm((int) ($_POST['id'] ?? 0));
-            $message = 'Periodplan raderad.';
+            $message = 'Periodplanen togs bort.';
             $mode = 'default';
         } elseif ($action === 'save_plan') {
             $postMode = $_POST['mode'] ?? 'default';
@@ -50,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $closeTime = ($closeHour !== '' && $closeMinute !== '') ? "{$closeHour}:{$closeMinute}" : '';
 
                 if ($isOpen && ($openTime === '' || $closeTime === '')) {
-                    $validationErrors[] = "Glöm inte att sätta både öppet och stängt för {$dayNames[$d]}, eller markera det som stängt.";
+                    $validationErrors[] = "Ange både öppnings- och stängningstid för {$dayNames[$d]}, eller markera dagen som stängd.";
                 }
 
                 $days[] = [
@@ -68,24 +71,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } elseif ($postMode === 'default') {
                 HoursPlan::savePlanFields((int) $postId, $fields);
                 HoursPlan::saveDays((int) $postId, $days);
-                $message = 'Standardöppettider sparade.';
+                $message = 'Standardöppettiderna sparades.';
                 $mode = 'default';
             } elseif ($postMode === 'long') {
                 if ($postId === '' || $postId === 'new') {
                     $count = count(HoursPlan::getLongTermOptions());
                     if ($count >= 3) {
-                        $error = 'Max 3st periodplaner åt gången. Radera en innan du lägger till en ny.';
+                        $error = 'Max antal periodplaner (3) är uppnått.';
                         $mode = 'default';
                     } else {
                         $newId = HoursPlan::createLongTermOption($fields, $count);
                         HoursPlan::saveDays($newId, $days);
-                        $message = 'Periodplan skapad.';
+                        $message = 'Periodplanen skapades.';
                         $mode = 'default';
                     }
                 } else {
                     HoursPlan::savePlanFields((int) $postId, $fields);
                     HoursPlan::saveDays((int) $postId, $days);
-                    $message = 'Periodplan sparad.';
+                    $message = 'Periodplanen sparades.';
                     $mode = 'default';
                 }
             }
@@ -99,7 +102,7 @@ if ($mode === 'default') {
     if ($editId === 'new') {
         $existingCount = count(HoursPlan::getLongTermOptions());
         if ($existingCount >= 3) {
-            $error = $error ?? 'Max 3st periodplaner åt gången. Radera en innan du lägger till en ny.';
+            $error = $error ?? 'Max antal periodplaner (3) är uppnått. Ta bort en innan du lägger till en ny.';
             $plan = null;
         } else {
             $plan = HoursPlan::blankPlan('long_term');
@@ -115,7 +118,7 @@ if ($mode === 'default') {
 
 $longTermOptions = HoursPlan::getLongTermOptions();
 
-$pageTitle = 'Opening Hours Admin';
+$pageTitle = 'Öppettider – Admin';
 require __DIR__ . '/../../app/Views/admin/_header.php';
 require __DIR__ . '/../../app/Views/admin/hours.php';
 require __DIR__ . '/../../app/Views/admin/_footer.php';

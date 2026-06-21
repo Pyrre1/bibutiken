@@ -16,16 +16,16 @@ class Auth
         $user = $stmt->fetch();
 
         if (!$user) {
-            return ['success' => false, 'message' => 'Invalid username or password.'];
+            return ['success' => false, 'message' => 'Fel användarnamn eller lösenord.'];
         }
 
         if ($user['locked_until'] && strtotime($user['locked_until']) > time()) {
-            return ['success' => false, 'message' => 'Account temporarily locked. Try again later.'];
+            return ['success' => false, 'message' => 'Kontot är temporärt låst. Försök igen senare.'];
         }
 
         if (!password_verify($password, $user['password_hash'])) {
             self::registerFailedAttempt($pdo, $user);
-            return ['success' => false, 'message' => 'Invalid username or password.'];
+            return ['success' => false, 'message' => 'Fel användarnamn eller lösenord.'];
         }
 
         $stmt = $pdo->prepare('UPDATE admin_users SET failed_attempts = 0, locked_until = NULL WHERE id = ?');
