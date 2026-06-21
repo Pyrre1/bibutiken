@@ -70,6 +70,8 @@ class HoursPlan
             'free_text_1' => '',
             'free_text_2' => '',
             'is_active' => 0,
+            'week_number' => null,
+            'year' => null,
             'days' => $days,
         ];
     }
@@ -100,6 +102,13 @@ class HoursPlan
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare('UPDATE hours_plans SET header_text = ?, free_text_1 = ?, free_text_2 = ? WHERE id = ?');
         $stmt->execute([$fields['header_text'] ?? null, $fields['free_text_1'] ?? null, $fields['free_text_2'] ?? null, $id]);
+    }
+
+    public static function saveWeekSpecificMeta(int $id, int $week, int $year): void
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare('UPDATE hours_plans SET week_number = ?, year = ? WHERE id = ?');
+        $stmt->execute([$week, $year, $id]);
     }
 
     public static function saveDays(int $planId, array $days): void
@@ -174,5 +183,19 @@ class HoursPlan
     public static function deleteLongTerm(int $id): void
     {
         Database::getConnection()->prepare("DELETE FROM hours_plans WHERE id = ? AND type = 'long_term'")->execute([$id]);
+    }
+
+    public static function pruneExpiredWeekSpecific(): void
+    {
+        $currentWeek = (int) date('W');
+        $currentYear = (int) date('Y');
+
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare(
+            "DELETE FROM hours_plans
+              WHERE type = 'week_specific'
+                AND (year < ? OR (year = ? AND week_number < ?))"
+        );
+        $stmt->execute([$currentYear, $currentYear, $currentWeek]);
     }
 }

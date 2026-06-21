@@ -1,11 +1,53 @@
 <div class="hours-admin-layout">
     <div class="col-left">
         <div class="actions">
-            <a href="/admin/hours.php?mode=default" class="button">Redigera standardöppettider</a>
+            <a href="/admin/hours.php?mode=default" class="button">Redigera standard</a>
+            <?php if (count($longTermOptions) < 3): ?>
+                <a href="/admin/hours.php?mode=long&id=new" class="button">Lägg till periodplan</a>
+            <?php endif; ?>
+            <a href="/admin/hours.php?mode=week&id=new" class="button">Lägg till veckoplan</a>
         </div>
 
         <?php if ($message): ?><p class="success"><?= Security::e($message) ?></p><?php endif; ?>
         <?php if ($error): ?><p class="error"><?= Security::e($error) ?></p><?php endif; ?>
+
+        <?php if ($mode === 'view' && $activePlan): ?>
+            <div class="active-plan-preview">
+                <p class="preview-heading">Öppettider publicerade på hemsidan nu:</p>
+                <p class="source-label">
+                    <?php
+                    $sourceLabels = [
+                        'default' => 'Källa: Standardöppettider',
+                        'long_term' => 'Källa: Periodplan',
+                        'week_specific' => 'Källa: Veckoplan',
+                    ];
+                    echo Security::e($sourceLabels[$activePlan['type']] ?? '');
+                    ?>
+                </p>
+
+                <?php if ($activePlan['header_text']): ?><h3><?= Security::e($activePlan['header_text']) ?></h3><?php endif; ?>
+                <?php if ($activePlan['free_text_1']): ?><p><?= nl2br(Security::e($activePlan['free_text_1'])) ?></p><?php endif; ?>
+
+                <?php
+                $anyOpenDay = false;
+                foreach ($activePlan['days'] as $day) { if (!$day['closed']) { $anyOpenDay = true; break; } }
+                ?>
+                <?php if ($anyOpenDay): ?>
+                    <ul class="hours-preview-list">
+                        <?php foreach ($activePlan['days'] as $day): $d = $day['day_of_week']; ?>
+                            <li>
+                                <?= $dayNames[$d] ?>:
+                                <?php if ($day['closed']): ?>Stängt<?php else: ?>
+                                    <?= Security::e(substr($day['open_time'], 0, 5)) ?>–<?= Security::e(substr($day['close_time'], 0, 5)) ?>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+
+                <?php if ($activePlan['free_text_2']): ?><p><?= nl2br(Security::e($activePlan['free_text_2'])) ?></p><?php endif; ?>
+            </div>
+        <?php endif; ?>
 
         <?php if ($plan): ?>
             <form method="post">
@@ -19,15 +61,28 @@
                         Redigerar: Standardöppettider
                     <?php elseif ($mode === 'long' && $plan['id'] === null): ?>
                         Ny periodplan
-                    <?php else: ?>
+                    <?php elseif ($mode === 'long'): ?>
                         Redigerar: <?= Security::e($plan['header_text'] ?: 'Periodplan') ?>
+                    <?php elseif ($mode === 'week' && $plan['id'] === null): ?>
+                        Ny veckoplan
+                    <?php elseif ($mode === 'week'): ?>
+                        Redigerar: Vecka <?= (int) $plan['week_number'] ?>, <?= (int) $plan['year'] ?>
                     <?php endif; ?>
                 </p>
+
+                <?php if ($mode === 'week'): ?>
+                    <label>Vecka
+                        <input type="number" name="week_number" min="1" max="53" value="<?= (int) ($plan['week_number'] ?? date('W')) ?>">
+                    </label>
+                    <label>År
+                        <input type="number" name="week_year" min="2024" value="<?= (int) ($plan['year'] ?? date('Y')) ?>">
+                    </label>
+                <?php endif; ?>
 
                 <label>Namn / Rubrik
                     <input type="text" name="header_text" value="<?= Security::e($plan['header_text'] ?? '') ?>">
                 </label>
-
+                <br>
                 <label>Fritext 1
                     <textarea name="free_text_1"><?= Security::e($plan['free_text_1'] ?? '') ?></textarea>
                 </label>
@@ -86,10 +141,6 @@
 
         <section class="long-term-list">
             <h2>Längre periodplaner</h2>
-            <?php if (count($longTermOptions) < 3): ?>
-                <a href="/admin/hours.php?mode=long&id=new" class="button">+ Ny periodplan</a>
-            <?php endif; ?>
-
             <?php if (empty($longTermOptions)): ?>
                 <p><em>Inga skapade ännu.</em></p>
             <?php else: ?>
@@ -134,7 +185,27 @@
         <p class="current-week-indicator">Innevarande vecka: <?= (int) date('W') ?>, <?= (int) date('Y') ?></p>
         <section class="week-specific-list">
             <h2>Veckospecifika planer</h2>
-            <p><em>Kommer i nästa steg.</em></p>
+            <?php if (empty($weekSpecificPlans)): ?>
+                <p><em>Inga kommande veckoplaner.</em></p>
+            <?php else: ?>
+                <ul>
+                <?php foreach ($weekSpecificPlans as $wp): ?>
+                    <li>
+                        <strong>Vecka <?= (int) $wp['week_number'] ?>, <?= (int) $wp['year'] ?></strong>
+                        <?php if ($wp['header_text']): ?> – <?= Security::e($wp['header_text']) ?><?php endif; ?>
+
+                        <a href="/admin/hours.php?mode=week&id=<?= (int) $wp['id'] ?>">Redigera</a>
+
+                        <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna veckoplan?');">
+                            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                            <input type="hidden" name="action" value="delete_week">
+                            <input type="hidden" name="id" value="<?= (int) $wp['id'] ?>">
+                            <button type="submit">Ta bort</button>
+                        </form>
+                    </li>
+                <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
         </section>
     </div>
 </div>
