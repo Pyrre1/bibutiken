@@ -187,8 +187,11 @@ class HoursPlan
 
     public static function pruneExpiredWeekSpecific(): void
     {
-        $currentWeek = (int) date('W');
-        $currentYear = (int) date('Y');
+        // Keep current week + 1 week of grace history; delete anything older.
+        $cutoff = new DateTime();
+        $cutoff->modify('-14 days');
+        $cutoffYear = (int) $cutoff->format('o');  // ISO-8601 year, not 'Y' — matters in rollover weeks
+        $cutoffWeek = (int) $cutoff->format('W');
 
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare(
@@ -196,6 +199,6 @@ class HoursPlan
               WHERE type = 'week_specific'
                 AND (year < ? OR (year = ? AND week_number < ?))"
         );
-        $stmt->execute([$currentYear, $currentYear, $currentWeek]);
+        $stmt->execute([$cutoffYear, $cutoffYear, $cutoffWeek]);
     }
 }
