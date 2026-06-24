@@ -30,54 +30,76 @@ class PreOrder
     public static function getActiveProducts(): array
     {
         $pdo = Database::getConnection();
-        $stmt = $pdo->prepare('SELECT id, name FROM products WHERE active = 1 ORDER BY sort_order ASC');
+        $stmt = $pdo->prepare('SELECT id, name, price_ore FROM products WHERE active = 1 ORDER BY sort_order ASC');
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
-    public static function productExists(int $productId): bool
+    /**
+     * Fetches active products as id => row, for quick lookup/validation
+     * when processing a submitted cart (avoids one query per line item).
+     */
+    public static function getActiveProductsById(): array
     {
-        $pdo = Database::getConnection();
-        $stmt = $pdo->prepare('SELECT id FROM products WHERE id = ? AND active = 1');
-        $stmt->execute([$productId]);
-        return (bool) $stmt->fetch();
+        $byId = [];
+        foreach (self::getActiveProducts() as $product) {
+            $byId[(int) $product['id']] = $product;
+        }
+        return $byId;
     }
 
     /**
-     * Inserts a pre-order, generating a unique order number.
-     * Retries a small, bounded number of times on the rare chance of a
-     * random collision with an existing order_number (UNIQUE constraint
-     * on the column makes this safe to detect via the DB itself).
+     * Inserts a full cart order: one pre_orders row plus one pre_order_items
+     * row per cart line. Prices are copied onto the line item at order time
+     * (not looked up fresh later) so historical orders stay accurate even if
+     * product prices change afterward.
      *
+     * @param array $items List of ['product_id' => int, 'quantity' => int, 'unit_price_ore' => int]
      * @throws RuntimeException if it can't find a free order number after several tries.
      */
-    public static function insertOrder(int $productId, int $quantity, string $customerEmail): array
+    public static function insertOrder(string $customerName, string $customerEmail, array $items): array
     {
         $pdo = Database::getConnection();
         $maxAttempts = 5;
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
             $orderNumber = self::generateOrderNumber();
+            $pdo->beginTransaction();
             try {
                 $stmt = $pdo->prepare(
-                    'INSERT INTO pre_orders (order_number, product_id, quantity, customer_email) VALUES (?, ?, ?, ?)'
+                    'INSERT INTO pre_orders (order_number, customer_name, customer_email) VALUES (?, ?, ?)'
                 );
-                $stmt->execute([$orderNumber, $productId, $quantity, $customerEmail]);
+                $stmt->execute([$orderNumber, $customerName, $customerEmail]);
+                $orderId = (int) $pdo->lastInsertId();
+
+                $itemStmt = $pdo->prepare(
+                    'INSERT INTO pre_order_items (pre_order_id, product_id, quantity, unit_price_ore) VALUES (?, ?, ?, ?)'
+                );
+                foreach ($items as $item) {
+                    $itemStmt->execute([
+                        $orderId,
+                        $item['product_id'],
+                        $item['quantity'],
+                        $item['unit_price_ore'],
+                    ]);
+                }
+
+                $pdo->commit();
                 return [
-                    'id' => (int) $pdo->lastInsertId(),
+                    'id' => $orderId,
                     'order_number' => $orderNumber,
                 ];
             } catch (PDOException $e) {
-                // 23000 = integrity constraint violation (covers the UNIQUE order_number clash).
-                // Anything else is a real error, not a collision, so it should bubble up.
+                $pdo->rollBack();
+                // Product IDs are validated by the caller before this is reached,
+                // so any 23000 here is the UNIQUE order_number constraint —
+                // safe to retry with a freshly generated number.
                 if ($e->getCode() !== '23000' || $attempt === $maxAttempts) {
                     throw $e;
                 }
-                // Otherwise: collision on this attempt, loop and try a fresh random number.
             }
         }
 
-        // Unreachable in practice (loop above always returns or throws), but keeps static analysis happy.
         throw new RuntimeException('Could not generate a unique order number.');
     }
 }

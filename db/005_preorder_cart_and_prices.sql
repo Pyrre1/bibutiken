@@ -29,5 +29,5 @@ CREATE TABLE pre_order_items (
 INSERT INTO products (name, price_ore, active, sort_order) VALUES
 ('Bifor 12,5kg', 22000, 1, 1),
 ('Dulcofruct 2kg', 10500, 1, 2),
-('Foderram obehandlad (håller ca 2-3 år)', 2500, 1, 3),
-('Foderram lackad/målad (håller ca 5 år +)', 3500, 1, 4);
+('Foderlåda obehandlad (håller ca 2-3 år)', 2500, 1, 3),
+('Foderlåda lackad/målad (håller ca 5 år +)', 3500, 1, 4);
