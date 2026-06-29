@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-<header class="site-nav">
-    <strong>Bibutiken</strong>
-    <nav>
-        <a href="/index.php">Hem</a>
-        <a href="/bihuset.php">Bihuset</a>
-        <a href="/preorder.php">Förbeställning</a>
-    </nav>
+<header class="site-header">
+    <div class="site-header__inner">
+        <nav class="site-nav">
+            <a href="/index.php">Hem</a>
+            <a href="/bihuset.php">Bihuset</a>
+            <a href="/preorder.php">Förbeställning</a>
+        </nav>
+    </div>
 </header>
 <main>

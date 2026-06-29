@@ -74,6 +74,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
             }
 
+            // Hard block: completely empty plan
+            $allDaysClosed = !array_filter($days, fn($d) => !$d['closed']);
+            $hasText = $fields['header_text'] !== '' || $fields['free_text_1'] !== '' || $fields['free_text_2'] !== '';
+            if ($allDaysClosed && !$hasText) {
+                $validationErrors[] = 'Planen är helt tom — ange minst en öppningsdag eller fyll i ett textfält innan du sparar.';
+            }
+
             $weekNumber = $postMode === 'week' ? (int) ($_POST['week_number'] ?? 0) : null;
             $weekYear = $postMode === 'week' ? (int) ($_POST['week_year'] ?? 0) : null;
 

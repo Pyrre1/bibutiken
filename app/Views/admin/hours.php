@@ -50,7 +50,7 @@
         <?php endif; ?>
 
         <?php if ($plan): ?>
-            <form method="post">
+            <form method="post" id="hours-form">
                 <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
                 <input type="hidden" name="action" value="save_plan">
                 <input type="hidden" name="mode" value="<?= Security::e($mode) ?>">

@@ -136,22 +136,53 @@
         submitButton.disabled = isEmpty;
     }
 
-    addButton.addEventListener('click', addItem);
+    if (form) {
+        addButton.addEventListener('click', addItem);
+        
+        form.addEventListener('submit', function (event) {
+            if (cart.length === 0) {
+                event.preventDefault();
+                return;
+            }
 
-    form.addEventListener('submit', function (event) {
-        if (cart.length === 0) {
-            event.preventDefault();
-            return;
-        }
+            const confirmed = confirm(
+                'Är du säker på att allt stämmer? När du skickat beställningen kommer du inte kunna ändra själv utan att mejla.\n\n' +
+                'Tips: Du har väl inte glömt att lägga till foderlådor om du behöver det?'
+            );
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
 
-        const confirmed = confirm(
-            'Är du säker på att allt stämmer? När du skickat beställningen kommer du inte kunna ändra själv utan att mejla.\n\n' +
-            'Tips: Du har väl inte glömt att lägga till foderlådor om du behöver det?'
-        );
-        if (!confirmed) {
-            event.preventDefault();
-        }
-    });
+        renderCart(); // initial state: empty cart, table hidden, submit disabled
+    }
 
-    renderCart(); // initial state: empty cart, table hidden, submit disabled
+    // Admin hours form — soft warning for nearly-empty plans
+    const hoursForm = document.getElementById('hours-form');
+    if (hoursForm) {
+        hoursForm.addEventListener('submit', function (event) {
+            // Count open days
+            let openDays = 0;
+            for (let d = 1; d <= 7; d++) {
+                if (document.querySelector('input[name="open_' + d + '"]')?.checked) {
+                    openDays++;
+                }
+            }
+
+            const ft1 = (document.querySelector('textarea[name="free_text_1"]')?.value || '').replace(/\s/g, '');
+            const ft2 = (document.querySelector('textarea[name="free_text_2"]')?.value || '').replace(/\s/g, '');
+            const charCount = ft1.length + ft2.length;
+
+            const headerText = (document.querySelector('input[name="header_text"]')?.value || '').trim();
+            const hasName = headerText.length > 0;
+
+            // Soft warn: has a name or some days, but text is thin and no days open
+            if ((hasName || openDays > 0) && charCount < 20 && openDays === 0) {
+                const confirmed = confirm('Hoppsan, det ser ut som att planen är nästan tom — vill du spara ändå?');
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            }
+        });
+    }
 })();
