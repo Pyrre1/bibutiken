@@ -5,6 +5,7 @@
     // Re-rendered fully on every change rather than doing fine-grained DOM patches —
     // the list is tiny (a handful of products max), so simplicity wins over micro-optimizing.
     let cart = [];
+    let editingIndex = -1;
 
     const productSelect = document.getElementById('staging_product_id');
     const quantityInput = document.getElementById('staging_quantity');
@@ -34,14 +35,16 @@
         const name = selectedOption.dataset.name;
         const priceOre = parseInt(selectedOption.dataset.priceOre, 10);
 
-        // If the product is already in the cart, increase its quantity instead of
-        // adding a duplicate row — keeps the list clean if someone adds the same
-        // product twice in a row.
-        const existing = cart.find(function (item) { return item.productId === productId; });
-        if (existing) {
-            existing.quantity += quantity;
+        if (editingIndex >= 0) {
+            cart[editingIndex] = { productId, name, priceOre, quantity };
+            editingIndex = -1;
         } else {
-            cart.push({ productId: productId, name: name, priceOre: priceOre, quantity: quantity });
+            const existing = cart.find(function (i) { return i.productId === productId; });
+            if (existing) {
+                existing.quantity += quantity;
+            } else {
+                cart.push({ productId: productId, name: name, priceOre: priceOre, quantity: quantity });
+            }
         }
 
         quantityInput.value = '1';
@@ -55,23 +58,25 @@
     }
 
     function startEdit(productId) {
-        const item = cart.find(function (i) { return i.productId === productId; });
-        if (!item) return;
-        const newQuantity = parseInt(prompt('Nytt antal för ' + item.name + ':', item.quantity), 10);
-        if (!isNaN(newQuantity) && newQuantity >= 1 && newQuantity <= 9999) {
-            item.quantity = newQuantity;
-            renderCart();
-        }
+        const index = cart.findIndex(function (i) { return i.productId === productId; });
+        if (index === -1) return;
+        const item = cart[index];
+        productSelect.value = item.productId;
+        quantityInput.value = item.quantity;
+        editingIndex = index;
+        renderCart();
+        productSelect.focus();
     }
 
     function renderCart() {
+        const isEditing = editingIndex >= 0;
         cartTableBody.innerHTML = '';
         hiddenInputsContainer.innerHTML = '';
 
         let totalQty = 0;
         let totalSum = 0;
 
-        cart.forEach(function (item) {
+        cart.forEach(function (item, index) {
             const lineTotal = item.priceOre * item.quantity;
             totalQty += item.quantity;
             totalSum += lineTotal;
@@ -87,28 +92,42 @@
             row.appendChild(qtyCell);
 
             const priceCell = document.createElement('td');
-            priceCell.textContent = formatKr(item.priceOre);
+            priceCell.textContent = formatKr(item.priceOre).replace(' kr', '');
             row.appendChild(priceCell);
 
             const lineTotalCell = document.createElement('td');
-            lineTotalCell.textContent = formatKr(lineTotal);
+            lineTotalCell.textContent = formatKr(lineTotal).replace(' kr', '');
             row.appendChild(lineTotalCell);
 
             const editCell = document.createElement('td');
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
-            editBtn.textContent = 'Ändra';
-            editBtn.addEventListener('click', function () { startEdit(item.productId); });
+            editBtn.textContent = '✎';
+            editBtn.title = 'Ändra antal';
+            if (isEditing) {
+                editBtn.disabled = true;
+            }  else {
+                editBtn.addEventListener('click', function () { startEdit(item.productId); });
+            }
             editCell.appendChild(editBtn);
             row.appendChild(editCell);
 
             const removeCell = document.createElement('td');
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
-            removeBtn.textContent = 'Ta bort';
-            removeBtn.addEventListener('click', function () { removeItem(item.productId); });
+            removeBtn.textContent = '✕';
+            removeBtn.title = 'Ta bort';
+            if (isEditing) {
+                removeBtn.disabled = true;
+            } else {
+                removeBtn.addEventListener('click', function () { removeItem(item.productId); });
+            }
             removeCell.appendChild(removeBtn);
             row.appendChild(removeCell);
+
+            if (index === editingIndex) {
+                row.classList.add('cart-row-editing');
+            }
 
             cartTableBody.appendChild(row);
 
@@ -134,24 +153,58 @@
         cartTable.style.display = isEmpty ? 'none' : '';
         emptyMessage.style.display = isEmpty ? '' : 'none';
         submitButton.disabled = isEmpty;
+
+        productSelect.disabled = isEditing;
+        addButton.textContent = isEditing ? 'Uppdatera' : 'Lägg till';
     }
 
     if (form) {
+        const infoBanner = document.getElementById('preorder-info-banner');
+        const closeInfoBtn = document.getElementById('close-info-banner');
+        if (infoBanner && closeInfoBtn) {
+            closeInfoBtn.addEventListener('click', function () {
+                infoBanner.style.display = 'none';
+            });
+        }
+
+
         addButton.addEventListener('click', addItem);
         
+        const modal = document.getElementById('confirm-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalConfirm = document.getElementById('modal-confirm');
+        const modalCancel = document.getElementById('modal-cancel');
+
         form.addEventListener('submit', function (event) {
             if (cart.length === 0) {
                 event.preventDefault();
                 return;
             }
 
-            const confirmed = confirm(
-                'Är du säker på att allt stämmer? När du skickat beställningen kommer du inte kunna ändra själv utan att mejla.\n\n' +
-                'Tips: Du har väl inte glömt att lägga till foderlådor om du behöver det?'
-            );
-            if (!confirmed) {
-                event.preventDefault();
+            event.preventDefault();
+            
+            const hasFeedBox = cart.some(function (i) { return i.name.toLowerCase().includes('obehandlad'); });
+            const hasLack = cart.some(function (i) { return i.name.toLowerCase().includes('lack'); });
+
+            let msg = 'Är du säker på att allt stämmer? När du skickat in beställningen kommer du inte längre kunna ändra utan att kontakta butiken.';
+
+            if (!hasFeedBox) {
+                msg += '\n\nTips: Du har väl inte glömt att lägga till foderlåda och lack till foderlåda?';
+            } else if (!hasLack) {
+                msg += '\n\nTips: Att lacka lådan gör det lättare att hålla den ren och ger större chans att kunna återanvända den längre tid.';
             }
+
+            modalMessage.textContent = msg;
+            modal.removeAttribute('hidden');
+        });
+
+        modalCancel.addEventListener('click', function () {
+            modal.setAttribute('hidden', '');
+        });
+
+        modalConfirm.addEventListener('click', function () {
+            modal.setAttribute('hidden', '');
+            form.submit();
         });
 
         renderCart(); // initial state: empty cart, table hidden, submit disabled

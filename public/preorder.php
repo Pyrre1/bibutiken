@@ -118,7 +118,7 @@ function self_notifyOwner(string $orderNumber, string $customerName, string $cus
         . "Reply-To: {$from}\r\n"
         . "Content-Type: text/plain; charset=UTF-8\r\n";
 
-    mail($to, $subject, $body, $headers);
+    @mail($to, $subject, $body, $headers);
 }
 
 $products = PreOrder::getActiveProducts();

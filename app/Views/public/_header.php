@@ -9,11 +9,12 @@
 </head>
 <body>
 <header class="site-header">
+    <div class="site-wordmark">Strängnäs Biredskap AB</div>
     <div class="site-header__inner">
         <nav class="site-nav">
             <a href="/index.php">Hem</a>
             <a href="/bihuset.php">Bihuset</a>
-            <a href="/preorder.php">Förbeställning</a>
+            <a href="/preorder.php">Vinterfoder</a>
         </nav>
     </div>
 </header>

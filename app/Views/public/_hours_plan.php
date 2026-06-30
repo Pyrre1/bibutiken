@@ -15,14 +15,11 @@
 
 <ul class="hours-day-list">
     <?php foreach ($planForBlock['days'] as $day): ?>
+        <?php if ($day['closed']) continue; ?>
         <li>
             <span class="hours-day-name"><?= htmlspecialchars($dayNames[$day['day_of_week']]) ?></span>
             <span class="hours-day-value">
-                <?php if ($day['closed']): ?>
-                    Stängt
-                <?php else: ?>
-                    <?= htmlspecialchars(substr($day['open_time'], 0, 5)) ?>–<?= htmlspecialchars(substr($day['close_time'], 0, 5)) ?>
-                <?php endif; ?>
+                <?= htmlspecialchars(substr($day['open_time'], 0, 5)) ?>–<?= htmlspecialchars(substr($day['close_time'], 0, 5)) ?>
             </span>
         </li>
     <?php endforeach; ?>
