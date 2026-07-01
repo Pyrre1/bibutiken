@@ -156,6 +156,26 @@
 
         productSelect.disabled = isEditing;
         addButton.textContent = isEditing ? 'Uppdatera' : 'Lägg till';
+
+        let cancelEditBtn = document.getElementById('cancel-edit-btn');
+        if (isEditing) {
+            if (!cancelEditBtn) {
+                cancelEditBtn = document.createElement('button');
+                cancelEditBtn.type = 'button';
+                cancelEditBtn.id = 'cancel-edit-btn';
+                cancelEditBtn.textContent = 'Avbryt';
+                cancelEditBtn.classList.add('btn-secondary');
+                cancelEditBtn.addEventListener('click', function () {
+                    editingIndex = -1;
+                    productSelect.value = '';
+                    quantityInput.value = '1';
+                    renderCart();
+                });
+                addButton.insertAdjacentElement('beforebegin', cancelEditBtn);
+            }
+        } else {
+            if (cancelEditBtn) cancelEditBtn.remove();
+        }
     }
 
     if (form) {

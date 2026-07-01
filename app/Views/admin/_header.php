@@ -1,13 +1,13 @@
 <?php /** Expects $pageTitle to be set before including. */ ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= Security::e($pageTitle ?? 'Admin') ?></title>
+    <title><?= Security::e($pageTitle ?? 'Admin') ?> – Bibutiken Admin</title>
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
-<body>
+<body class="admin">
 <header class="admin-nav">
     <strong>Bibutiken Admin</strong>
     <nav>

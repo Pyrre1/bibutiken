@@ -71,12 +71,14 @@
                 </p>
 
                 <?php if ($mode === 'week'): ?>
+                    <div class="week-year-row">
                     <label>Vecka
                         <input type="number" name="week_number" min="1" max="53" value="<?= (int) ($plan['week_number'] ?? date('W')) ?>">
                     </label>
                     <label>År
                         <input type="number" name="week_year" min="2024" value="<?= (int) ($plan['year'] ?? date('Y')) ?>">
                     </label>
+                    </div>
                 <?php endif; ?>
 
                 <label>Namn / Rubrik
@@ -88,47 +90,61 @@
                 </label>
 
                 <table class="hours-days-table">
-                    <thead><tr><th>Dag</th><th>Öppet?</th><th>Öppnar</th><th>Stänger</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Dag</th>
+                            <th>Öppet?</th>
+                            <th>Öppnar</th>
+                            <th>Stänger</th>
+                        </tr>
+                    </thead>
                     <tbody>
-                    <?php foreach ($plan['days'] as $day): $d = $day['day_of_week']; $isOpen = !$day['closed'];
-                        $openHour = $day['open_time'] ? substr($day['open_time'], 0, 2) : '09';
-                        $openMinute = $day['open_time'] ? substr($day['open_time'], 3, 2) : '00';
-                        $closeHour = $day['close_time'] ? substr($day['close_time'], 0, 2) : '17';
-                        $closeMinute = $day['close_time'] ? substr($day['close_time'], 3, 2) : '00';
+                    <?php foreach ($plan['days'] as $day):
+                        $d = $day['day_of_week'];
+                        $isOpen = !$day['closed'];
+                        $openHour = $day['open_time']  ? substr($day['open_time'],  0, 2) : '09';
+                        $openMinute = $day['open_time']  ? substr($day['open_time'],  3, 2) : '00';
+                        $closeHour  = $day['close_time'] ? substr($day['close_time'], 0, 2) : '17';
+                        $closeMinute= $day['close_time'] ? substr($day['close_time'], 3, 2) : '00';
                     ?>
                         <tr>
                             <td><?= $dayNames[$d] ?></td>
                             <td><input type="checkbox" name="open_<?= $d ?>" <?= $isOpen ? 'checked' : '' ?>></td>
                             <td>
-                                <select name="open_hour_<?= $d ?>">
-                                    <?php for ($h = 0; $h < 24; $h++): $hh = sprintf('%02d', $h); ?>
-                                        <option value="<?= $hh ?>" <?= $openHour === $hh ? 'selected' : '' ?>><?= $hh ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                                :
-                                <select name="open_minute_<?= $d ?>">
-                                    <?php foreach (['00','15','30','45'] as $mm): ?>
-                                        <option value="<?= $mm ?>" <?= $openMinute === $mm ? 'selected' : '' ?>><?= $mm ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <span class="time-pair">
+                                    <select name="open_hour_<?= $d ?>">
+                                        <?php for ($h = 0; $h < 24; $h++): $hh = sprintf('%02d', $h); ?>
+                                            <option value="<?= $hh ?>" <?= $openHour === $hh ? 'selected' : '' ?>><?= $hh ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                    <span class="time-sep">:</span>
+                                    <select name="open_minute_<?= $d ?>">
+                                        <?php foreach (['00','15','30','45'] as $mm): ?>
+                                            <option value="<?= $mm ?>" <?= $openMinute === $mm ? 'selected' : '' ?>><?= $mm ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </span>
                             </td>
                             <td>
-                                <select name="close_hour_<?= $d ?>">
-                                    <?php for ($h = 0; $h < 24; $h++): $hh = sprintf('%02d', $h); ?>
-                                        <option value="<?= $hh ?>" <?= $closeHour === $hh ? 'selected' : '' ?>><?= $hh ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                                :
-                                <select name="close_minute_<?= $d ?>">
-                                    <?php foreach (['00','15','30','45'] as $mm): ?>
-                                        <option value="<?= $mm ?>" <?= $closeMinute === $mm ? 'selected' : '' ?>><?= $mm ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <span class="time-pair">
+                                    <select name="close_hour_<?= $d ?>">
+                                        <?php for ($h = 0; $h < 24; $h++): $hh = sprintf('%02d', $h); ?>
+                                            <option value="<?= $hh ?>" <?= $closeHour === $hh ? 'selected' : '' ?>><?= $hh ?></option>
+                                        <?php endfor; ?>
+                                    </select>
+                                    <span class="time-sep">:</span>
+                                    <select name="close_minute_<?= $d ?>">
+                                        <?php foreach (['00','15','30','45'] as $mm): ?>
+                                            <option value="<?= $mm ?>" <?= $closeMinute === $mm ? 'selected' : '' ?>><?= $mm ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </span>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+
                 <p class="hint"><em>Lämna alla dagar omarkerade för en plan utan fasta tider (t.ex. "ring oss") — fritext 2 nedan kan förklara det på den publika sidan.</em></p>
 
                 <label>Fritext 2
@@ -147,33 +163,34 @@
                 <ul>
                 <?php foreach ($longTermOptions as $opt): ?>
                     <li>
-                        <strong><?= Security::e($opt['header_text'] ?: '(namnlös)') ?></strong>
-
-                        <?php if ($opt['is_active']): ?>
-                            <span class="badge-active">Aktiv</span>
-                            <form method="post" style="display:inline">
-                                <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                        <div class="plan-item">
+                            <span class="plan-name"><?= Security::e($opt['header_text'] ?: '(namnlös)') ?></span>
+                            <div class="plan-actions">
+                            <?php if ($opt['is_active']): ?>
+                                <span class="badge-active">Aktiv</span>
+                                <form method="post" style="display:inline">
+                                <input type="hidden" name="csrf_token" value="...">
                                 <input type="hidden" name="action" value="deactivate_long">
-                                <button type="submit">Inaktivera</button>
-                            </form>
-                        <?php else: ?>
-                            <span class="badge-inactive">Inaktiv</span>
-                            <form method="post" style="display:inline">
-                                <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                                <button type="submit" class="btn-toggle btn-toggle--active">Inaktivera</button>
+                                </form>
+                            <?php else: ?>
+                                <span class="badge-inactive">Inaktiv</span>
+                                <form method="post" style="display:inline">
+                                <input type="hidden" name="csrf_token" value="...">
                                 <input type="hidden" name="action" value="activate_long">
                                 <input type="hidden" name="id" value="<?= (int) $opt['id'] ?>">
-                                <button type="submit">Aktivera</button>
+                                <button type="submit" class="btn-toggle">Aktivera</button>
+                                </form>
+                            <?php endif; ?>
+                            <a class="btn-icon" href="/admin/hours.php?mode=long&id=<?= (int) $opt['id'] ?>" title="Redigera">✎</a>
+                            <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna periodplan?');">
+                                <input type="hidden" name="csrf_token" value="...">
+                                <input type="hidden" name="action" value="delete_long">
+                                <input type="hidden" name="id" value="<?= (int) $opt['id'] ?>">
+                                <button type="submit" class="btn-icon btn-icon--danger" title="Ta bort">✕</button>
                             </form>
-                        <?php endif; ?>
-
-                        <a href="/admin/hours.php?mode=long&id=<?= (int) $opt['id'] ?>">Redigera</a>
-
-                        <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna periodplan?');">
-                            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
-                            <input type="hidden" name="action" value="delete_long">
-                            <input type="hidden" name="id" value="<?= (int) $opt['id'] ?>">
-                            <button type="submit">Ta bort</button>
-                        </form>
+                            </div>
+                        </div>
                     </li>
                 <?php endforeach; ?>
                 </ul>
@@ -194,13 +211,13 @@
                         <strong>Vecka <?= (int) $wp['week_number'] ?>, <?= (int) $wp['year'] ?></strong>
                         <?php if ($wp['header_text']): ?> – <?= Security::e($wp['header_text']) ?><?php endif; ?>
 
-                        <a href="/admin/hours.php?mode=week&id=<?= (int) $wp['id'] ?>">Redigera</a>
+                        <a class="btn-icon" href="/admin/hours.php?mode=week&id=<?= (int) $wp['id'] ?>" title="Redigera">✎</a>
 
                         <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna veckoplan?');">
                             <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
                             <input type="hidden" name="action" value="delete_week">
                             <input type="hidden" name="id" value="<?= (int) $wp['id'] ?>">
-                            <button type="submit">Ta bort</button>
+                            <button type="submit" class="btn-icon btn-icon--danger" title="Ta bort">✕</button>
                         </form>
                     </li>
                 <?php endforeach; ?>
