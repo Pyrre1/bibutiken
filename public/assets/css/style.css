@@ -792,7 +792,7 @@ body.admin input[name="header_text"] {
 /* ── Hours page: two-col shell ────────────────────────────── */
 .hours-admin-layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-6);
   align-items: start;
 }
@@ -801,6 +801,30 @@ body.admin input[name="header_text"] {
   .hours-admin-layout {
     grid-template-columns: 1fr;
   }
+}
+
+.hours-days-table td:nth-child(2),
+.hours-days-table th:nth-child(2),
+.hours-days-table td:nth-child(3),
+.hours-days-table th:nth-child(3),
+.hours-days-table td:nth-child(4),
+.hours-days-table th:nth-child(4) {
+  text-align: center;
+}
+
+.preview-heading-row {
+    display: block;
+    margin-bottom: var(--space-2);
+}
+
+.preview-heading-row .preview-heading {
+    margin-bottom: 0;
+}
+
+.preview-edit-btn {
+  position: absolute;
+  bottom: var(--space-4);
+  right: var(--space-4);
 }
 
 /* ── Action buttons row ───────────────────────────────────── */
@@ -850,6 +874,53 @@ a.btn-icon {
   background: #FDECEA;
 }
 
+.form-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.btn-secondary-link {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-500);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--neutral-100);
+}
+
+.btn-secondary-link:hover {
+  color: var(--color-heading);
+  background: var(--neutral-100);
+  filter: brightness(0.95);
+}
+
+.plan-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.plan-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;   /* never wrap — actions stay together */
+}
+
 /* ── Active plan preview card ─────────────────────────────── */
 .active-plan-preview {
   background: var(--honey-50);
@@ -858,6 +929,7 @@ a.btn-icon {
   padding: var(--space-4);
   margin-bottom: var(--space-5);
   font-size: var(--text-sm);
+  position: relative;
 }
 
 .preview-heading {
@@ -883,6 +955,14 @@ a.btn-icon {
 }
 
 /* ── Edit form ────────────────────────────────────────────── */
+.plan-edit-form {
+  background: var(--honey-50);
+  border: 1px solid var(--honey-200);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+}
+
 .form-mode-indicator {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -1028,10 +1108,6 @@ body.admin p.error {
 
 .long-term-list li,
 .week-specific-list li {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
   padding: var(--space-2) 0;
   border-bottom: 1px solid var(--color-border);
   font-size: var(--text-sm);
@@ -1046,6 +1122,44 @@ body.admin p.error {
   font-size: var(--text-sm);
   color: var(--neutral-500);
   margin-bottom: var(--space-3);
+}
+
+.plan-item {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.plan-name {
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Change style of active/inactive buttons in the plan list.  */
+.btn-toggle {
+  font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-3);
+  background: var(--neutral-100);
+  color: var(--color-heading);
+  border: 1px solid var(--color-border);
+}
+
+.btn-toggle--active {
+  background: var(--honey-600);
+  color: var(--neutral-0);
+  border-color: var(--honey-600);
+}
+
+.btn-toggle--active:hover {
+  background: var(--honey-700);
+  border-color: var(--honey-700);
 }
 
 /* ── Active / inactive badges ─────────────────────────────── */

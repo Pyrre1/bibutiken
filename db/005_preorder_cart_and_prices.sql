@@ -27,7 +27,7 @@ CREATE TABLE pre_order_items (
 
 -- Seed starting products with placeholder prices (confirm real prices later).
 INSERT INTO products (name, price_ore, active, sort_order) VALUES
-('Bifor 12,5kg', 22000, 1, 1),
-('Dulcofruct 2kg', 10500, 1, 2),
-('Foderlåda obehandlad (håller ca 2-3 år)', 2500, 1, 3),
-('Foderlåda lackad/målad (håller ca 5 år +)', 3500, 1, 4);
+('Ideal Api Classic, flaska 13kg', 29500, 1, 1),
+('Bifor 12,5kg', 28500, 1, 2),
+('Foderlåda EPS (obehandlad)', 30700, 1, 3),
+('Högglanslack EPS till foderlåda (för lättare rengöring)', 13800, 1, 4);

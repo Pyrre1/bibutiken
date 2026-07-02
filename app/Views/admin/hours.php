@@ -13,28 +13,45 @@
 
         <?php if ($mode === 'view' && $activePlan): ?>
             <div class="active-plan-preview">
-                <p class="preview-heading">Öppettider publicerade på hemsidan nu:</p>
+                <?php
+                $sourceLabels = [
+                    'default'       => 'Standardöppettider',
+                    'long_term'     => 'Periodplan',
+                    'week_specific' => 'Veckoplan',
+                ];
+                $modeParam = $displayPlan['type'] === 'week_specific' ? 'week' : ($displayPlan['type'] === 'long_term' ? 'long' : 'default');
+                $editHref = "/admin/hours.php?mode={$modeParam}&id={$displayPlan['id']}";
+                ?>
+                <div class="preview-heading-row">
+                    <p class="preview-heading">
+                        <?= $previewNext ? 'Öppettider som publiceras nästa vecka:' : 'Öppettider publicerade på hemsidan nu:' ?>
+                    </p>
+                </div>
                 <p class="source-label">
-                    <?php
-                    $sourceLabels = [
-                        'default' => 'Källa: Standardöppettider',
-                        'long_term' => 'Källa: Periodplan',
-                        'week_specific' => 'Källa: Veckoplan',
-                    ];
-                    echo Security::e($sourceLabels[$activePlan['type']] ?? '');
-                    ?>
+                    Källa: <?= Security::e($sourceLabels[$displayPlan['type']] ?? '') ?>
+                    <?php if ($nextDiffers): ?>
+                        <?php
+                        $nextLabel = $sourceLabels[$nextWeekPlan['type']] ?? '';
+                        $nextId = $nextWeekPlan['id'] ?? null;
+                        $nextModeParam = $nextWeekPlan['type'] === 'week_specific' ? 'week' : ($nextWeekPlan['type'] === 'long_term' ? 'long' : 'default');
+                        $nextShort = $nextWeekPlan['type'] === 'week_specific' ? 'Veckoplan' : $nextLabel;
+                        ?>
+                        <?php if ($previewNext): ?>
+                            , liveplanen nu: <a href="/admin/hours.php"><?= Security::e($sourceLabels[$activePlan['type']] ?? '') ?></a>
+                        <?php else: ?>
+                            , nästa vecka: <a href="/admin/hours.php?preview=next"><?= Security::e($nextShort) ?></a>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </p>
-
-                <?php if ($activePlan['header_text']): ?><h3><?= Security::e($activePlan['header_text']) ?></h3><?php endif; ?>
-                <?php if ($activePlan['free_text_1']): ?><p><?= nl2br(Security::e($activePlan['free_text_1'])) ?></p><?php endif; ?>
-
+                <?php if ($displayPlan['header_text']): ?><h3><?= Security::e($displayPlan['header_text']) ?></h3><?php endif; ?>
+                <?php if ($displayPlan['free_text_1']): ?><p><?= nl2br(Security::e($displayPlan['free_text_1'])) ?></p><?php endif; ?>
                 <?php
                 $anyOpenDay = false;
-                foreach ($activePlan['days'] as $day) { if (!$day['closed']) { $anyOpenDay = true; break; } }
+                foreach ($displayPlan['days'] as $day) { if (!$day['closed']) { $anyOpenDay = true; break; } }
                 ?>
                 <?php if ($anyOpenDay): ?>
                     <ul class="hours-preview-list">
-                        <?php foreach ($activePlan['days'] as $day): $d = $day['day_of_week']; ?>
+                        <?php foreach ($displayPlan['days'] as $day): $d = $day['day_of_week']; ?>
                             <li>
                                 <?= $dayNames[$d] ?>:
                                 <?php if ($day['closed']): ?>Stängt<?php else: ?>
@@ -44,13 +61,13 @@
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>
-
-                <?php if ($activePlan['free_text_2']): ?><p><?= nl2br(Security::e($activePlan['free_text_2'])) ?></p><?php endif; ?>
+                <?php if ($displayPlan['free_text_2']): ?><p><?= nl2br(Security::e($displayPlan['free_text_2'])) ?></p><?php endif; ?>
+                <div class="preview-edit-btn"><a class="btn-icon" href="<?= Security::e($editHref) ?>" title="Redigera">✎</a></div>
             </div>
         <?php endif; ?>
 
         <?php if ($plan): ?>
-            <form method="post" id="hours-form">
+            <form method="post" id="hours-form" class="plan-edit-form">
                 <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
                 <input type="hidden" name="action" value="save_plan">
                 <input type="hidden" name="mode" value="<?= Security::e($mode) ?>">
@@ -151,7 +168,14 @@
                     <textarea name="free_text_2"><?= Security::e($plan['free_text_2'] ?? '') ?></textarea>
                 </label>
 
-                <button type="submit">Spara</button>
+                <div class="form-submit-row">
+                <?php if (($plan['id'] ?? null) !== null): ?>
+                    <a href="/admin/hours.php" class="btn-secondary-link">Avbryt</a>
+                <?php endif; ?>
+                <button type="submit">
+                    <?= ($plan['id'] ?? null) !== null ? 'Uppdatera' : 'Spara' ?>
+                </button>
+                </div>
             </form>
         <?php endif; ?>
 
@@ -169,14 +193,14 @@
                             <?php if ($opt['is_active']): ?>
                                 <span class="badge-active">Aktiv</span>
                                 <form method="post" style="display:inline">
-                                <input type="hidden" name="csrf_token" value="...">
+                                <input type="hidden" name="csrf_token" value=<?= Security::e(Security::csrfToken()) ?>>
                                 <input type="hidden" name="action" value="deactivate_long">
                                 <button type="submit" class="btn-toggle btn-toggle--active">Inaktivera</button>
                                 </form>
                             <?php else: ?>
                                 <span class="badge-inactive">Inaktiv</span>
                                 <form method="post" style="display:inline">
-                                <input type="hidden" name="csrf_token" value="...">
+                                <input type="hidden" name="csrf_token" value=<?= Security::e(Security::csrfToken()) ?>>
                                 <input type="hidden" name="action" value="activate_long">
                                 <input type="hidden" name="id" value="<?= (int) $opt['id'] ?>">
                                 <button type="submit" class="btn-toggle">Aktivera</button>
@@ -184,7 +208,7 @@
                             <?php endif; ?>
                             <a class="btn-icon" href="/admin/hours.php?mode=long&id=<?= (int) $opt['id'] ?>" title="Redigera">✎</a>
                             <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna periodplan?');">
-                                <input type="hidden" name="csrf_token" value="...">
+                                <input type="hidden" name="csrf_token" value=<?= Security::e(Security::csrfToken()) ?>>
                                 <input type="hidden" name="action" value="delete_long">
                                 <input type="hidden" name="id" value="<?= (int) $opt['id'] ?>">
                                 <button type="submit" class="btn-icon btn-icon--danger" title="Ta bort">✕</button>
@@ -199,7 +223,7 @@
     </div>
 
     <div class="col-right">
-        <p class="current-week-indicator">Innevarande vecka: <?= (int) date('W') ?>, <?= (int) date('Y') ?></p>
+        <p class="current-week-indicator">Nuvarande vecka: <?= (int) date('W') ?>, <?= (int) date('Y') ?></p>
         <section class="week-specific-list">
             <h2>Veckospecifika planer</h2>
             <?php if (empty($weekSpecificPlans)): ?>
@@ -208,17 +232,21 @@
                 <ul>
                 <?php foreach ($weekSpecificPlans as $wp): ?>
                     <li>
-                        <strong>Vecka <?= (int) $wp['week_number'] ?>, <?= (int) $wp['year'] ?></strong>
-                        <?php if ($wp['header_text']): ?> – <?= Security::e($wp['header_text']) ?><?php endif; ?>
-
-                        <a class="btn-icon" href="/admin/hours.php?mode=week&id=<?= (int) $wp['id'] ?>" title="Redigera">✎</a>
-
-                        <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna veckoplan?');">
-                            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
-                            <input type="hidden" name="action" value="delete_week">
-                            <input type="hidden" name="id" value="<?= (int) $wp['id'] ?>">
-                            <button type="submit" class="btn-icon btn-icon--danger" title="Ta bort">✕</button>
-                        </form>
+                        <div class="plan-item">
+                            <span class="plan-name">
+                                Vecka <?= (int) $wp['week_number'] ?>, <?= (int) $wp['year'] ?>
+                                <?php if ($wp['header_text']): ?> – <?= Security::e($wp['header_text']) ?><?php endif; ?>
+                            </span>
+                            <div class="plan-actions">
+                                <a class="btn-icon" href="/admin/hours.php?mode=week&id=<?= (int) $wp['id'] ?>" title="Redigera">✎</a>
+                                <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna veckoplan?');">
+                                    <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                                    <input type="hidden" name="action" value="delete_week">
+                                    <input type="hidden" name="id" value="<?= (int) $wp['id'] ?>">
+                                    <button type="submit" class="btn-icon btn-icon--danger" title="Ta bort">✕</button>
+                                </form>
+                            </div>
+                        </div>
                     </li>
                 <?php endforeach; ?>
                 </ul>

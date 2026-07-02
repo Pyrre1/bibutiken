@@ -165,6 +165,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (!$skipReload) {
     if ($mode === 'view') {
         $activePlan = HoursResolver::resolveForWeek((int) date('W'), (int) date('Y'));
+        $nextWeek = (int)date('W') + 1;
+        $nextYear = (int)date('Y');
+        if ($nextWeek > 52) { $nextWeek = 1; $nextYear++; }
+        $nextWeekPlan = HoursResolver::resolveForWeek($nextWeek, $nextYear);
+        $nextDiffers = $activePlan && $nextWeekPlan && ($nextWeekPlan['id'] !== $activePlan['id'] || $nextWeekPlan['type'] !== $activePlan['type']);
+        $previewNext = isset($_GET['preview']) && $_GET['preview'] === 'next';
+        $displayPlan = $previewNext ? $nextWeekPlan : $activePlan;
     } elseif ($mode === 'default') {
         $plan = HoursPlan::getDefault();
     } elseif ($mode === 'long') {
@@ -174,6 +181,13 @@ if (!$skipReload) {
                 $error = $error ?? 'Max antal periodplaner (3) är uppnått. Ta bort en innan du lägger till en ny.';
                 $mode = 'view';
                 $activePlan = HoursResolver::resolveForWeek((int) date('W'), (int) date('Y'));
+                $nextWeek = (int)date('W') + 1;
+                $nextYear = (int)date('Y');
+                if ($nextWeek > 52) { $nextWeek = 1; $nextYear++; }
+                $nextWeekPlan = HoursResolver::resolveForWeek($nextWeek, $nextYear);
+                $nextDiffers = $activePlan && $nextWeekPlan && ($nextWeekPlan['id'] !== $activePlan['id'] || $nextWeekPlan['type'] !== $activePlan['type']);
+                $previewNext = isset($_GET['preview']) && $_GET['preview'] === 'next';
+                $displayPlan = $previewNext ? $nextWeekPlan : $activePlan;
             } else {
                 $plan = HoursPlan::blankPlan('long_term');
             }

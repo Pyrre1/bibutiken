@@ -15,8 +15,8 @@
 
 <div class="info-banner" id="preorder-info-banner">
     <button class="info-banner__close" id="close-info-banner" aria-label="Stäng meddelande">✕</button>
-    <p>Observera att alla priser är uppskattade från förra årets leverans och är bara en uppskattning tills dess att årets priser blivit beräknade exakt. Du kommer bli kontaktad när dina varor kommit och då få årets aktuella priser. Det brukar inte vara några större skillnader, men värt att notera.</p>
-    <p>När du skickar in din beställning av vinterfoder godkänner du att jag använder e-postadressen för att kontakta dig när din order går att hämta. Självklart följer vi GDPR och vill du få din e-post raderad, kontakta butiken så raderar vi den.</p>
+    <p><strong>Observera:</strong> alla priser är uppskattade från förra årets leverans och är bara ungefärliga tills dess att årets priser blivit beräknade exakt. Du kommer bli kontaktad när dina varor kommit och då få årets aktuella priser. Det brukar inte vara några större skillnader, men värt att notera.</p>
+    <p>När du skickar in din beställning av vinterfoder godkänner du att Strängnäs Biredskap AB använder e-postadressen för att kontakta dig när din order går att hämta. Självklart följer vi GDPR och vill du få din e-post raderad, kontakta butiken så raderar vi den.</p>
 </div>
 
 <form method="post" action="/preorder.php" class="preorder-form" id="preorder-form">
@@ -83,7 +83,7 @@
     </div>
 
     <p class="cart-totals">Totalt antal produkter: <span id="cart-total-qty">0</span></p>
-    <p class="cart-totals">Totalt summa: <span id="cart-total-sum">0,00 kr</span></p>
+    <p class="cart-totals">Total summa (uppskattad): <span id="cart-total-sum">0,00 kr</span></p>
 
     <button type="submit" id="submit-order-btn" disabled>Skicka in beställning</button>
 </form>
