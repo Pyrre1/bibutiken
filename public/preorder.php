@@ -63,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'product_id' => $productId,
                     'quantity' => $quantity,
                     'unit_price_ore' => (int) $activeProducts[$productId]['price_ore'],
+                    'needs_manual_work' => (int) $activeProducts[$productId]['needs_manual_work'],
                 ];
             }
         }

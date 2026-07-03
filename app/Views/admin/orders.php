@@ -7,14 +7,14 @@
 
 <?php if ($detailOrder): ?>
     <!-- DETAIL VIEW -->
-    <div class="admin-back">
-        <a href="/admin/orders.php">← Tillbaka till alla beställningar</a>
-(    </div>
     <h1>Order <?= Security::e($detailOrder['order_number']) ?></h1>
     <p><?= Security::e($detailOrder['customer_name']) ?> — <?= Security::e($detailOrder['customer_email']) ?></p>
-    <p>Lagd: <?= date('Y-m-d H:i', strtotime($detailOrder['created_at'])) ?></p>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-4)">
+        <span>Lagd: <?= date('Y-m-d H:i', strtotime($detailOrder['created_at'])) ?></span>
+        <a href="/admin/orders.php" class="btn-secondary-link">← Tillbaka till alla beställningar</a>
+    </div>
 
-    <table class="admin-table">
+    <table class="admin-table" id="orders-table">
         <thead>
             <tr>
                 <th>Produkt</th>
@@ -102,7 +102,7 @@
     </div>
 
     <!-- Product summary -->
-    <table class="admin-table" style="margin-bottom:1.5rem">
+    <table class="admin-summary-table">
         <thead><tr><th>Produkt</th><th>Totalt beställt</th></tr></thead>
         <tbody>
         <?php foreach ($summary as $row): ?>
@@ -123,11 +123,12 @@
     </nav>
 
     <!-- CSV export -->
-    <div style="margin-bottom:1rem">
+    <div class="admin-export-row">
         <a href="/admin/export_orders.php?type=all"       class="btn-secondary">Exportera alla e-post</a>
         <a href="/admin/export_orders.php?type=bifor"     class="btn-secondary">Endast Bifor</a>
         <a href="/admin/export_orders.php?type=dulco"     class="btn-secondary">Endast Dulcofruct</a>
         <a href="/admin/export_orders.php?type=both"      class="btn-secondary">Bifor + Dulcofruct</a>
+        <a href="/admin/export_orders.php?type=unpicked" class="btn-secondary">Ej hämtat</a>
     </div>
 
     <!-- Orders table -->
@@ -140,6 +141,7 @@
                 <th>Datum</th>
                 <th>Levererad</th>
                 <th>Hantering</th>
+                <th>Utleverans</th>
                 <th></th>
             </tr>
         </thead>
@@ -149,16 +151,35 @@
                 <td><?= Security::e($order['order_number']) ?></td>
                 <td><?= Security::e($order['customer_name']) ?></td>
                 <td><?= Security::e($order['customer_email']) ?></td>
-                <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
-                <td><?= $order['is_delivered'] ? '✓' : '–' ?></td>
-                <td><?= $order['has_manual_work'] ? '🔧' : '–' ?></td>
+                <td data-sort="<?= $order['created_at'] ?>"><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
+                <td class="center"><?= $order['is_delivered'] ? '✓' : '–' ?></td>
+                <td class="center"><?= $order['has_manual_work'] ? '<span class="badge-manual">🔧</span>' : '–' ?></td>
+                <td>
+                    <?php if (!$order['is_delivered']): ?>
+                        <?php if ($order['has_manual_work']): ?>
+                            <span class="muted" title="Manuell hantering ej klar">🔒</span>
+                        <?php else: ?>
+                            <form method="post" style="display:inline">
+                                <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                                <input type="hidden" name="action" value="set_delivered">
+                                <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                <input type="hidden" name="delivered" value="1">
+                                <button type="submit" class="btn-deliver"
+                                    data-name="<?= Security::e($order['customer_name']) ?>"
+                                    onclick="return confirmDeliver(this)">
+                                    Utleverera
+                                </button>
+                            </form>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </td>
                 <td><a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>">Öppna</a></td>
             </tr>
         <?php endforeach; ?>
         <?php if (empty($orders)): ?>
-            <tr><td colspan="7"><em>Inga beställningar.</em></td></tr>
+            <tr><td colspan="8"><em>Inga beställningar.</em></td></tr>
         <?php endif; ?>
-        </tbody>)
+        </tbody>
     </table>
-
+    <div id="orders-pagination" class="admin-pagination"></div>
 <?php endif; ?>
