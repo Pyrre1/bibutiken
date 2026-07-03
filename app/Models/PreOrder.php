@@ -102,4 +102,124 @@ class PreOrder
 
         throw new RuntimeException('Could not generate a unique order number.');
     }
+    public static function getAllOrders(): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->query(
+            'SELECT o.id, o.order_number, o.customer_name, o.customer_email,
+                    o.created_at, o.is_delivered, o.has_manual_work
+            FROM pre_orders o
+            ORDER BY o.created_at DESC'
+        );
+        return $stmt->fetchAll();
+    }
+
+    public static function getOrderWithItems(int $orderId): ?array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare(
+            'SELECT o.id, o.order_number, o.customer_name, o.customer_email,
+                    o.created_at, o.is_delivered, o.has_manual_work
+            FROM pre_orders o WHERE o.id = ?'
+        );
+        $stmt->execute([$orderId]);
+        $order = $stmt->fetch();
+        if (!$order) return null;
+
+        $stmt2 = $pdo->prepare(
+            'SELECT i.id, i.product_id, p.name AS product_name,
+                    i.quantity, i.unit_price_ore, i.actual_price_ore,
+                    i.needs_manual_work, i.manual_work_status
+            FROM pre_order_items i
+            JOIN products p ON p.id = i.product_id
+            WHERE i.pre_order_id = ?
+            ORDER BY p.sort_order'
+        );
+        $stmt2->execute([$orderId]);
+        $order['items'] = $stmt2->fetchAll();
+        return $order;
+    }
+
+    public static function setDelivered(int $orderId, bool $delivered): void
+    {
+        $pdo = Database::getConnection();
+        $pdo->prepare('UPDATE pre_orders SET is_delivered = ? WHERE id = ?')
+            ->execute([(int)$delivered, $orderId]);
+    }
+
+    public static function setManualWorkStatus(int $itemId, string $status): void
+    {
+        if (!in_array($status, ['ej_tillämplig', 'ej_behandlad', 'fardig'])) return;
+        $pdo = Database::getConnection();
+        $pdo->prepare('UPDATE pre_order_items SET manual_work_status = ? WHERE id = ?')
+            ->execute([$status, $itemId]);
+        // Recalculate has_manual_work on parent order
+        $stmt = $pdo->prepare(
+            'UPDATE pre_orders SET has_manual_work = (
+                SELECT COUNT(*) FROM pre_order_items
+                WHERE pre_order_id = (SELECT pre_order_id FROM pre_order_items WHERE id = ?)
+                AND needs_manual_work = 1 AND manual_work_status = "ej_behandlad"
+            ) > 0 WHERE id = (SELECT pre_order_id FROM pre_order_items WHERE id = ?)'
+        );
+        $stmt->execute([$itemId, $itemId]);
+    }
+
+    public static function updateActualPrice(int $itemId, int $priceOre): void
+    {
+        $pdo = Database::getConnection();
+        $pdo->prepare('UPDATE pre_order_items SET actual_price_ore = ? WHERE id = ?')
+            ->execute([$priceOre, $itemId]);
+    }
+
+    public static function updateProductPrice(int $productId, int $priceOre): void
+    {
+        $pdo = Database::getConnection();
+        $pdo->prepare('UPDATE products SET price_ore = ? WHERE id = ?')
+            ->execute([$priceOre, $productId]);
+    }
+
+    public static function deleteOrder(int $orderId): void
+    {
+        $pdo = Database::getConnection();
+        // pre_order_items cascade deletes via FK
+        $pdo->prepare('DELETE FROM pre_orders WHERE id = ?')->execute([$orderId]);
+    }
+
+    public static function anonymizeEmail(string $email): int
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare(
+            'UPDATE pre_orders SET customer_email = "Raderad på begäran" WHERE customer_email = ?'
+        );
+        $stmt->execute([$email]);
+        return $stmt->rowCount();
+    }
+
+    public static function getOrderSummaryByProduct(): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->query(
+            'SELECT p.name, SUM(i.quantity) AS total_qty
+            FROM pre_order_items i
+            JOIN products p ON p.id = i.product_id
+            GROUP BY p.id, p.name
+            ORDER BY p.sort_order'
+        );
+        return $stmt->fetchAll();
+    }
+
+    public static function getOrderStats(): array
+    {
+        $pdo = Database::getConnection();
+        $total = $pdo->query('SELECT COUNT(*) FROM pre_orders')->fetchColumn();
+        $delivered = $pdo->query('SELECT COUNT(*) FROM pre_orders WHERE is_delivered = 1')->fetchColumn();
+        $manualPending = $pdo->query(
+            'SELECT COUNT(*) FROM pre_orders WHERE has_manual_work = 1 AND is_delivered = 0'
+        )->fetchColumn();
+        return [
+            'total_orders' => (int)$total,
+            'delivered' => (int)$delivered,
+            'manual_pending' => (int)$manualPending,
+        ];
+    }
 }
