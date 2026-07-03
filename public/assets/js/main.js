@@ -259,3 +259,80 @@
         });
     }
 })();
+
+// ── Orders: confirm deliver ──────────────────────────────────
+function confirmDeliver(btn) {
+    const name = btn.dataset.name;
+    return confirm(`Är du säker på att ${name} hämtat alla sina varor och att ordern ska utlevereras?`);
+}
+
+// ── Orders: sort + paginate ──────────────────────────────────
+(function () {
+    const table = document.getElementById('orders-table');
+    const pagination = document.getElementById('orders-pagination');
+    if (!table) return;
+
+    const PAGE_SIZE = 20;
+    let currentPage = 1;
+    let sortCol = 3; // Datum column index (0-based)
+    let sortAsc = true;
+
+    const tbody = table.querySelector('tbody');
+    const headers = table.querySelectorAll('th');
+
+    function getRows() {
+        return Array.from(tbody.querySelectorAll('tr[data-sortable]'));
+    }
+
+    function sortRows() {
+        const rows = getRows();
+        rows.sort((a, b) => {
+            const aVal = a.children[sortCol]?.dataset.sort ?? a.children[sortCol]?.textContent.trim() ?? '';
+            const bVal = b.children[sortCol]?.dataset.sort ?? b.children[sortCol]?.textContent.trim() ?? '';
+            return sortAsc ? aVal.localeCompare(bVal, 'sv') : bVal.localeCompare(aVal, 'sv');
+        });
+        rows.forEach(r => tbody.appendChild(r));
+    }
+
+    function renderPage() {
+        const rows = getRows();
+        const start = (currentPage - 1) * PAGE_SIZE;
+        rows.forEach((r, i) => {
+            r.style.display = (i >= start && i < start + PAGE_SIZE) ? '' : 'none';
+        });
+        renderPagination(rows.length);
+    }
+
+    function renderPagination(total) {
+        const pages = Math.ceil(total / PAGE_SIZE);
+        pagination.innerHTML = '';
+        if (pages <= 1) return;
+        for (let i = 1; i <= pages; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i;
+            if (i === currentPage) btn.classList.add('active');
+            btn.addEventListener('click', () => { currentPage = i; renderPage(); });
+            pagination.appendChild(btn);
+        }
+    }
+
+    // Mark rows as sortable
+    getRows().forEach(r => r.setAttribute('data-sortable', '1'));
+
+    // Sort indicators on headers
+    headers.forEach((th, i) => {
+        th.addEventListener('click', () => {
+            if (sortCol === i) { sortAsc = !sortAsc; }
+            else { sortCol = i; sortAsc = true; }
+            headers.forEach(h => h.textContent = h.textContent.replace(/ [▲▼]$/, ''));
+            th.textContent += sortAsc ? ' ▲' : ' ▼';
+            currentPage = 1;
+            sortRows();
+            renderPage();
+        });
+    });
+
+    // Initial render
+    sortRows();
+    renderPage();
+}());
