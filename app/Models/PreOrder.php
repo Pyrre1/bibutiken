@@ -73,8 +73,8 @@ class PreOrder
                 $stmt->execute([$orderNumber, $customerName, $customerEmail, $hasManualWork]);
                 $orderId = (int) $pdo->lastInsertId();
                 $itemStmt = $pdo->prepare(
-                    'INSERT INTO pre_order_items (pre_order_id, product_id, quantity, unit_price_ore, needs_manual_work)
-                    VALUES (?, ?, ?, ?, ?)'
+                    'INSERT INTO pre_order_items (pre_order_id, product_id, quantity, unit_price_ore, needs_manual_work, manual_work_status)
+                    VALUES (?, ?, ?, ?, ?, ?)'
                 );
                 foreach ($items as $item) {
                     $itemStmt->execute([
@@ -83,6 +83,7 @@ class PreOrder
                         $item['quantity'],
                         $item['unit_price_ore'],
                         $item['needs_manual_work'] ?? 0,
+                        !empty($item['needs_manual_work']) ? 'ej_behandlad' : 'ej_tillämplig',
                     ]);
                 }
 
@@ -172,13 +173,6 @@ class PreOrder
             ->execute([$pending > 0 ? 1 : 0, $orderId]);
     }
 
-    public static function updateActualPrice(int $itemId, int $priceOre): void
-    {
-        $pdo = Database::getConnection();
-        $pdo->prepare('UPDATE pre_order_items SET actual_price_ore = ? WHERE id = ?')
-            ->execute([$priceOre, $itemId]);
-    }
-
     public static function updateProductPrice(int $productId, int $priceOre): void
     {
         $pdo = Database::getConnection();
@@ -229,5 +223,103 @@ class PreOrder
             'delivered' => (int)$delivered,
             'manual_pending' => (int)$manualPending,
         ];
+    }
+
+    public static function updateOrderItem(int $itemId, int $productId, int $quantity): void
+    {
+        $pdo = Database::getConnection();
+        
+        // Get new product details
+        $prod = $pdo->prepare('SELECT price_ore, needs_manual_work FROM products WHERE id = ?');
+        $prod->execute([$productId]);
+        $product = $prod->fetch();
+        if (!$product) return;
+
+        $pdo->prepare(
+            'UPDATE pre_order_items 
+            SET product_id = ?, quantity = ?, unit_price_ore = ?, needs_manual_work = ?
+            WHERE id = ?'
+        )->execute([
+            $productId,
+            $quantity,
+            $product['price_ore'],
+            $product['needs_manual_work'],
+            $itemId,
+        ]);
+
+        // Recalculate has_manual_work on parent order
+        $row = $pdo->prepare('SELECT pre_order_id FROM pre_order_items WHERE id = ?');
+        $row->execute([$itemId]);
+        $orderId = (int) $row->fetchColumn();
+
+        $count = $pdo->prepare(
+            'SELECT COUNT(*) FROM pre_order_items
+            WHERE pre_order_id = ? AND needs_manual_work = 1 AND manual_work_status = "ej_behandlad"'
+        );
+        $count->execute([$orderId]);
+        $pending = (int) $count->fetchColumn();
+
+        $pdo->prepare('UPDATE pre_orders SET has_manual_work = ? WHERE id = ?')
+            ->execute([$pending > 0 ? 1 : 0, $orderId]);
+    }
+
+    public static function deleteOrderItem(int $itemId): void
+    {
+        $pdo = Database::getConnection();
+        
+        $row = $pdo->prepare('SELECT pre_order_id FROM pre_order_items WHERE id = ?');
+        $row->execute([$itemId]);
+        $orderId = (int) $row->fetchColumn();
+
+        $pdo->prepare('DELETE FROM pre_order_items WHERE id = ?')->execute([$itemId]);
+
+        // Recalculate has_manual_work
+        $count = $pdo->prepare(
+            'SELECT COUNT(*) FROM pre_order_items
+            WHERE pre_order_id = ? AND needs_manual_work = 1 AND manual_work_status = "ej_behandlad"'
+        );
+        $count->execute([$orderId]);
+        $pending = (int) $count->fetchColumn();
+
+        $pdo->prepare('UPDATE pre_orders SET has_manual_work = ? WHERE id = ?')
+            ->execute([$pending > 0 ? 1 : 0, $orderId]);
+    }
+
+    public static function getAllProducts(): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->query('SELECT id, name FROM products WHERE active = 1 ORDER BY sort_order ASC');
+        return $stmt->fetchAll();
+    }
+
+    public static function addOrderItem(int $orderId, int $productId, int $quantity): void
+    {
+        $pdo = Database::getConnection();
+
+        $prod = $pdo->prepare('SELECT price_ore, needs_manual_work FROM products WHERE id = ?');
+        $prod->execute([$productId]);
+        $product = $prod->fetch();
+        if (!$product) return;
+
+        $pdo->prepare(
+            'INSERT INTO pre_order_items (pre_order_id, product_id, quantity, unit_price_ore, needs_manual_work, manual_work_status)
+            VALUES (?, ?, ?, ?, ?, ?)'
+        )->execute([
+            $orderId, 
+            $productId, 
+            $quantity, 
+            $product['price_ore'], 
+            $product['needs_manual_work'],
+            $product['needs_manual_work'] ? 'ej_behandlad' : 'ej_tillämplig',
+        ]);
+
+        // Recalculate has_manual_work
+        $count = $pdo->prepare(
+            'SELECT COUNT(*) FROM pre_order_items
+            WHERE pre_order_id = ? AND needs_manual_work = 1 AND manual_work_status = "ej_behandlad"'
+        );
+        $count->execute([$orderId]);
+        $pdo->prepare('UPDATE pre_orders SET has_manual_work = ? WHERE id = ?')
+            ->execute([(int)$count->fetchColumn() > 0 ? 1 : 0, $orderId]);
     }
 }

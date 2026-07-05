@@ -20,49 +20,97 @@
                 <th>Produkt</th>
                 <th>Antal</th>
                 <th>Estimat/st</th>
-                <th>Faktiskt pris/st</th>
                 <th>Hantering</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
         <?php foreach ($detailOrder['items'] as $item): ?>
-            <tr>
-                <td><?= Security::e($item['product_name']) ?></td>
-                <td><?= $item['quantity'] ?></td>
-                <td><?= number_format($item['unit_price_ore'] / 100, 2, ',', ' ') ?> kr</td>
-                <td>
-                    <?php if ($item['actual_price_ore'] !== null): ?>
-                        <?= number_format($item['actual_price_ore'] / 100, 2, ',', ' ') ?> kr
-                    <?php else: ?>
-                        <em>Ej satt</em>
-                    <?php endif; ?>
-                    <form method="post" style="display:inline-block; margin-left:.5rem">
+        <tr data-item-id="<?= $item['id'] ?>">
+            <td>
+                <span class="item-display"><?= Security::e($item['product_name']) ?></span>
+                <select name="product_id" class="item-edit" style="display:none">
+                    <?php foreach ($allProducts as $p): 
+                        $isCurrentItem = $p['id'] === $item['product_id'];
+                        $alreadyInOrder = in_array($p['id'], array_column($detailOrder['items'], 'product_id'));
+                    ?>
+                        <option value="<?= $p['id'] ?>" 
+                            <?= $isCurrentItem ? 'selected' : '' ?>
+                            <?= (!$isCurrentItem && $alreadyInOrder) ? 'disabled' : '' ?>>
+                            <?= Security::e($p['name']) ?><?= (!$isCurrentItem && $alreadyInOrder) ? ' (redan i order)' : '' ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </td>
+            <td>
+                <span class="item-display"><?= $item['quantity'] ?></span>
+                <input type="number" class="item-edit" style="display:none;width:70px" 
+                      value="<?= $item['quantity'] ?>" min="1" max="9999">
+            </td>
+            <td><?= number_format($item['unit_price_ore'] / 100, 2, ',', ' ') ?> kr</td>
+            <td>
+                <?php if ($item['needs_manual_work']): ?>
+                    <form method="post">
                         <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
-                        <input type="hidden" name="action" value="update_actual_price">
+                        <input type="hidden" name="action" value="set_manual_status">
                         <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
-                        <input type="number" name="actual_price_kr" step="0.01" min="0"
-                            placeholder="kr" style="width:80px"
-                              value="<?= $item['actual_price_ore'] !== null ? number_format($item['actual_price_ore']/100,2,'.','') : '' ?>">
-                        <button type="submit">Spara</button>
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="ej_behandlad" <?= $item['manual_work_status']==='ej_behandlad'?'selected':'' ?>>Ej behandlad</option>
+                            <option value="fardig" <?= $item['manual_work_status']==='fardig'?'selected':'' ?>>Färdig</option>
+                        </select>
                     </form>
-                </td>
-                <td>
-                    <?php if ($item['needs_manual_work']): ?>
-                        <form method="post">
-                            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
-                            <input type="hidden" name="action" value="set_manual_status">
-                            <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
-                            <select name="status" onchange="this.form.submit()">
-                                <option value="ej_behandlad" <?= $item['manual_work_status']==='ej_behandlad'?'selected':'' ?>>Ej behandlad</option>
-                                <option value="fardig" <?= $item['manual_work_status']==='fardig'?'selected':'' ?>>Färdig</option>
-                            </select>
-                        </form>
-                    <?php else: ?>
-                        <span class="muted">–</span>
-                    <?php endif; ?>
-                </td>
-            </tr>
+                <?php else: ?>
+                    <span class="muted">–</span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <!-- Edit/Save/Cancel -->
+                <button type="button" class="btn-edit-row">Redigera</button>
+                <form method="post" class="item-edit" style="display:none">
+                    <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                    <input type="hidden" name="action" value="update_order_item">
+                    <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
+                    <input type="hidden" name="product_id" class="save-product-id" value="<?= $item['product_id'] ?>">
+                    <input type="hidden" name="quantity" class="save-quantity" value="<?= $item['quantity'] ?>">
+                    <button type="submit">Spara</button>
+                    <button type="button" class="btn-cancel-row">Avbryt</button>
+                </form>
+            </td>
+            <td>
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                    <input type="hidden" name="action" value="delete_order_item">
+                    <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
+                    <button type="submit" class="btn-icon btn-icon--danger"
+                        onclick="return confirm('Ta bort <?= Security::e(addslashes($item['product_name'])) ?> från ordern?')">✕</button>
+                </form>
+            </td>
+        </tr>
         <?php endforeach; ?>
+
+        <!-- Add item row -->
+        <tr>
+            <td colspan="6">
+                <form method="post" class="add-item-form">
+                    <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                    <input type="hidden" name="action" value="add_order_item">
+                    <input type="hidden" name="order_id" value="<?= $detailOrder['id'] ?>">
+                    <select name="product_id" required>
+                        <option value="">Välj produkt att lägga till...</option>
+                        <?php foreach ($allProducts as $p): 
+                            $alreadyInOrder = in_array($p['id'], array_column($detailOrder['items'], 'product_id'));
+                        ?>
+                            <option value="<?= $p['id'] ?>" <?= $alreadyInOrder ? 'disabled' : '' ?>>
+                                <?= Security::e($p['name']) ?><?= $alreadyInOrder ? ' (redan i order)' : '' ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <input type="number" name="quantity" value="1" min="1" max="9999" style="width:70px">
+                    <button type="submit">+ Lägg till rad</button>
+                </form>
+            </td>
+        </tr>
         </tbody>
     </table>
 
@@ -139,9 +187,9 @@
                 <th>Namn</th>
                 <th>E-post</th>
                 <th>Datum</th>
-                <th>Levererad</th>
-                <th>Hantering</th>
-                <th>Utleverans</th>
+                <th>Levererad</th> // TODO: merge with Utleverans, rename to Status
+                <th>Hantering</th> // TODO: merge with Utleverans, rename to Status
+                <th>Utleverans</th> // TODO: Change header to "Status" and display "🔧" if manual labor (clickable with a popup "Säker på att ändra till hanterad?"), when manual work done or not needed and not delivered, show button "Skriv ut" or something to mark as delivered. If delivered, show "✓".
                 <th></th>
             </tr>
         </thead>

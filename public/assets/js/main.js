@@ -106,7 +106,7 @@
             editBtn.title = 'Ändra antal';
             if (isEditing) {
                 editBtn.disabled = true;
-            }  else {
+            } else {
                 editBtn.addEventListener('click', function () { startEdit(item.productId); });
             }
             editCell.appendChild(editBtn);
@@ -189,7 +189,7 @@
 
 
         addButton.addEventListener('click', addItem);
-        
+
         const modal = document.getElementById('confirm-modal');
         const modalMessage = document.getElementById('modal-message');
         const modalConfirm = document.getElementById('modal-confirm');
@@ -202,7 +202,7 @@
             }
 
             event.preventDefault();
-            
+
             const hasFeedBox = cart.some(function (i) { return i.name.toLowerCase().includes('obehandlad'); });
             const hasLack = cart.some(function (i) { return i.name.toLowerCase().includes('lack'); });
 
@@ -270,7 +270,7 @@ function confirmDeliver(btn) {
 (function () {
     const table = document.getElementById('orders-table');
     const pagination = document.getElementById('orders-pagination');
-    if (!table) return;
+    if (!table || !pagination) return;
 
     const PAGE_SIZE = 20;
     let currentPage = 1;
@@ -336,3 +336,30 @@ function confirmDeliver(btn) {
     sortRows();
     renderPage();
 }());
+
+// ── Order detail: inline edit toggle ────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.btn-edit-row').forEach(function (btn) {
+        const row = btn.closest('tr');
+
+        btn.addEventListener('click', function () {
+            row.querySelectorAll('.item-display').forEach(el => el.style.display = 'none');
+            row.querySelectorAll('.item-edit').forEach(el => el.style.display = '');
+            btn.style.display = 'none';
+
+            const productSelect = row.querySelector('select[name="product_id"]');
+            const qtyInput = row.querySelector('input[type="number"]');
+            const hiddenProduct = row.querySelector('.save-product-id');
+            const hiddenQty = row.querySelector('.save-quantity');
+
+            if (productSelect) productSelect.addEventListener('change', () => hiddenProduct.value = productSelect.value);
+            if (qtyInput) qtyInput.addEventListener('input', () => hiddenQty.value = qtyInput.value);
+        });
+
+        row.querySelector('.btn-cancel-row')?.addEventListener('click', function () {
+            row.querySelectorAll('.item-display').forEach(el => el.style.display = '');
+            row.querySelectorAll('.item-edit').forEach(el => el.style.display = 'none');
+            btn.style.display = '';
+        });
+    });
+});

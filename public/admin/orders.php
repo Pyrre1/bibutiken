@@ -22,16 +22,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             PreOrder::setManualWorkStatus($itemId, $_POST['status'] ?? '');
             $message = 'Hanteringsstatus uppdaterad.';
 
-        } elseif ($action === 'update_actual_price') {
-            $ore = (int)round((float)str_replace(',', '.', $_POST['actual_price_kr'] ?? '0') * 100);
-            PreOrder::updateActualPrice($itemId, $ore);
-            $message = 'Faktiskt pris uppdaterat.';
+        } elseif ($action === 'update_order_item') {
+            $productId = (int)($_POST['product_id'] ?? 0);
+            $quantity   = (int)($_POST['quantity'] ?? 0);
+            if ($productId > 0 && $quantity > 0) {
+                PreOrder::updateOrderItem($itemId, $productId, $quantity);
+                $message = 'Orderrad uppdaterad.';
+            } else {
+                $error = 'Ogiltigt produkt eller antal.';
+            }
 
+        } elseif ($action === 'delete_order_item') {
+            PreOrder::deleteOrderItem($itemId);
+            $message = 'Orderrad borttagen.';
+        
         } elseif ($action === 'update_product_price') {
             $productId = (int)($_POST['product_id'] ?? 0);
             $ore = (int)round((float)str_replace(',', '.', $_POST['price_kr'] ?? '0') * 100);
             PreOrder::updateProductPrice($productId, $ore);
             $message = 'Produktpris (nästa säsongs estimat) uppdaterat.';
+
+        } elseif ($action === 'add_order_item') {
+            $orderId   = (int)($_POST['order_id'] ?? 0);
+            $productId = (int)($_POST['product_id'] ?? 0);
+            $quantity  = (int)($_POST['quantity'] ?? 0);
+            if ($orderId > 0 && $productId > 0 && $quantity > 0) {
+                PreOrder::addOrderItem($orderId, $productId, $quantity);
+                $message = 'Produkt tillagd i order.';
+            } else {
+                $error = 'Ogiltigt produkt eller antal.';
+            }
 
         } elseif ($action === 'delete_order') {
             $confirmNumber = trim($_POST['confirm_order_number'] ?? '');
@@ -69,6 +89,7 @@ $stats     = PreOrder::getOrderStats();
 
 // Detail view
 $detailOrder = null;
+$allProducts = PreOrder::getAllProducts();
 if (isset($_GET['order'])) {
     $detailOrder = PreOrder::getOrderWithItems((int)$_GET['order']);
 }
