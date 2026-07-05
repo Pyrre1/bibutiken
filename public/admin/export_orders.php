@@ -1,115 +1,119 @@
 <?php
-error_reporting(E_ALL & ~E_DEPRECATED);
 require_once __DIR__ . '/../../app/Core/init.php';
 require_once __DIR__ . '/../../app/Models/PreOrder.php';
 Auth::requireLogin();
 
-$type = $_GET['type'] ?? 'all'; // all | bifor | dulco | both
+error_reporting(E_ALL & ~E_DEPRECATED);
 
-$pdo = \Database::getConnection();
+$pdo = Database::getConnection();
+$type = $_GET['type'] ?? 'all';
 
-// Identify products by name pattern
-$biforIds = $pdo->query(
-    "SELECT id FROM products WHERE name LIKE '%Bifor%'"
-)->fetchAll(PDO::FETCH_COLUMN);
+$biforIds = $pdo->query("SELECT id FROM products WHERE name LIKE '%Bifor%'")->fetchAll(PDO::FETCH_COLUMN);
+$dulcoIds = $pdo->query("SELECT id FROM products WHERE name LIKE '%Ideal Api%'")->fetchAll(PDO::FETCH_COLUMN);
 
-$dulcoIds = $pdo->query(
-    "SELECT id FROM products WHERE name LIKE '%Ideal Api%'"
-)->fetchAll(PDO::FETCH_COLUMN);
+function buildQuery(PDO $pdo, string $type, array $biforIds, array $dulcoIds): array
+{
+    $base = "SELECT DISTINCT c.name AS customer_name, c.email AS customer_email,
+                    o.order_number, o.created_at, o.is_delivered
+            FROM pre_orders o
+            JOIN customers c ON c.id = o.customer_id";
 
-// Build query based on filter type
-if ($type === 'bifor') {
-    $bPH = implode(',', array_fill(0, count($biforIds), '?'));
-    $dPH = implode(',', array_fill(0, count($dulcoIds), '?'));
-    $stmt = $pdo->prepare(
-        "SELECT DISTINCT o.customer_name, o.customer_email, o.order_number, o.created_at
-        FROM pre_orders o
-        WHERE EXISTS (
-            SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($bPH)
-        )
-        AND NOT EXISTS (
-            SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($dPH)
-        )
-        ORDER BY o.created_at ASC"
-    );
-    $stmt->execute(array_merge($biforIds, $dulcoIds));
+    if ($type === 'separated') {
+        // Returns all three groups
+        $results = [];
 
-} elseif ($type === 'dulco') {
-    $bPH = implode(',', array_fill(0, count($biforIds), '?'));
-    $dPH = implode(',', array_fill(0, count($dulcoIds), '?'));
-    $stmt = $pdo->prepare(
-        "SELECT DISTINCT o.customer_name, o.customer_email, o.order_number, o.created_at
-        FROM pre_orders o
-        WHERE EXISTS (
-            SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($dPH)
-        )
-        AND NOT EXISTS (
-            SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($bPH)
-        )
-        ORDER BY o.created_at ASC"
-    );
-    $stmt->execute(array_merge($dulcoIds, $biforIds));
+        // Bifor only
+        $bPH = implode(',', array_fill(0, count($biforIds), '?'));
+        $dPH = implode(',', array_fill(0, count($dulcoIds), '?'));
+        $stmt = $pdo->prepare("$base
+            WHERE EXISTS (SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($bPH))
+            AND NOT EXISTS (SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($dPH))
+            AND o.is_delivered = 0
+            ORDER BY o.created_at ASC");
+        $stmt->execute(array_merge($biforIds, $dulcoIds));
+        $results['bifor'] = $stmt->fetchAll();
 
-} elseif ($type === 'both') {
-    // Orders containing at least one bifor AND at least one dulco item
-    $bPH = implode(',', array_fill(0, count($biforIds), '?'));
-    $dPH = implode(',', array_fill(0, count($dulcoIds), '?'));
-    $stmt = $pdo->prepare(
-        "SELECT DISTINCT o.customer_name, o.customer_email, o.order_number, o.created_at
-        FROM pre_orders o
-        WHERE EXISTS (
-            SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($bPH)
-        )
-        AND EXISTS (
-            SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($dPH)
-        )
-        ORDER BY o.created_at ASC"
-    );
-    $stmt->execute(array_merge($biforIds, $dulcoIds));
+        // Dulco only
+        $stmt = $pdo->prepare("$base
+            WHERE EXISTS (SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($dPH))
+            AND NOT EXISTS (SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($bPH))
+            AND o.is_delivered = 0
+            ORDER BY o.created_at ASC");
+        $stmt->execute(array_merge($dulcoIds, $biforIds));
+        $results['dulco'] = $stmt->fetchAll();
 
-} elseif ($type === 'unpicked') {
-    $stmt = $pdo->query(
-        "SELECT o.customer_name, o.customer_email, o.order_number, o.created_at
-        FROM pre_orders o
-        WHERE o.is_delivered = 0
-        ORDER BY o.created_at ASC"
-    );
+        // Both
+        $stmt = $pdo->prepare("$base
+            WHERE EXISTS (SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($bPH))
+            AND EXISTS (SELECT 1 FROM pre_order_items i WHERE i.pre_order_id = o.id AND i.product_id IN ($dPH))
+            AND o.is_delivered = 0
+            ORDER BY o.created_at ASC");
+        $stmt->execute(array_merge($biforIds, $dulcoIds));
+        $results['both'] = $stmt->fetchAll();
 
-} else {
+        return $results;
+    }
+
+    if ($type === 'unpicked') {
+        $stmt = $pdo->query("$base WHERE o.is_delivered = 0 ORDER BY o.created_at ASC");
+        return $stmt->fetchAll();
+    }
+
     // all
-    $stmt = $pdo->query(
-        "SELECT DISTINCT o.customer_name, o.customer_email, o.order_number, o.created_at
-        FROM pre_orders o
-        ORDER BY o.created_at ASC"
-    );
+    $stmt = $pdo->query("$base ORDER BY o.created_at ASC");
+    return $stmt->fetchAll();
 }
 
-$rows = $stmt->fetchAll();
-
 $labels = [
-    'all'   => 'alla-kunder',
-    'bifor' => 'endast-bifor',
-    'dulco' => 'endast-dulcofruct',
-    'both'  => 'bifor-och-dulcofruct',
-    'unpicked' => 'ej-hamtat',
+    'all'       => 'alla-kunder',
+    'separated' => 'separerad',
+    'unpicked'  => 'ej-hamtat',
 ];
+
 $filename = 'epostlista-' . ($labels[$type] ?? 'export') . '-' . date('Y-m-d') . '.csv';
 
 header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 
 $out = fopen('php://output', 'w');
-// BOM for Excel UTF-8 compatibility
 fwrite($out, "\xEF\xBB\xBF");
-fputcsv($out, ['Namn', 'E-post', 'Ordernummer', 'Datum'], ';', '"', '');
 
-foreach ($rows as $row) {
-    fputcsv($out, [
-        $row['customer_name'],
-        $row['customer_email'],
-        $row['order_number'],
-        date('Y-m-d', strtotime($row['created_at'])),
-    ], ';', '"', '');
+$results = buildQuery($pdo, $type, $biforIds, $dulcoIds);
+
+if ($type === 'separated') {
+    $sections = [
+        'bifor' => 'Endast Bifor (ej Dulcofruct)',
+        'dulco' => 'Endast Dulcofruct (ej Bifor)',
+        'both'  => 'Bifor och Dulcofruct',
+    ];
+    foreach ($sections as $key => $label) {
+        fputcsv($out, [$label], ';', '"', '');
+        fputcsv($out, ['Namn', 'E-post', 'Ordernummer', 'Datum'], ';', '"', '');
+        foreach ($results[$key] as $row) {
+            fputcsv($out, [
+                $row['customer_name'],
+                $row['customer_email'],
+                $row['order_number'],
+                date('Y-m-d', strtotime($row['created_at'])),
+            ], ';', '"', '');
+        }
+        fputcsv($out, [], ';', '"', ''); // empty row between sections
+    }
+} else {
+    $showStatus = $type === 'all';
+    $headers = ['Namn', 'E-post', 'Ordernummer', 'Datum'];
+    if ($showStatus) $headers[] = 'Status';
+    fputcsv($out, $headers, ';', '"', '');
+    foreach ($results as $row) {
+        $line = [
+            $row['customer_name'],
+            $row['customer_email'],
+            $row['order_number'],
+            date('Y-m-d', strtotime($row['created_at'])),
+        ];
+        if ($showStatus) $line[] = $row['is_delivered'] ? 'Hämtad' : 'Ej hämtad';
+        fputcsv($out, $line, ';', '"', '');
+    }
 }
 
 fclose($out);
