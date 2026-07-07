@@ -14,6 +14,7 @@
         <a href="/admin/dashboard.php">Översikt</a>
         <a href="/admin/hours.php">Öppettider</a>
         <a href="/admin/orders.php">Beställningar</a>
+        <a href="/admin/products.php">Produkter</a>
         <a href="/admin/customers.php">Kunder</a>
         <a href="/admin/logout.php">Logga ut</a>
     </nav>

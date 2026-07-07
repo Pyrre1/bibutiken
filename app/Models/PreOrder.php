@@ -27,7 +27,7 @@ class PreOrder
         return $prefix . $suffix;
     }
 
-    // ── Products ─────────────────────────────────────────────
+    // ── Products ───────────────────────────────────────────── TODO look up page
 
     public static function getActiveProducts(): array
     {
@@ -40,6 +40,94 @@ class PreOrder
         );
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+    // -- added to products:
+    public static function getAllProductsAdmin(): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->query(
+            'SELECT id, name, active, sort_order, price_ore, needs_manual_work, deprecated
+            FROM products
+            WHERE deprecated = 0
+            ORDER BY sort_order ASC'
+        );
+        return $stmt->fetchAll();
+    }
+
+    public static function productHasOrders(int $productId): bool
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM pre_order_items WHERE product_id = ?');
+        $stmt->execute([$productId]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    public static function createProduct(string $name, int $priceOre, bool $needsManualWork): int
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->query('SELECT COALESCE(MAX(sort_order), 0) + 1 FROM products WHERE deprecated = 0');
+        $nextSort = (int) $stmt->fetchColumn();
+
+        $pdo->prepare(
+            'INSERT INTO products (name, price_ore, needs_manual_work, active, sort_order, deprecated)
+            VALUES (?, ?, ?, 1, ?, 0)'
+        )->execute([$name, $priceOre, (int) $needsManualWork, $nextSort]);
+
+        return (int) $pdo->lastInsertId();
+    }
+
+    public static function updateProduct(int $productId, string $name, int $priceOre, bool $needsManualWork): void
+    {
+        $pdo = Database::getConnection();
+
+        // Check if name changed and has orders — if so deprecate old, create new
+        $stmt = $pdo->prepare('SELECT name, sort_order FROM products WHERE id = ?');
+        $stmt->execute([$productId]);
+        $current = $stmt->fetch();
+
+        if ($current['name'] !== $name && self::productHasOrders($productId)) {
+            // Deprecate old
+            $pdo->prepare('UPDATE products SET deprecated = 1, active = 0 WHERE id = ?')
+                ->execute([$productId]);
+            // Create new with same sort position
+            $pdo->prepare(
+                'INSERT INTO products (name, price_ore, needs_manual_work, active, sort_order, deprecated)
+                VALUES (?, ?, ?, 1, ?, 0)'
+            )->execute([$name, $priceOre, (int) $needsManualWork, $current['sort_order']]);
+        } else {
+            $pdo->prepare(
+                'UPDATE products SET name = ?, price_ore = ?, needs_manual_work = ? WHERE id = ?'
+            )->execute([$name, $priceOre, (int) $needsManualWork, $productId]);
+        }
+    }
+
+    public static function setProductActive(int $productId, bool $active): void
+    {
+        $pdo = Database::getConnection();
+        $pdo->prepare('UPDATE products SET active = ? WHERE id = ?')
+            ->execute([(int) $active, $productId]);
+    }
+
+    public static function deleteOrDeprecateProduct(int $productId): string
+    {
+        $pdo = Database::getConnection();
+        if (self::productHasOrders($productId)) {
+            $pdo->prepare('UPDATE products SET deprecated = 1, active = 0 WHERE id = ?')
+                ->execute([$productId]);
+            return 'deprecated';
+        }
+        $pdo->prepare('DELETE FROM products WHERE id = ?')->execute([$productId]);
+        return 'deleted';
+    }
+
+    public static function updateProductSortOrder(array $orderedIds): void
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare('UPDATE products SET sort_order = ? WHERE id = ?');
+        foreach ($orderedIds as $position => $productId) {
+            $stmt->execute([$position + 1, (int) $productId]);
+        }
     }
 
     /**
@@ -72,6 +160,82 @@ class PreOrder
         $pdo = Database::getConnection();
         $pdo->prepare('UPDATE products SET price_ore = ? WHERE id = ?')
             ->execute([$priceOre, $productId]);
+    }
+
+    // ── Dashbord ─────────────────────────────────────────────
+    public static function getDashboardStats(?string $previousLoginAt): array
+    {
+        $pdo = Database::getConnection();
+
+        $thisYear = date('Y');
+
+        $totalThisYear = (int) $pdo->prepare(
+            'SELECT COUNT(*) FROM pre_orders WHERE YEAR(created_at) = ?'
+        )->execute([$thisYear]) ? $pdo->prepare(
+            'SELECT COUNT(*) FROM pre_orders WHERE YEAR(created_at) = ?'
+        ) : 0;
+
+        // Cleaner approach
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM pre_orders WHERE YEAR(created_at) = ?');
+        $stmt->execute([$thisYear]);
+        $totalThisYear = (int) $stmt->fetchColumn();
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM pre_orders WHERE is_delivered = 1 AND YEAR(created_at) = ?');
+        $stmt->execute([$thisYear]);
+        $delivered = (int) $stmt->fetchColumn();
+
+        $stmt = $pdo->query('SELECT COUNT(*) FROM pre_orders WHERE has_manual_work = 1 AND is_delivered = 0');
+        $manualPending = (int) $stmt->fetchColumn();
+
+        $newSinceLogin = 0;
+        if ($previousLoginAt) {
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM pre_orders WHERE created_at > ?');
+            $stmt->execute([$previousLoginAt]);
+            $newSinceLogin = (int) $stmt->fetchColumn();
+        }
+
+        $stmt = $pdo->query('SELECT COUNT(*) FROM customers');
+        $totalCustomers = (int) $stmt->fetchColumn();
+
+        $stmt = $pdo->prepare(
+            'SELECT COUNT(*) FROM customer_role_assignments a
+            JOIN customer_roles r ON r.id = a.role_id WHERE r.name = "newsletter"'
+        );
+        $stmt->execute();
+        $newsletterCount = (int) $stmt->fetchColumn();
+
+        // Product totals by name pattern
+        $productTotals = [];
+        $patterns = [
+            'bifor'       => '%Bifor%',
+            'dulco'       => '%Ideal Api%',
+            'lackad'      => '%Färdiglackad%',
+        ];
+        foreach ($patterns as $key => $pattern) {
+            $stmt = $pdo->prepare(
+                'SELECT COALESCE(SUM(i.quantity), 0)
+                FROM pre_order_items i
+                JOIN products p ON p.id = i.product_id
+                JOIN pre_orders o ON o.id = i.pre_order_id
+                WHERE p.name LIKE ? AND YEAR(o.created_at) = ?'
+            );
+            $stmt->execute([$pattern, $thisYear]);
+            $productTotals[$key] = (int) $stmt->fetchColumn();
+        }
+
+        $stmt = $pdo->query('SELECT COUNT(*) FROM products WHERE active = 1 AND deprecated = 0');
+        $activeProducts = (int) $stmt->fetchColumn();
+
+        return [
+            'new_since_login'  => $newSinceLogin,
+            'total_this_year'  => $totalThisYear,
+            'delivered'        => $delivered,
+            'manual_pending'   => $manualPending,
+            'total_customers'  => $totalCustomers,
+            'newsletter_count' => $newsletterCount,
+            'product_totals'   => $productTotals,
+            'active_products'  => $activeProducts,
+        ];
     }
 
     // ── Customers ─────────────────────────────────────────────

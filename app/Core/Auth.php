@@ -35,6 +35,12 @@ class Auth
         $_SESSION['admin_id'] = $user['id'];
         $_SESSION['admin_username'] = $user['username'];
 
+        // Record last login for dashboard "new orders since last login"
+        $now = date('Y-m-d H:i:s');
+        $_SESSION['previous_login_at'] = $user['last_login_at']; // store BEFORE updating
+        $pdo->prepare('UPDATE admin_users SET last_login_at = ? WHERE id = ?')
+            ->execute([$now, $user['id']]);
+
         return ['success' => true];
     }
 
