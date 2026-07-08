@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../app/Core/init.php';
-require_once __DIR__ . '/../../app/Models/PreOrder.php';
+require_once __DIR__ . '/../../app/Models/Product.php';
 Auth::requireLogin();
 
 $message = null;
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($name === '' || $priceOre <= 0) {
                 $error = 'Ange namn och ett giltigt pris.';
             } else {
-                PreOrder::createProduct($name, $priceOre, $manual);
+                Product::createProduct($name, $priceOre, $manual);
                 $message = 'Produkt skapad.';
             }
 
@@ -31,16 +31,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($name === '' || $priceOre <= 0) {
                 $error = 'Ange namn och ett giltigt pris.';
             } else {
-                PreOrder::updateProduct($productId, $name, $priceOre, $manual);
+                Product::updateProduct($productId, $name, $priceOre, $manual);
                 $message = 'Produkt uppdaterad.';
             }
 
         } elseif ($action === 'toggle_active') {
             $active = (bool)(int)($_POST['active'] ?? 0);
-            PreOrder::setProductActive($productId, $active);
+            Product::setProductActive($productId, $active);
 
         } elseif ($action === 'delete') {
-            $result = PreOrder::deleteOrDeprecateProduct($productId);
+            $result = Product::deleteOrDeprecateProduct($productId);
             $message = $result === 'deleted'
                 ? 'Produkten togs bort.'
                 : 'Produkten har tidigare beställningar och är nu dold.';
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($action === 'reorder') {
             $ids = array_map('intval', $_POST['ordered_ids'] ?? []);
             if (!empty($ids)) {
-                PreOrder::updateProductSortOrder($ids);
+                Product::updateProductSortOrder($ids);
             }
             // Silent — called via JS fetch
             header('Content-Type: application/json');
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$products  = PreOrder::getAllProductsAdmin();
+$products  = Product::getAllProductsAdmin();
 
 $pageTitle = 'Produkter – Admin';
 require __DIR__ . '/../../app/Views/admin/_header.php';

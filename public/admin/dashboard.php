@@ -1,12 +1,13 @@
 <?php
 require_once __DIR__ . '/../../app/Core/init.php';
-require_once __DIR__ . '/../../app/Models/PreOrder.php';
+require_once __DIR__ . '/../../app/Models/Dashboard.php';
+require_once __DIR__ . '/../../app/Models/Product.php';
 require_once __DIR__ . '/../../app/Models/HoursPlan.php';
 require_once __DIR__ . '/../../app/Core/HoursResolver.php';
 Auth::requireLogin();
 
 $previousLoginAt = $_SESSION['previous_login_at'] ?? null;
-$stats = PreOrder::getDashboardStats($previousLoginAt);
+$stats = Dashboard::getDashboardStats($previousLoginAt);
 
 $thisWeekNum  = (int) date('W');
 $thisYear     = (int) date('Y');

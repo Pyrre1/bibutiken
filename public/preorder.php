@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../app/Core/init.php';
 require_once __DIR__ . '/../app/Models/PreOrder.php';
+require_once __DIR__ . '/../app/Models/Product.php';
 require_once __DIR__ . '/../app/Models/Settings.php';
 require_once __DIR__ . '/../app/Core/Security.php';
 
@@ -43,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $validationErrors[] = 'Ange en giltig e-postadress.';
         }
 
-        $activeProducts = PreOrder::getActiveProductsById();
+        $activeProducts = Product::getActiveProductsById();
         $orderItems = []; // built fresh from validated data, with server-trusted prices
 
         if (empty($submittedProductIds)) {
@@ -131,7 +132,7 @@ function self_notifyOwner(string $orderNumber, string $customerName, string $cus
     @mail($to, $subject, $body, $headers);
 }
 
-$products = PreOrder::getActiveProducts();
+$products = Product::getActiveProducts();
 $pageTitle = 'Förbeställning – Bibutiken';
 
 require __DIR__ . '/../app/Views/public/_header.php';

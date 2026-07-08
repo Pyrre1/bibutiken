@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../app/Core/init.php';
 require_once __DIR__ . '/../../app/Models/PreOrder.php';
+require_once __DIR__ . '/../../app/Models/Product.php';
 require_once __DIR__ . '/../../app/Models/Settings.php';
 Auth::requireLogin();
 
@@ -101,7 +102,7 @@ if (!$message && isset($_GET['msg'])) {
 
 // Detail view
 $detailOrder = null;
-$allProducts = PreOrder::getAllProducts();
+$allProducts = Product::getAllProducts();
 if (isset($_GET['order'])) {
     $detailOrder = PreOrder::getOrderWithItems((int)$_GET['order']);
 }

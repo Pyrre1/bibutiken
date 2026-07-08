@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../../app/Core/init.php';
-require_once __DIR__ . '/../../app/Models/PreOrder.php';
 Auth::requireLogin();
 
 error_reporting(E_ALL & ~E_DEPRECATED);

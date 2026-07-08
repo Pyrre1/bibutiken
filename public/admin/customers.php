@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../app/Core/init.php';
-require_once __DIR__ . '/../../app/Models/PreOrder.php';
+require_once __DIR__ . '/../../app/Models/Customer.php';
 Auth::requireLogin();
 
 $message = null;
@@ -21,20 +21,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $error = 'Ange ett giltigt namn och e-postadress.';
             } else {
-                PreOrder::updateCustomer($customerId, $name, $email);
+                Customer::updateCustomer($customerId, $name, $email);
                 $message = 'Kundinformation uppdaterad.';
             }
             $viewId = $customerId;
 
         } elseif ($action === 'anonymize_email') {
-            PreOrder::anonymizeEmail($customerId);
+            Customer::anonymizeEmail($customerId);
             $message = 'E-postadressen anonymiserad.';
             $viewId = $customerId;
 
         } elseif ($action === 'anonymize_full') {
             $confirmName  = trim($_POST['confirm_name'] ?? '');
             $confirmEmail = trim($_POST['confirm_email'] ?? '');
-            $customer = PreOrder::getCustomerById($customerId);
+            $customer = Customer::getCustomerById($customerId);
             if (
                 mb_strtolower($confirmName)  !== mb_strtolower($customer['name']) ||
                 strtolower($confirmEmail) !== strtolower($customer['email'])
@@ -42,14 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Namn eller e-post stämmer inte — ingen ändring gjordes.';
                 $viewId = $customerId;
             } else {
-                PreOrder::anonymizeCustomer($customerId);
+                Customer::anonymizeCustomer($customerId);
                 $message = 'Kunden är helt anonymiserad.';
                 $viewId = $customerId;
             }
 
         } elseif ($action === 'set_roles') {
             $roleIds = array_map('intval', $_POST['roles'] ?? []);
-            PreOrder::setCustomerRoles($customerId, $roleIds);
+            Customer::setCustomerRoles($customerId, $roleIds);
             $message = 'Roller uppdaterade.';
             $viewId = $customerId;
         }
@@ -58,13 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $searchResults = [];
 if ($searchTerm !== '') {
-    $searchResults = PreOrder::searchCustomers($searchTerm);
+    $searchResults = Customer::searchCustomers($searchTerm);
 }
 
 $customer  = null;
-$allRoles  = PreOrder::getAllRoles();
+$allRoles  = Customer::getAllRoles();
 if ($viewId) {
-    $customer = PreOrder::getCustomerById($viewId);
+    $customer = Customer::getCustomerById($viewId);
 }
 
 $pageTitle = 'Kunder – Admin';
