@@ -428,7 +428,11 @@ class PreOrder
         $pdo = Database::getConnection();
         $stmt = $pdo->query(
             'SELECT o.id, o.order_number, c.name AS customer_name, c.email AS customer_email,
-                    o.created_at, o.is_delivered, o.has_manual_work
+                    o.created_at, o.is_delivered, o.has_manual_work,
+                    EXISTS (
+                        SELECT 1 FROM pre_order_items i
+                        WHERE i.pre_order_id = o.id AND i.needs_manual_work = 1
+                    ) AS has_any_manual_item
             FROM pre_orders o
             JOIN customers c ON c.id = o.customer_id
             ORDER BY o.created_at ASC'
@@ -471,6 +475,8 @@ class PreOrder
             'SELECT p.name, SUM(i.quantity) AS total_qty
             FROM pre_order_items i
             JOIN products p ON p.id = i.product_id
+            JOIN pre_orders po ON po.id = i.pre_order_id
+            WHERE YEAR(po.created_at) = YEAR(NOW())
             GROUP BY p.id, p.name
             ORDER BY p.sort_order'
         );
@@ -480,14 +486,18 @@ class PreOrder
     public static function getOrderStats(): array
     {
         $pdo = Database::getConnection();
-        $total      = (int) $pdo->query('SELECT COUNT(*) FROM pre_orders')->fetchColumn();
-        $delivered  = (int) $pdo->query('SELECT COUNT(*) FROM pre_orders WHERE is_delivered = 1')->fetchColumn();
+        $total = (int) $pdo->query(
+            'SELECT COUNT(*) FROM pre_orders WHERE YEAR(created_at) = YEAR(NOW())'
+        )->fetchColumn();
+        $delivered = (int) $pdo->query(
+            'SELECT COUNT(*) FROM pre_orders WHERE is_delivered = 1 AND YEAR(created_at) = YEAR(NOW())'
+        )->fetchColumn();
         $manualPending = (int) $pdo->query(
-            'SELECT COUNT(*) FROM pre_orders WHERE has_manual_work = 1 AND is_delivered = 0'
+            'SELECT COUNT(*) FROM pre_orders WHERE has_manual_work = 1 AND is_delivered = 0 AND YEAR(created_at) = YEAR(NOW())'
         )->fetchColumn();
         return [
-            'total_orders'  => $total,
-            'delivered'     => $delivered,
+            'total_orders'   => $total,
+            'delivered'      => $delivered,
             'manual_pending' => $manualPending,
         ];
     }

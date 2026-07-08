@@ -1557,6 +1557,53 @@ a.dash-card:hover {
   filter: brightness(0.9);
 }
 
+/* Confirm popup (admin-common.js) */
+.admin-confirm-popup {
+  position: absolute;
+  z-index: 1000;
+  background: var(--neutral-0);
+  border: 1px solid var(--honey-300);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-width: 260px;
+}
+
+.admin-confirm-popup p {
+  margin: 0 0 var(--space-2);
+  font-size: 0.9rem;
+}
+
+.admin-confirm-popup-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+/* Orders legend */
+.admin-summary-row {
+  display: flex;
+  gap: var(--space-6);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.admin-legend {
+  font-size: 0.85rem;
+  background: var(--neutral-50);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+}
+
+.admin-legend p {
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.admin-legend ul {
+  margin: 0 0 var(--space-2);
+  padding-left: var(--space-4);
+}
+
 /* ── Products page ────────────────────────────────────────── */
 .products-layout {
   display: flex;

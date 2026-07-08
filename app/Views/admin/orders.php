@@ -150,24 +150,47 @@
     </div>
 
     <!-- Product summary -->
-    <table class="admin-summary-table">
-        <thead><tr><th>Produkt</th><th>Totalt beställt</th></tr></thead>
-        <tbody>
-        <?php foreach ($summary as $row): ?>
-            <tr>
-                <td><?= Security::e($row['name']) ?></td>
-                <td><?= $row['total_qty'] ?></td>
-            </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="admin-summary-row">
+        <table class="admin-summary-table">
+            <thead><tr><th>Produkt</th><th>Totalt beställt</th></tr></thead>
+            <tbody>
+            <?php foreach ($summary as $row): ?>
+                <tr>
+                    <td><?= Security::e($row['name']) ?></td>
+                    <td><?= $row['total_qty'] ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <aside class="admin-legend">
+            <p><strong>Knappar/Symboler:</strong></p>
+            <ul>
+                <li>📤: Utleverera</li>
+                <li>🔧: Manuell hantering</li>
+                <li>✅: Status klar</li>
+                <li>❌: Status ej klar</li>
+            </ul>
+            <p><strong>I tabellen:</strong></p>
+            <ul>
+                <li>"Öppna": öppnar upp ordern i detaljvy</li>
+            </ul>
+            <p><strong>Exportering av filer:</strong></p>
+            <ul>
+                <li>Alla: Exporterar alla ordrar, hämtade eller ej med status.</li>
+                <li>Separerad: En fil uppdelad på vad kunder beställt, för personligare mejl.</li>
+                <li>Ej hämtat: Alla ordrar med status "Ej hämtat"</li>
+            </ul>
+        </aside>
+    </div>
 
     <!-- Filters -->
     <nav class="admin-filters">
-        <a href="?filter=all"       class="<?= $filter==='all'       ?'active':'' ?>">Alla</a>
-        <a href="?filter=pending"   class="<?= $filter==='pending'   ?'active':'' ?>">Ej levererade</a>
-        <a href="?filter=delivered" class="<?= $filter==='delivered' ?'active':'' ?>">Levererade</a>
-        <a href="?filter=manual"    class="<?= $filter==='manual'    ?'active':'' ?>">Manuell hantering</a>
+        <a href="?filter=all"        class="<?= $filter==='all'        ?'active':'' ?>">Alla</a>
+        <a href="?filter=pending"    class="<?= $filter==='pending'    ?'active':'' ?>">📤:❌</a>
+        <a href="?filter=delivered"  class="<?= $filter==='delivered'  ?'active':'' ?>">📤:✅</a>
+        <a href="?filter=manual"     class="<?= $filter==='manual'     ?'active':'' ?>">🔧:❌</a>
+        <a href="?filter=manual_any" class="<?= $filter==='manual_any' ?'active':'' ?>">🔧:✅+❌</a>
     </nav>
 
     <!-- CSV export -->
@@ -186,9 +209,7 @@
                 <th>Namn</th>
                 <th>E-post</th>
                 <th>Datum</th>
-                <th>Levererad</th> // TODO: merge with Utleverans, rename to Status
-                <th>Hantering</th> // TODO: merge with Utleverans, rename to Status
-                <th>Utleverans</th> // TODO: Change header to "Status" and display "🔧" if manual labor (clickable with a popup "Säker på att ändra till hanterad?"), when manual work done or not needed and not delivered, show button "Skriv ut" or something to mark as delivered. If delivered, show "✓".
+                <th>Status</th>
                 <th></th>
             </tr>
         </thead>
@@ -199,32 +220,25 @@
                 <td><?= Security::e($order['customer_name']) ?></td>
                 <td><?= Security::e($order['customer_email']) ?></td>
                 <td data-sort="<?= $order['created_at'] ?>"><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
-                <td class="center"><?= $order['is_delivered'] ? '✓' : '–' ?></td>
-                <td class="center"><?= $order['has_manual_work'] ? '<span class="badge-manual">🔧</span>' : '–' ?></td>
-                <td>
-                    <?php if (!$order['is_delivered']): ?>
-                        <?php if ($order['has_manual_work']): ?>
-                            <span class="muted" title="Manuell hantering ej klar">🔒</span>
-                        <?php else: ?>
-                            <form method="post" style="display:inline">
-                                <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
-                                <input type="hidden" name="action" value="set_delivered">
-                                <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                <input type="hidden" name="delivered" value="1">
-                                <button type="submit" class="btn-deliver"
-                                    data-name="<?= Security::e($order['customer_name']) ?>"
-                                    onclick="return confirmDeliver(this)">
-                                    Utleverera
-                                </button>
-                            </form>
-                        <?php endif; ?>
+                <td class="center">
+                    <?php if ($order['has_manual_work']): ?>
+                        <a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>"
+                          class="badge-manual" title="Öppna för manuell hantering">🔧</a>
+                    <?php elseif (!$order['is_delivered']): ?>
+                        <button type="button" class="btn-icon status-deliver-btn"
+                            data-order-id="<?= $order['id'] ?>"
+                            data-csrf="<?= Security::e(Security::csrfToken()) ?>">📤</button>
+                    <?php else: ?>
+                        <button type="button" class="btn-icon status-undeliver-btn"
+                            data-order-id="<?= $order['id'] ?>"
+                            data-csrf="<?= Security::e(Security::csrfToken()) ?>">✅</button>
                     <?php endif; ?>
                 </td>
                 <td><a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>">Öppna</a></td>
             </tr>
         <?php endforeach; ?>
         <?php if (empty($orders)): ?>
-            <tr><td colspan="8"><em>Inga beställningar.</em></td></tr>
+            <tr><td colspan="6"><em>Inga beställningar.</em></td></tr>
         <?php endif; ?>
         </tbody>
     </table>

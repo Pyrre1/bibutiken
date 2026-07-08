@@ -260,12 +260,6 @@
     }
 })();
 
-// ── Orders: confirm deliver ──────────────────────────────────
-function confirmDeliver(btn) {
-    const name = btn.dataset.name;
-    return confirm(`Är du säker på att ${name} hämtat alla sina varor och att ordern ska utlevereras?`);
-}
-
 // ── Orders: sort + paginate ──────────────────────────────────
 (function () {
     const table = document.getElementById('orders-table');

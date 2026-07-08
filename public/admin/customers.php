@@ -178,8 +178,6 @@ require __DIR__ . '/../../app/Views/admin/_header.php';
                 <tr>
                     <td><?= Security::e($order['order_number']) ?></td>
                     <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
-                    <td class="center"><?= $order['is_delivered'] ? '✓' : '–' ?></td>
-                    <td class="center"><?= $order['has_manual_work'] ? '<span class="badge-manual">🔧</span>' : '–' ?></td>
                     <td><a href="/admin/orders.php?order=<?= $order['id'] ?>">Öppna</a></td>
                 </tr>
             <?php endforeach; ?>

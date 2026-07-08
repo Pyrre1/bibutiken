@@ -73,14 +73,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // --- View data ---
-$filter = $_GET['filter'] ?? 'all'; // all | pending | delivered | manual
+$filter = $_GET['filter'] ?? 'all'; // all | pending | delivered | manual | manual_any
 $orders = PreOrder::getAllOrders();
-
 // Filter
 $orders = array_filter($orders, function($o) use ($filter) {
-    if ($filter === 'pending')   return !$o['is_delivered'];
-    if ($filter === 'delivered') return  $o['is_delivered'];
-    if ($filter === 'manual')    return  $o['has_manual_work'];
+    if ($filter === 'pending')    return !$o['is_delivered'];
+    if ($filter === 'delivered')  return  $o['is_delivered'];
+    if ($filter === 'manual')     return  $o['has_manual_work'];
+    if ($filter === 'manual_any') return  $o['has_any_manual_item'];
     return true;
 });
 
@@ -94,7 +94,8 @@ if (isset($_GET['order'])) {
     $detailOrder = PreOrder::getOrderWithItems((int)$_GET['order']);
 }
 
-$pageTitle = 'Beställningar – Admin';
+$pageTitle    = 'Beställningar – Admin';
+$extraScripts = ['/assets/js/admin-orders.js'];
 require __DIR__ . '/../../app/Views/admin/_header.php';
 require __DIR__ . '/../../app/Views/admin/orders.php';
 require __DIR__ . '/../../app/Views/admin/_footer.php';
