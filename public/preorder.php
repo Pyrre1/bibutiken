@@ -1,7 +1,16 @@
 <?php
 require_once __DIR__ . '/../app/Core/init.php';
 require_once __DIR__ . '/../app/Models/PreOrder.php';
+require_once __DIR__ . '/../app/Models/Settings.php';
 require_once __DIR__ . '/../app/Core/Security.php';
+
+if (Settings::get('preorder_enabled', '1') !== '1') {
+    $pageTitle = 'Förbeställning – Bibutiken';
+    require __DIR__ . '/../app/Views/public/_header.php';
+    echo '<main style="padding:2rem"><p>Denna tiden på året tar vi inte emot beställningar av vinterfoder. Välkommen åter när förbeställningar öppnar igen!</p></main>';
+    require __DIR__ . '/../app/Views/public/_footer.php';
+    exit;
+}
 
 $error = null;
 $successOrderNumber = null;

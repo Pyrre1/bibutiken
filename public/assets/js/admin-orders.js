@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then(function (res) {
         if (!res.ok) throw new Error('Nätverksfel');
+        // Show reload button so stats can be refreshed without full-page jump
+        var reloadBtn = document.getElementById('stats-reload-btn');
+        if (reloadBtn) reloadBtn.style.display = '';
         // Swap icon and rebind — no reload needed
         if (delivered === '1') {
           cell.innerHTML = '<button type="button" class="btn-icon status-undeliver-btn" ' +

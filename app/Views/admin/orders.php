@@ -142,11 +142,23 @@
     <!-- LIST VIEW -->
     <h1>Beställningar</h1>
 
-    <!-- Summary -->
-    <div class="admin-stats-row">
-        <span>Totalt: <?= $stats['total_orders'] ?></span>
-        <span>Levererade: <?= $stats['delivered'] ?></span>
-        <span>Manuell hantering väntar: <?= $stats['manual_pending'] ?></span>
+    <!-- Summary + preorder toggle -->
+    <div class="admin-orders-header">
+        <div class="admin-stats-row">
+            <span>Totalt: <?= $stats['total_orders'] ?></span>
+            <span>Levererade: <?= $stats['delivered'] ?></span>
+            <span>Manuell hantering väntar: <?= $stats['manual_pending'] ?></span>
+            <button type="button" id="stats-reload-btn" class="btn-icon" style="display:none"
+                title="Uppdatera statistik" onclick="location.reload()">🔄</button>
+        </div>
+        <form method="post" class="admin-preorder-toggle">
+            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+            <input type="hidden" name="action" value="toggle_preorder">
+            <button type="submit"
+                class="<?= $preorderEnabled ? 'btn-toggle-active' : 'btn-toggle-inactive' ?>">
+                <?= $preorderEnabled ? '🟢 Förbeställning aktiv' : '🔴 Förbeställning dold' ?>
+            </button>
+        </form>
     </div>
 
     <!-- Product summary -->

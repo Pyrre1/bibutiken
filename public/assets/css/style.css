@@ -1604,6 +1604,49 @@ a.dash-card:hover {
   padding-left: var(--space-4);
 }
 
+.admin-orders-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.admin-orders-header .admin-stats-row {
+  margin-bottom: 0;
+  /* override any existing bottom margin */
+}
+
+#stats-reload-btn {
+  font-size: 1rem;
+  padding: 0 var(--space-2);
+  vertical-align: middle;
+}
+
+/* Preorder toggle button */
+.btn-toggle-active {
+  background: var(--success);
+  color: var(--neutral-0);
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.btn-toggle-inactive {
+  background: var(--error);
+  color: var(--neutral-0);
+  border: none;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
 /* ── Products page ────────────────────────────────────────── */
 .products-layout {
   display: flex;

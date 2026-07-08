@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../app/Core/init.php';
 require_once __DIR__ . '/../../app/Models/PreOrder.php';
+require_once __DIR__ . '/../../app/Models/Settings.php';
 Auth::requireLogin();
 
 $message = null;
@@ -53,6 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Ogiltigt produkt eller antal.';
             }
 
+        } elseif ($action === 'toggle_preorder') {
+            $current = Settings::get('preorder_enabled', '1');
+            Settings::set('preorder_enabled', $current === '1' ? '0' : '1');
+            $msg = urlencode('Förbeställningsformulär ' . ($current === '1' ? 'dolt' : 'aktiverat') . '.');
+            header('Location: /admin/orders.php?filter=' . urlencode($_GET['filter'] ?? 'all') . '&msg=' . $msg);
+            exit;
+
         } elseif ($action === 'delete_order') {
             $confirmNumber = trim($_POST['confirm_order_number'] ?? '');
             $confirmName   = trim($_POST['confirm_customer_name'] ?? '');
@@ -86,6 +94,10 @@ $orders = array_filter($orders, function($o) use ($filter) {
 
 $summary   = PreOrder::getOrderSummaryByProduct();
 $stats     = PreOrder::getOrderStats();
+$preorderEnabled  = Settings::get('preorder_enabled', '1') === '1';
+if (!$message && isset($_GET['msg'])) {
+    $message = $_GET['msg'];
+}
 
 // Detail view
 $detailOrder = null;
