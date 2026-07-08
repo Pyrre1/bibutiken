@@ -1268,14 +1268,14 @@ body.admin h1 {
 }
 
 .dashboard-tiles {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: var(--space-4);
 }
 
 .dash-card {
-  width: 160px;
-  height: 160px;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
   background: var(--neutral-0);
   border: 2px solid var(--color-border);
   border-radius: var(--radius);
@@ -1287,7 +1287,6 @@ body.admin h1 {
   justify-content: center;
   gap: var(--space-1);
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
-  flex-shrink: 0;
 }
 
 a.dash-card:hover {
@@ -1326,13 +1325,39 @@ a.dash-card:hover {
   color: var(--error);
 }
 
-@media (max-width: 500px) {
-  .dash-card {
-    width: calc(50vw - 2.5rem);
-    height: calc(50vw - 2.5rem);
+/* ── Dashboard two-column layout UPDATED, if conflict this is the right one ────────────────────────── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.dashboard-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Medium screens: narrower but still two columns */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
   }
 }
 
+/* Small screens: single column */
+@media (max-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Status tile variant — no hover lift needed, it's informational */
+.dash-card--status {
+  cursor: default;
+}
 
 
 /* ── Orders page ──────────────────────────────────────────── */

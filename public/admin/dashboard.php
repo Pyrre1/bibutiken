@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../app/Core/init.php';
 require_once __DIR__ . '/../../app/Models/Dashboard.php';
 require_once __DIR__ . '/../../app/Models/Product.php';
 require_once __DIR__ . '/../../app/Models/HoursPlan.php';
+require_once __DIR__ . '/../../app/Models/Settings.php';
 require_once __DIR__ . '/../../app/Core/HoursResolver.php';
 Auth::requireLogin();
 
@@ -18,6 +19,7 @@ if ($nextWeekNum > 52) { $nextWeekNum = 1; $nextYear++; }
 $thisWeekPlan = HoursResolver::resolveForWeek($thisWeekNum, $thisYear);
 $nextWeekPlan = HoursResolver::resolveForWeek($nextWeekNum, $nextYear);
 
+$preorderEnabled = Settings::get('preorder_enabled', '1') === '1';
 $pageTitle = 'Översikt – Admin';
 require __DIR__ . '/../../app/Views/admin/_header.php';
 ?>
@@ -31,87 +33,122 @@ require __DIR__ . '/../../app/Views/admin/_header.php';
 
 <h1>Översikt</h1>
 
-<div class="dashboard-section">
-    <div class="dashboard-section__label">Beställningar</div>
-    <div class="dashboard-tiles">
+<div class="dashboard-grid">
 
-        <a href="/admin/orders.php" class="dash-card <?= $stats['new_since_login'] > 0 ? 'dash-card--highlight' : '' ?>">
-            <div class="dash-card__value"><?= $stats['new_since_login'] ?></div>
-            <div class="dash-card__label">Nya sedan senaste inloggning</div>
-        </a>
+    <!-- LEFT COLUMN: Orders + Customers -->
+    <div class="dashboard-col">
 
-        <a href="/admin/orders.php" class="dash-card">
-            <div class="dash-card__value"><?= $stats['total_this_year'] ?></div>
-            <div class="dash-card__label">Totalt <?= date('Y') ?></div>
-        </a>
+        <div class="dashboard-section">
+            <div class="dashboard-section__label">Beställningar</div>
+            <div class="dashboard-tiles">
 
-        <a href="/admin/orders.php?filter=manual" class="dash-card <?= $stats['manual_pending'] > 0 ? 'dash-card--warning' : '' ?>">
-            <div class="dash-card__value"><?= $stats['manual_pending'] ?></div>
-            <div class="dash-card__label">Manuell hantering väntar</div>
-        </a>
+                <a href="/admin/orders.php" class="dash-card <?= $stats['new_since_login'] > 0 ? 'dash-card--highlight' : '' ?>">
+                    <div class="dash-card__value"><?= $stats['new_since_login'] ?></div>
+                    <div class="dash-card__label">Nya sedan senaste inloggning</div>
+                </a>
 
-        <a href="/admin/orders.php?filter=delivered" class="dash-card">
-            <div class="dash-card__value"><?= $stats['delivered'] ?></div>
-            <div class="dash-card__label">Levererade <?= date('Y') ?></div>
-        </a>
+                <a href="/admin/orders.php" class="dash-card">
+                    <div class="dash-card__value"><?= $stats['total_this_year'] ?></div>
+                    <div class="dash-card__label">Totala order <?= date('Y') ?></div>
+                </a>
 
-        <a href="/admin/orders.php" class="dash-card">
-            <div class="dash-card__value"><?= $stats['product_totals']['bifor'] ?></div>
-            <div class="dash-card__label">Totalt Bifor</div>
-        </a>
+                <a href="/admin/orders.php?filter=manual" class="dash-card <?= $stats['manual_pending'] > 0 ? 'dash-card--warning' : '' ?>">
+                    <div class="dash-card__value"><?= $stats['manual_pending'] ?></div>
+                    <div class="dash-card__label">Manuell hantering väntar</div>
+                </a>
 
-        <a href="/admin/orders.php" class="dash-card">
-            <div class="dash-card__value"><?= $stats['product_totals']['dulco'] ?></div>
-            <div class="dash-card__label">Totalt Dulcofruct</div>
-        </a>
+                <a href="/admin/orders.php?filter=delivered" class="dash-card">
+                    <div class="dash-card__value"><?= $stats['delivered'] ?></div>
+                    <div class="dash-card__label">Levererade denna säsong</div>
+                </a>
 
-        <a href="/admin/orders.php?filter=manual" class="dash-card">
-            <div class="dash-card__value"><?= $stats['product_totals']['lackad'] ?></div>
-            <div class="dash-card__label">Totalt Färdiglackad låda</div>
-        </a>
-
-    </div>
-</div>
-
-<div class="dashboard-section">
-    <div class="dashboard-section__label">Hemsidan</div>
-    <div class="dashboard-tiles">
-
-        <a href="/admin/hours.php" class="dash-card">
-            <div class="dash-card__label">Denna vecka (v.<?= $thisWeekNum ?>)</div>
-            <div class="dash-card__sub"><?= $thisWeekPlan ? Security::e($thisWeekPlan['header_text'] ?: 'Standard') : 'Ingen plan' ?></div>
-            <div class="dash-card__sub muted"><?= $thisWeekPlan ? Security::e($thisWeekPlan['type']) : '' ?></div>
-        </a>
-
-        <a href="/admin/hours.php?preview=next" class="dash-card">
-            <div class="dash-card__label">Nästa vecka (v.<?= $nextWeekNum ?>)</div>
-            <div class="dash-card__sub"><?= $nextWeekPlan ? Security::e($nextWeekPlan['header_text'] ?: 'Standard') : 'Ingen plan' ?></div>
-            <div class="dash-card__sub muted"><?= $nextWeekPlan ? Security::e($nextWeekPlan['type']) : '' ?></div>
-        </a>
-
-        <a href="/admin/products.php" class="dash-card">
-            <div class="dash-card__value"><?= $stats['active_products'] ?></div>
-            <div class="dash-card__label">Aktiva produkter på hemsidan</div>
-        </a>        
-
-    </div>
-</div>
-
-<div class="dashboard-section">
-    <div class="dashboard-section__label">Kunder</div>
-    <div class="dashboard-tiles">
-
-        <a href="/admin/customers.php" class="dash-card">
-            <div class="dash-card__value"><?= $stats['total_customers'] ?></div>
-            <div class="dash-card__label">Totalt antal kunder</div>
-        </a>
-
-        <div class="dash-card">
-            <div class="dash-card__value"><?= $stats['newsletter_count'] ?></div>
-            <div class="dash-card__label">Prenumeranter nyhetsbrev</div>
+            </div>
         </div>
 
-    </div>
-</div>
+        <div class="dashboard-section">
+            <div class="dashboard-section__label">Kunder</div>
+            <div class="dashboard-tiles">
+
+                <a href="/admin/customers.php" class="dash-card">
+                    <div class="dash-card__value"><?= $stats['total_customers'] ?></div>
+                    <div class="dash-card__label">Totalt antal kunder</div>
+                </a>
+
+                <div class="dash-card">
+                    <div class="dash-card__value"><?= $stats['newsletter_count'] ?></div>
+                    <div class="dash-card__label">Prenumeranter nyhetsbrev</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /dashboard-col left -->
+
+    <!-- RIGHT COLUMN: Produktinfo + Hemsidan -->
+    <div class="dashboard-col">
+
+        <div class="dashboard-section">
+            <div class="dashboard-section__label">Produktinfo</div>
+            <div class="dashboard-tiles">
+
+                <!-- TODO: Replace hardcoded product tiles with a "Show on dashboard"
+                     checkbox per product in Produkter, so owner controls this without code changes. -->
+                <a href="/admin/orders.php" class="dash-card">
+                    <div class="dash-card__value"><?= $stats['product_totals']['bifor'] ?></div>
+                    <div class="dash-card__label">Totalt sålda Bifor denna säsong</div>
+                </a>
+
+                <a href="/admin/orders.php" class="dash-card">
+                    <div class="dash-card__value"><?= $stats['product_totals']['dulco'] ?></div>
+                    <div class="dash-card__label">Totalt sålda Dulcofruct denna säsong</div>
+                </a>
+
+                <a href="/admin/orders.php" class="dash-card">
+                    <div class="dash-card__value"><?= $stats['product_totals']['lackad'] ?></div>
+                    <div class="dash-card__label">Totalt sålda Lackade lådor denna säsong</div>
+                </a>
+
+                <a href="/admin/products.php" class="dash-card">
+                    <div class="dash-card__value"><?= $stats['active_products'] ?></div>
+                    <div class="dash-card__label">Aktiva produkter på hemsidan</div>
+                </a>
+
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="dashboard-section__label">Hemsidan</div>
+            <div class="dashboard-tiles">
+
+                <a href="/admin/hours.php" class="dash-card">
+                    <div class="dash-card__label">Denna vecka (v.<?= $thisWeekNum ?>)</div>
+                    <div class="dash-card__sub"><?= $thisWeekPlan ? Security::e($thisWeekPlan['header_text'] ?: 'Standard') : 'Ingen plan' ?></div>
+                    <div class="dash-card__sub muted"><?= $thisWeekPlan ? Security::e($thisWeekPlan['type']) : '' ?></div>
+                </a>
+
+                <a href="/admin/hours.php?preview=next" class="dash-card">
+                    <div class="dash-card__label">Nästa vecka (v.<?= $nextWeekNum ?>)</div>
+                    <div class="dash-card__sub"><?= $nextWeekPlan ? Security::e($nextWeekPlan['header_text'] ?: 'Standard') : 'Ingen plan' ?></div>
+                    <div class="dash-card__sub muted"><?= $nextWeekPlan ? Security::e($nextWeekPlan['type']) : '' ?></div>
+                </a>
+
+                <a href="/admin/orders.php" class="dash-card dash-card--status">
+                    <div class="dash-card__label">Vinterfoder status:</div>
+                    <div class="dash-card__sub">
+                        <?php if ($preorderEnabled): ?>
+                            <span class="badge-active">🟢 Aktiv</span>
+                        <?php else: ?>
+                            <span class="badge-inactive">🔴 Dold</span>
+                        <?php endif; ?>
+                    </div>
+                    <!-- <div class="dash-card__sub muted">Hantera under Beställningar →</div> -->
+                </a>
+
+            </div>
+        </div>
+
+    </div><!-- /dashboard-col right -->
+
+</div><!-- /dashboard-grid -->
 
 <?php require __DIR__ . '/../../app/Views/admin/_footer.php'; ?>
