@@ -207,10 +207,9 @@
 
     <!-- CSV export -->
     <div class="admin-export-row">
-        <span>Exportera e-postlista:</span>
+        <span>Exportera ordrar:</span>
         <a href="/admin/export_orders.php?type=all">Alla</a>
-        <a href="/admin/export_orders.php?type=separated">Separerad (Bifor / Dulcofruct / Båda)</a>
-        <a href="/admin/export_orders.php?type=unpicked">Ej hämtat</a>
+        <a href="/admin/export_orders.php?type=unpicked">Ej hämtade</a>
     </div>
 
     <!-- Orders table -->

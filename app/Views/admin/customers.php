@@ -9,12 +9,26 @@
 
 <h1>Kunder</h1>
 
+<!-- Role filter pills -->
+<nav class="admin-filters" style="margin-bottom:var(--space-3)">
+    <a href="?" class="<?= $roleFilter === null ? 'active' : '' ?>">Alla</a>
+    <?php foreach ($allRoles as $role): ?>
+        <a href="?role=<?= urlencode($role['name']) ?>"
+            class="<?= $roleFilter === $role['name'] ? 'active' : '' ?>">
+            <?= Security::e($role['name']) ?>
+        </a>
+    <?php endforeach; ?>
+</nav>
+
 <!-- Search -->
 <form method="get" class="admin-search-row">
     <input type="text" name="q" value="<?= Security::e($searchTerm) ?>" placeholder="Sök namn eller e-post...">
     <button type="submit">Sök</button>
     <?php if ($viewId): ?>
         <input type="hidden" name="id" value="<?= $viewId ?>">
+    <?php endif; ?>
+    <?php if ($roleFilter): ?>
+        <input type="hidden" name="role" value="<?= Security::e($roleFilter) ?>">
     <?php endif; ?>
 </form>
 
@@ -43,6 +57,38 @@
         <?php endforeach; ?>
         </tbody>
     </table>
+<?php endif; ?>
+
+<?php if (!empty($allCustomers) && !$customer): ?>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-3)">
+        <span class="muted"><?= count($allCustomers) ?> kunder</span>
+        <a href="/admin/export_customers.php<?= $roleFilter ? '?role='.urlencode($roleFilter) : '' ?>">
+            Exportera som CSV
+        </a>
+    </div>
+    <table class="admin-table admin-table--tight" id="customers-table">
+        <thead>
+            <tr>
+                <th>Namn</th>
+                <th>E-post</th>
+                <th>Roller</th>
+                <th>Order</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($allCustomers as $row): ?>
+            <tr<?= $row['has_ingen_mejl'] ? ' class="row--no-mail"' : '' ?>>
+                <td><?= Security::e($row['name']) ?></td>
+                <td><?= Security::e($row['email']) ?></td>
+                <td class="muted"><?= Security::e($row['role_names'] ?? '') ?></td>
+                <td class="center"><?= $row['order_count'] ?></td>
+                <td><a href="?id=<?= $row['id'] ?><?= $roleFilter ? '&role='.urlencode($roleFilter) : '' ?>">Visa</a></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <div id="customers-pagination" class="admin-pagination"></div>
 <?php endif; ?>
 
 <?php if ($customer): ?>

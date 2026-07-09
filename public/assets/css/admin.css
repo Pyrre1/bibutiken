@@ -375,6 +375,37 @@ body.admin p.error {
   padding: var(--space-2) var(--space-4);
 }
 
+/* ── Pill styling ───────────────────────────────────────────── */
+.admin-filters {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.admin-filters a {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--neutral-0);
+  color: var(--color-heading);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.admin-filters a:hover {
+  background: var(--honey-100);
+  border-color: var(--honey-300);
+}
+
+.admin-filters a.active {
+  background: var(--honey-600);
+  color: var(--neutral-0);
+  border-color: var(--honey-600);
+}
+
 /* ── Hours page ───────────────────────────────────────────── */
 .hours-admin-layout {
   display: grid;

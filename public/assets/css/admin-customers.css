@@ -28,3 +28,9 @@
   padding: var(--space-5);
   margin-top: var(--space-4);
 }
+
+.admin-table tr.row--no-mail td,
+.admin-table tr:nth-child(even).row--no-mail td {
+  background-color: #fdecea;
+  color: #c0392b;
+}

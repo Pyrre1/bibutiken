@@ -22,6 +22,15 @@ class Customer
         if ($existing) {
             $pdo->prepare('UPDATE customers SET name = ? WHERE id = ?')
                 ->execute([$name, $existing['id']]);
+            // Also ensure the assigned role exists for returning customers
+            $roleStmt = $pdo->prepare('SELECT id FROM customer_roles WHERE name = ?');
+            $roleStmt->execute([$assignRole]);
+            $role = $roleStmt->fetch();
+            if ($role) {
+                $pdo->prepare(
+                    'INSERT IGNORE INTO customer_role_assignments (customer_id, role_id) VALUES (?, ?)'
+                )->execute([$existing['id'], $role['id']]);
+            }
             return (int) $existing['id'];
         }
 
@@ -131,5 +140,41 @@ class Customer
         foreach ($roleIds as $roleId) {
             $stmt->execute([$customerId, (int)$roleId]);
         }
+    }
+
+    /**
+     * Returns all customers, optionally filtered by role name.
+     * Each row includes order_count and has_ingen_mejl flag.
+     */
+    public static function getAllCustomers(?string $roleFilter = null): array
+    {
+        $pdo = Database::getConnection();
+
+        $noMailId = $pdo->query(
+            'SELECT id FROM customer_roles WHERE name = "ingen_mejl"'
+        )->fetchColumn();
+
+        $sql = 'SELECT c.id, c.name, c.email, c.created_at,
+                    COUNT(DISTINCT o.id) AS order_count,
+                    MAX(CASE WHEN ra.role_id = ' . (int)$noMailId . ' THEN 1 ELSE 0 END) AS has_ingen_mejl,
+                    GROUP_CONCAT(DISTINCT r.name ORDER BY r.id SEPARATOR ", ") AS role_names
+                FROM customers c
+                LEFT JOIN pre_orders o ON o.customer_id = c.id
+                LEFT JOIN customer_role_assignments ra ON ra.customer_id = c.id
+                LEFT JOIN customer_roles r ON r.id = ra.role_id';
+
+        if ($roleFilter !== null) {
+            $sql .= ' WHERE c.id IN (
+                        SELECT customer_id FROM customer_role_assignments
+                        JOIN customer_roles ON customer_roles.id = customer_role_assignments.role_id
+                        WHERE customer_roles.name = ?
+                    )';
+        }
+
+        $sql .= ' GROUP BY c.id ORDER BY c.name ASC';
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($roleFilter !== null ? [$roleFilter] : []);
+        return $stmt->fetchAll();
     }
 }

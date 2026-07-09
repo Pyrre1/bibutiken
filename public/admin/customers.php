@@ -56,10 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$roleFilter = $_GET['role'] ?? null;
+
 $searchResults = [];
 if ($searchTerm !== '') {
     $searchResults = Customer::searchCustomers($searchTerm);
 }
+
+$allCustomers = (!$viewId && $searchTerm === '')
+    ? Customer::getAllCustomers($roleFilter)
+    : [];
 
 $customer = null;
 $allRoles = Customer::getAllRoles();
@@ -68,5 +74,6 @@ if ($viewId) {
 }
 
 $pageTitle   = 'Kunder – Admin';
+$extraScripts = ['/assets/js/admin-customers.js'];
 $extraStyles = ['/assets/css/admin-customers.css'];
 require __DIR__ . '/../../app/Views/admin/customers.php';
