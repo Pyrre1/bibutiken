@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $products  = Product::getAllProductsAdmin();
 
 $pageTitle = 'Produkter – Admin';
+$extraScripts = ['/assets/js/admin-products.js'];
 $extraStyles = ['/assets/css/admin-products.css'];
 require __DIR__ . '/../../app/Views/admin/_header.php';
 require __DIR__ . '/../../app/Views/admin/products.php';

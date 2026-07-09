@@ -1,6 +1,5 @@
 </main>
 <script src="/assets/js/admin-common.js"></script>
-<script src="/assets/js/main.js"></script>
 <?php if (isset($extraScripts)): ?>
     <?php foreach ($extraScripts as $src): ?>
         <script src="<?= Security::e($src) ?>"></script>

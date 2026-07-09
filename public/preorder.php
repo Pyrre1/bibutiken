@@ -7,6 +7,7 @@ require_once __DIR__ . '/../app/Core/Security.php';
 
 if (Settings::get('preorder_enabled', '1') !== '1') {
     $pageTitle = 'Förbeställning – Bibutiken';
+    $extraScripts = ['/assets/js/preorder.js'];
     require __DIR__ . '/../app/Views/public/_header.php';
     echo '<main style="padding:2rem"><p>Denna tiden på året tar vi inte emot beställningar av vinterfoder. Välkommen åter när förbeställningar öppnar igen!</p></main>';
     require __DIR__ . '/../app/Views/public/_footer.php';
@@ -134,7 +135,7 @@ function self_notifyOwner(string $orderNumber, string $customerName, string $cus
 
 $products = Product::getActiveProducts();
 $pageTitle = 'Förbeställning – Bibutiken';
-
+$extraScripts = ['/assets/js/preorder.js'];
 require __DIR__ . '/../app/Views/public/_header.php';
 require __DIR__ . '/../app/Views/public/preorder.php';
 require __DIR__ . '/../app/Views/public/_footer.php';

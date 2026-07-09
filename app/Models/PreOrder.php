@@ -32,7 +32,8 @@ class PreOrder
     public static function insertOrder(string $customerName, string $customerEmail, array $items): array
     {
         $pdo = Database::getConnection();
-        $customerId = self::findOrCreateCustomer($customerName, $customerEmail);
+        require_once __DIR__ . '/Customer.php';
+        $customerId = Customer::findOrCreateCustomer($customerName, $customerEmail);
         $maxAttempts = 5;
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {

@@ -208,6 +208,7 @@ if (!$skipReload) {
 $longTermOptions = HoursPlan::getLongTermOptions();
 $weekSpecificPlans = HoursPlan::getAllWeekSpecific();
 
+$extraScripts = ['/assets/js/admin-hours.js'];
 $pageTitle = 'Öppettider – Admin';
 require __DIR__ . '/../../app/Views/admin/_header.php';
 require __DIR__ . '/../../app/Views/admin/hours.php';
