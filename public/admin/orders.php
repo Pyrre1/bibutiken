@@ -109,6 +109,7 @@ if (isset($_GET['order'])) {
 
 $pageTitle    = 'Beställningar – Admin';
 $extraScripts = ['/assets/js/admin-orders.js'];
+$extraStyles  = ['/assets/css/admin-orders.css'];
 require __DIR__ . '/../../app/Views/admin/_header.php';
 require __DIR__ . '/../../app/Views/admin/orders.php';
 require __DIR__ . '/../../app/Views/admin/_footer.php';

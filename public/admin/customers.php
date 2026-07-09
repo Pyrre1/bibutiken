@@ -68,6 +68,7 @@ if ($viewId) {
 }
 
 $pageTitle = 'Kunder – Admin';
+$extraStyles = ['/assets/css/admin-customers.css'];
 require __DIR__ . '/../../app/Views/admin/_header.php';
 ?>
 
@@ -94,7 +95,7 @@ require __DIR__ . '/../../app/Views/admin/_header.php';
 <?php endif; ?>
 
 <?php if (!empty($searchResults)): ?>
-    <table class="admin-table" style="margin-bottom:var(--space-5)">
+    <table class="admin-table admin-table--tight">
         <thead>
             <tr>
                 <th>Namn</th>
@@ -168,9 +169,8 @@ require __DIR__ . '/../../app/Views/admin/_header.php';
                 <tr>
                     <th>Ordernr</th>
                     <th>Datum</th>
-                    <th>Levererad</th>
+                    <th>Status</th>
                     <th>Hantering</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -178,6 +178,7 @@ require __DIR__ . '/../../app/Views/admin/_header.php';
                 <tr>
                     <td><?= Security::e($order['order_number']) ?></td>
                     <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
+                    <td><?= $order['is_delivered'] ? '✅' : ($order['has_manual_work'] ? '🔧' : '📤') ?></td>
                     <td><a href="/admin/orders.php?order=<?= $order['id'] ?>">Öppna</a></td>
                 </tr>
             <?php endforeach; ?>

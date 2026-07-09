@@ -5,7 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= Security::e($pageTitle ?? 'Admin') ?> – Bibutiken Admin</title>
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/tokens.css">
+    <link rel="stylesheet" href="/assets/css/shared.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
+    <?php if (isset($extraStyles)): ?>
+        <?php foreach ($extraStyles as $href): ?>
+            <link rel="stylesheet" href="<?= Security::e($href) ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
 <body class="admin">
 <header class="admin-nav">

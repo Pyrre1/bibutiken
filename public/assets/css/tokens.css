@@ -1,0 +1,150 @@
+/* ============================================================
+    TOKENS — design tokens, reset, base elements
+    Loaded on every page (public and admin).
+   ============================================================ */
+
+/* ── Design tokens ────────────────────────────────────────── */
+:root {
+  /* Honey palette */
+  --honey-50: #FFF9EB;
+  --honey-100: #FBEEC8;
+  --honey-200: #F5D67A;
+  --honey-300: #E5B53A;
+  --honey-400: #C98A12;
+  --honey-500: #8A5A06;
+  --honey-600: #5D3900;
+  --honey-700: #2E1B00;
+
+  /* Neutrals */
+  --neutral-0: #FFFFFF;
+  --neutral-50: #FFFCF6;
+  --neutral-100: #EEEAE2;
+  --neutral-500: #6D665A;
+  --neutral-700: #39342D;
+  --neutral-900: #1D1A16;
+
+  /* Semantic */
+  --success: #3F7D20;
+  --warning: #B86900;
+  --error: #B3261E;
+  --info: #005E8A;
+
+  /* Roles */
+  --color-bg: var(--honey-50);
+  --color-surface: var(--neutral-0);
+  --color-border: var(--neutral-100);
+  --color-text: var(--neutral-700);
+  --color-heading: var(--honey-700);
+  --color-link: var(--honey-500);
+  --color-link-hover: var(--honey-600);
+  --color-btn-bg: var(--honey-500);
+  --color-btn-hover: var(--honey-600);
+  --color-btn-text: var(--neutral-0);
+  --color-accent: var(--honey-300);
+  --color-nav-bg: var(--neutral-50);
+  --color-nav-border: var(--honey-300);
+
+  /* Typography */
+  --font-display: 'Skranji', cursive;
+  --font-body: 'Nunito', sans-serif;
+
+  /* Type scale */
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  /* Layout */
+  --max-width: 860px;
+  --nav-height: 7rem;
+  --radius: 6px;
+}
+
+/* ── Reset ────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Base elements ────────────────────────────────────────── */
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+  padding-top: calc(var(--nav-height) + var(--space-6));
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-body);
+  color: var(--color-heading);
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin-bottom: var(--space-5);
+}
+
+h2 {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+}
+
+h3 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+}
+
+p {
+  margin-bottom: var(--space-4);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+ul {
+  list-style: none;
+}

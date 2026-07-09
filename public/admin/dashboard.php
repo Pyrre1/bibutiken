@@ -21,6 +21,7 @@ $nextWeekPlan = HoursResolver::resolveForWeek($nextWeekNum, $nextYear);
 
 $preorderEnabled = Settings::get('preorder_enabled', '1') === '1';
 $pageTitle = 'Översikt – Admin';
+$extraStyles = ['/assets/css/admin-dashboard.css'];
 require __DIR__ . '/../../app/Views/admin/_header.php';
 ?>
 

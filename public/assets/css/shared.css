@@ -1,0 +1,26 @@
+/* ============================================================
+    SHARED — classes used in both public and admin contexts.
+    Loaded on every page after tokens.css.
+   ============================================================ */
+
+.form-success {
+  background: #EBF5E6;
+  border: 1px solid var(--success);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+  color: var(--success);
+}
+
+.form-error {
+  background: #FDECEA;
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+  color: var(--error);
+}
+
+.muted {
+  color: var(--neutral-500);
+}

@@ -1,0 +1,30 @@
+/* ============================================================
+    ADMIN CUSTOMERS — customers page only.
+   ============================================================ */
+
+.admin-search-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  background: var(--neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+.admin-search-row input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-customer-card {
+  background: var(--neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  margin-top: var(--space-4);
+}

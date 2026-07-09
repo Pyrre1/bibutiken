@@ -24,7 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Logga in – Bibutiken Admin</title>
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/tokens.css">
+    <link rel="stylesheet" href="/assets/css/shared.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
 </head>
 <body class="admin">
 

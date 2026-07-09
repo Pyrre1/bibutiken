@@ -1,0 +1,629 @@
+/* ============================================================
+    ADMIN — shared across all admin pages.
+    Loaded on every admin page after tokens.css + shared.css.
+   ============================================================ */
+
+/* ── Layout ───────────────────────────────────────────────── */
+body.admin {
+  background: var(--neutral-100);
+}
+
+body.admin main {
+  max-width: 1100px;
+  padding-top: calc(3.25rem + var(--space-6));
+}
+
+body.admin h1 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-3);
+}
+
+/* ── Admin nav ────────────────────────────────────────────── */
+.admin-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 3.25rem;
+  background: var(--honey-700);
+  color: var(--honey-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-5);
+  gap: var(--space-4);
+}
+
+.admin-nav strong {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  color: var(--honey-100);
+  white-space: nowrap;
+}
+
+.admin-nav nav {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.admin-nav nav a {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--honey-200);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-nav nav a:hover {
+  background: var(--honey-600);
+  color: var(--neutral-0);
+}
+
+/* ── Admin table ──────────────────────────────────────────── */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  background: var(--neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: var(--space-6);
+}
+
+.admin-table th {
+  background: var(--neutral-50);
+  font-weight: 700;
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 2px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.admin-table th:hover {
+  background: var(--honey-100);
+}
+
+.admin-table td {
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tr:nth-child(even) td {
+  background: var(--neutral-50);
+}
+
+.admin-table td.center {
+  text-align: center;
+}
+
+.admin-pagination {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.admin-pagination button {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  background: var(--neutral-0);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.admin-pagination button.active {
+  background: var(--honey-600);
+  color: var(--neutral-0);
+  border-color: var(--honey-600);
+}
+
+.admin-pagination button:hover:not(.active) {
+  background: var(--honey-100);
+}
+
+.admin-back {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.admin-back a {
+  color: var(--honey-700);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ── Compact inputs + buttons ─────────────────────────────── */
+body.admin button,
+body.admin input[type="submit"],
+body.admin .btn {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-btn-bg);
+  color: var(--color-btn-text);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+body.admin button:hover,
+body.admin input[type="submit"]:hover {
+  background: var(--color-btn-hover);
+}
+
+body.admin button:disabled,
+body.admin input[type="submit"]:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+body.admin input[type="text"],
+body.admin input[type="email"],
+body.admin input[type="number"],
+body.admin input[type="password"],
+body.admin select,
+body.admin textarea {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--neutral-0);
+  color: var(--color-text);
+  transition: border-color 0.15s ease;
+}
+
+body.admin input:focus,
+body.admin select:focus,
+body.admin textarea:focus {
+  outline: none;
+  border-color: var(--honey-400);
+}
+
+body.admin label {
+  display: block;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--color-heading);
+  margin-bottom: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+body.admin input[name="week_number"],
+body.admin input[name="week_year"] {
+  width: 6rem;
+  display: inline-block;
+}
+
+body.admin input[name="header_text"] {
+  max-width: 28rem;
+}
+
+/* ── Icon buttons ─────────────────────────────────────────── */
+.btn-icon,
+body.admin .btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  font-size: 1rem;
+  background: var(--neutral-100);
+  color: var(--color-heading);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+a.btn-icon {
+  font-size: 1rem;
+  background: var(--neutral-100);
+  color: var(--color-heading);
+  border: 1px solid var(--color-border);
+}
+
+.btn-icon:hover {
+  background: var(--honey-100);
+  color: var(--honey-600);
+}
+
+.btn-icon--danger {
+  background: var(--neutral-100);
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.btn-icon--danger:hover {
+  background: #FDECEA;
+}
+
+.btn-secondary-link {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-500);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--neutral-100);
+}
+
+.btn-secondary-link:hover {
+  color: var(--color-heading);
+  background: var(--neutral-100);
+  filter: brightness(0.95);
+}
+
+.form-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+/* ── Badges ───────────────────────────────────────────────── */
+.badge-active {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px var(--space-2);
+  background: #EBF5E6;
+  color: var(--success);
+  border-radius: 99px;
+  border: 1px solid var(--success);
+}
+
+.badge-inactive {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px var(--space-2);
+  background: var(--neutral-100);
+  color: var(--neutral-500);
+  border-radius: 99px;
+  border: 1px solid var(--neutral-500);
+}
+
+/* ── Feedback ─────────────────────────────────────────────── */
+body.admin .success,
+body.admin p.success {
+  color: var(--success);
+  background: #EBF5E6;
+  border: 1px solid var(--success);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+body.admin .error,
+body.admin p.error {
+  color: var(--error);
+  background: #FDECEA;
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+/* ── Login page ───────────────────────────────────────────── */
+.admin-login-wrap {
+  min-height: calc(100vh - 3.25rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.admin-login-card {
+  background: var(--neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 2px 12px rgba(46, 27, 0, 0.08);
+}
+
+.admin-login-card h1 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-5);
+  text-align: center;
+}
+
+.admin-login-card label {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.admin-login-card button[type="submit"] {
+  margin-top: var(--space-5);
+  width: 100%;
+  font-size: var(--text-base);
+  padding: var(--space-2) var(--space-4);
+}
+
+/* ── Hours page ───────────────────────────────────────────── */
+.hours-admin-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .hours-admin-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hours-days-table td:nth-child(2),
+.hours-days-table th:nth-child(2),
+.hours-days-table td:nth-child(3),
+.hours-days-table th:nth-child(3),
+.hours-days-table td:nth-child(4),
+.hours-days-table th:nth-child(4) {
+  text-align: center;
+}
+
+.preview-heading-row {
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.preview-heading-row .preview-heading {
+  margin-bottom: 0;
+}
+
+.preview-edit-btn {
+  position: absolute;
+  bottom: var(--space-4);
+  right: var(--space-4);
+}
+
+.plan-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.plan-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.active-plan-preview {
+  background: var(--honey-50);
+  border: 1px solid var(--honey-200);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-sm);
+  position: relative;
+}
+
+.preview-heading {
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: var(--space-1);
+}
+
+.source-label {
+  color: var(--neutral-500);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-3);
+}
+
+.hours-preview-list {
+  list-style: none;
+  margin: var(--space-2) 0;
+}
+
+.hours-preview-list li {
+  padding: 2px 0;
+  font-size: var(--text-sm);
+}
+
+.plan-edit-form {
+  background: var(--honey-50);
+  border: 1px solid var(--honey-200);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.form-mode-indicator {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--neutral-500);
+  margin-bottom: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--neutral-100);
+  border-radius: var(--radius);
+  display: inline-block;
+}
+
+.week-year-row {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-end;
+}
+
+.week-year-row label {
+  margin-top: 0;
+}
+
+.week-year-row input {
+  width: 6rem;
+  display: block;
+}
+
+body.admin #hours-form>button[type="submit"] {
+  display: block;
+  margin-left: auto;
+  margin-top: var(--space-4);
+}
+
+.hint {
+  font-size: var(--text-sm);
+  color: var(--neutral-500);
+  margin: var(--space-3) 0;
+}
+
+.hours-days-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-4) 0;
+  font-size: var(--text-sm);
+}
+
+.hours-days-table th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--color-heading);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 2px solid var(--color-border);
+  background: var(--neutral-50);
+  white-space: nowrap;
+}
+
+.hours-days-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.hours-days-table tr:last-child td {
+  border-bottom: none;
+}
+
+.hours-days-table td:nth-child(2) {
+  text-align: center;
+}
+
+.time-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.time-pair select {
+  width: auto;
+  min-width: 3.5rem;
+  padding: var(--space-1) var(--space-1);
+  font-size: var(--text-sm);
+}
+
+.time-sep {
+  font-weight: 700;
+  color: var(--color-heading);
+  padding: 0 1px;
+  line-height: 1;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.long-term-list,
+.week-specific-list {
+  background: var(--neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.long-term-list h2,
+.week-specific-list h2 {
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.long-term-list ul,
+.week-specific-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.long-term-list li,
+.week-specific-list li {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.long-term-list li:last-child,
+.week-specific-list li:last-child {
+  border-bottom: none;
+}
+
+.col-right .current-week-indicator {
+  font-size: var(--text-sm);
+  color: var(--neutral-500);
+  margin-bottom: var(--space-3);
+}
+
+.btn-toggle {
+  font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-3);
+  background: var(--neutral-100);
+  color: var(--color-heading);
+  border: 1px solid var(--color-border);
+}
+
+.btn-toggle--active {
+  background: var(--honey-600);
+  color: var(--neutral-0);
+  border-color: var(--honey-600);
+}
+
+.btn-toggle--active:hover {
+  background: var(--honey-700);
+  border-color: var(--honey-700);
+}
