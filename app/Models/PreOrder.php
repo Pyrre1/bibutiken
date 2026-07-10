@@ -89,7 +89,7 @@ class PreOrder
                     ) AS has_any_manual_item
             FROM pre_orders o
             JOIN customers c ON c.id = o.customer_id
-            ORDER BY o.created_at ASC'
+            ORDER BY o.is_delivered ASC, o.created_at ASC'
         );
         return $stmt->fetchAll();
     }

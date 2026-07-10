@@ -47,30 +47,17 @@ document.addEventListener('DOMContentLoaded', function () {
       .catch(() => alert('Något gick fel, försök igen.'));
   }
 
-  // ── Sort + paginate (list view) ───────────────────────────
+  // ── Paginate (list view) ───────────────────────────
   const table = document.getElementById('orders-table');
   const pagination = document.getElementById('orders-pagination');
   if (table && pagination) {
     const PAGE_SIZE = 20;
     let currentPage = 1;
-    let sortCol = 3;
-    let sortAsc = true;
 
     const tbody = table.querySelector('tbody');
-    const headers = table.querySelectorAll('th');
 
     function getRows() {
-      return Array.from(tbody.querySelectorAll('tr[data-sortable]'));
-    }
-
-    function sortRows() {
-      const rows = getRows();
-      rows.sort((a, b) => {
-        const aVal = a.children[sortCol]?.dataset.sort ?? a.children[sortCol]?.textContent.trim() ?? '';
-        const bVal = b.children[sortCol]?.dataset.sort ?? b.children[sortCol]?.textContent.trim() ?? '';
-        return sortAsc ? aVal.localeCompare(bVal, 'sv') : bVal.localeCompare(aVal, 'sv');
-      });
-      rows.forEach(r => tbody.appendChild(r));
+      return Array.from(tbody.querySelectorAll('tr'));
     }
 
     function renderPage() {
@@ -95,21 +82,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    getRows().forEach(r => r.setAttribute('data-sortable', '1'));
-
-    headers.forEach((th, i) => {
-      th.addEventListener('click', () => {
-        if (sortCol === i) { sortAsc = !sortAsc; }
-        else { sortCol = i; sortAsc = true; }
-        headers.forEach(h => h.textContent = h.textContent.replace(/ [▲▼]$/, ''));
-        th.textContent += sortAsc ? ' ▲' : ' ▼';
-        currentPage = 1;
-        sortRows();
-        renderPage();
-      });
-    });
-
-    sortRows();
     renderPage();
   }
 

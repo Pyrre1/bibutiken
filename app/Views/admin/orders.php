@@ -230,7 +230,7 @@
                 <td><?= Security::e($order['order_number']) ?></td>
                 <td><?= Security::e($order['customer_name']) ?></td>
                 <td><?= Security::e($order['customer_email']) ?></td>
-                <td data-sort="<?= $order['created_at'] ?>"><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
+                <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
                 <td class="center">
                     <?php if ($order['has_manual_work']): ?>
                         <a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>"

@@ -81,13 +81,8 @@ body.admin h1 {
   border-bottom: 2px solid var(--color-border);
   text-align: left;
   white-space: nowrap;
-  cursor: pointer;
   -webkit-user-select: none;
   user-select: none;
-}
-
-.admin-table th:hover {
-  background: var(--honey-100);
 }
 
 .admin-table td {
