@@ -182,11 +182,12 @@
 
     const hasFeedBox = cart.some(i => i.name.toLowerCase().includes('obehandlad'));
     const hasLack = cart.some(i => i.name.toLowerCase().includes('lack'));
+    const hasHandmade = cart.some(i => i.name.toLowerCase().includes('rdiglackad'));
 
     let msg = 'Är du säker på att allt stämmer? När du skickat in beställningen kommer du inte längre kunna ändra utan att kontakta butiken.';
-    if (!hasFeedBox) {
+    if (!hasFeedBox && !hasHandmade) {
       msg += '\n\nTips: Du har väl inte glömt att lägga till foderlåda och lack till foderlåda?';
-    } else if (!hasLack) {
+    } else if (!hasLack && !hasHandmade) {
       msg += '\n\nTips: Att lacka lådan gör det lättare att hålla den ren och ger större chans att kunna återanvända den längre tid.';
     }
 
