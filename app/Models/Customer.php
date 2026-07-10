@@ -9,42 +9,61 @@ class Customer
      * Also assigns 'customer' role if newly created.
      * Silently updates name if it differs.
      */
-    public static function findOrCreateCustomer(string $name, string $email, string $assignRole = 'customer'): int
+    public static function findOrCreateCustomer(string $name, string $email, string $assignRole = 'vinterfoder'): int
     {
         $pdo = Database::getConnection();
         $email = strtolower(trim($email));
         $name  = trim($name);
+
+        // Resolve target role ID
+        $roleStmt = $pdo->prepare('SELECT id FROM customer_roles WHERE name = ?');
+        $roleStmt->execute([$assignRole]);
+        $role = $roleStmt->fetch();
+        $roleId = $role ? (int) $role['id'] : null;
+
+        // Resolve ingen_mejl role ID
+        $nmStmt = $pdo->prepare('SELECT id FROM customer_roles WHERE name = ?');
+        $nmStmt->execute(['ingen_mejl']);
+        $nm = $nmStmt->fetch();
+        $ingenMejlId = $nm ? (int) $nm['id'] : null;
 
         $stmt = $pdo->prepare('SELECT id FROM customers WHERE email = ?');
         $stmt->execute([$email]);
         $existing = $stmt->fetch();
 
         if ($existing) {
+            $customerId = (int) $existing['id'];
             $pdo->prepare('UPDATE customers SET name = ? WHERE id = ?')
-                ->execute([$name, $existing['id']]);
-            // Also ensure the assigned role exists for returning customers
-            $roleStmt = $pdo->prepare('SELECT id FROM customer_roles WHERE name = ?');
-            $roleStmt->execute([$assignRole]);
-            $role = $roleStmt->fetch();
-            if ($role) {
+                ->execute([$name, $customerId]);
+
+            if ($roleId) {
+                // If customer has ingen_mejl, strip all roles first
+                if ($ingenMejlId) {
+                    $hasNm = $pdo->prepare(
+                        'SELECT 1 FROM customer_role_assignments WHERE customer_id = ? AND role_id = ?'
+                    );
+                    $hasNm->execute([$customerId, $ingenMejlId]);
+                    if ($hasNm->fetch()) {
+                        $pdo->prepare('DELETE FROM customer_role_assignments WHERE customer_id = ?')
+                            ->execute([$customerId]);
+                    }
+                }
                 $pdo->prepare(
                     'INSERT IGNORE INTO customer_role_assignments (customer_id, role_id) VALUES (?, ?)'
-                )->execute([$existing['id'], $role['id']]);
+                )->execute([$customerId, $roleId]);
             }
-            return (int) $existing['id'];
+            return $customerId;
         }
 
+        // New customer
         $pdo->prepare('INSERT INTO customers (name, email) VALUES (?, ?)')
             ->execute([$name, $email]);
         $customerId = (int) $pdo->lastInsertId();
 
-        $roleStmt = $pdo->prepare('SELECT id FROM customer_roles WHERE name = ?');
-        $roleStmt->execute([$assignRole]);
-        $role = $roleStmt->fetch();
-        if ($role) {
+        if ($roleId) {
             $pdo->prepare(
                 'INSERT IGNORE INTO customer_role_assignments (customer_id, role_id) VALUES (?, ?)'
-            )->execute([$customerId, $role['id']]);
+            )->execute([$customerId, $roleId]);
         }
 
         return $customerId;

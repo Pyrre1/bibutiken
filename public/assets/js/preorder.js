@@ -203,3 +203,19 @@
 
   renderCart();
 })();
+
+// ── Reminder form toggle ─────────────────────────────
+const showReminderBtn = document.getElementById('show-reminder-form');
+const reminderForm = document.getElementById('reminder-form');
+if (showReminderBtn && reminderForm) {
+  showReminderBtn.addEventListener('click', () => {
+    reminderForm.hidden = false;
+    showReminderBtn.hidden = true;
+    reminderForm.querySelector('input')?.focus();
+  });
+}
+
+if (reminderForm && reminderForm.querySelector('.reminder-error')) {
+  reminderForm.hidden = false;
+  if (showReminderBtn) showReminderBtn.hidden = true;
+}

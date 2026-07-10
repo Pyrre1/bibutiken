@@ -4,12 +4,28 @@ require_once __DIR__ . '/../app/Models/PreOrder.php';
 require_once __DIR__ . '/../app/Models/Product.php';
 require_once __DIR__ . '/../app/Models/Settings.php';
 require_once __DIR__ . '/../app/Core/Security.php';
+require_once __DIR__ . '/../app/Models/Customer.php';
 
 if (Settings::get('preorder_enabled', '1') !== '1') {
     $pageTitle = 'Förbeställning – Bibutiken';
     $extraScripts = ['/assets/js/preorder.js'];
+    $reminderMessage = null;
+    $reminderError = null;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reminder_submit'])) {
+        Security::validateCsrf($_POST['csrf_token'] ?? '');
+        $rName  = trim($_POST['reminder_name'] ?? '');
+        $rEmail = strtolower(trim($_POST['reminder_email'] ?? ''));
+        if (!$rName || !$rEmail || !filter_var($rEmail, FILTER_VALIDATE_EMAIL)) {
+            $reminderError = 'Fyll i både namn och en giltig e-postadress.';
+        } else {
+            Customer::findOrCreateCustomer($rName, $rEmail, 'vinterfoder');
+            $reminderMessage = 'Du kommer få ett mejl när beställningen öppnar.';
+        }
+    }
+
     require __DIR__ . '/../app/Views/public/_header.php';
-    echo '<main style="padding:2rem"><p>Denna tiden på året tar vi inte emot beställningar av vinterfoder. Välkommen åter när förbeställningar öppnar igen!</p></main>';
+    require __DIR__ . '/../app/Views/public/preorder_closed.php';
     require __DIR__ . '/../app/Views/public/_footer.php';
     exit;
 }

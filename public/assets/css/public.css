@@ -399,6 +399,12 @@ main h1 {
   margin-right: 0.8rem;
 }
 
+/* ── Preorder closed ──────────────────────────────────────── */
+.reminder-toggle-wrap {
+  text-align: right;
+  margin-bottom: var(--space-4);
+}
+
 /* ── Confirmation modal ───────────────────────────────────── */
 .modal-overlay {
   position: fixed;
@@ -409,6 +415,12 @@ main h1 {
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
+}
+
+.reminder-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-4);
 }
 
 .modal-overlay[hidden] {
@@ -445,6 +457,9 @@ main h1 {
   filter: brightness(0.95);
 }
 
+[hidden] {
+  display: none !important;
+}
 /* ── Footer ───────────────────────────────────────────────── */
 .site-footer {
   background: var(--honey-700);
