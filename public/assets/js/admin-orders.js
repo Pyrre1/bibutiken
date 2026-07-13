@@ -108,4 +108,16 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.style.display = '';
     });
   });
+
+  // ── Export "Alla" confirm popup ───────────────────────────
+  document.querySelector('a[href="/admin/export_orders.php?type=all"]')
+    ?.addEventListener('click', function (e) {
+      e.preventDefault();
+      const href = this.href;
+      showConfirmPopup(e,
+        'Denna export är för prisöversikt – inte för att mejla kunder. ' +
+        'Mejl skickas via "Ej hämtade". Vill du fortsätta?',
+        function () { window.location.href = href; }
+      );
+    });
 });

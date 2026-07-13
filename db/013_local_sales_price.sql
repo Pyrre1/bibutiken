@@ -1,0 +1,1 @@
+ALTER TABLE local_sales ADD COLUMN calculated_price_ore INT NULL;

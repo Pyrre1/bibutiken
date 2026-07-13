@@ -67,3 +67,45 @@
 .product-add-field--submit {
   margin-left: auto;
 }
+
+/* ── Lagersaldo & Local sales sections ── */
+.saldo-section {
+  background: var(--neutral-0);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.saldo-add-row,
+.ls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: flex-end;
+  margin-bottom: var(--space-3);
+}
+
+.saldo-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.saldo-field--submit {
+  margin-left: auto;
+}
+
+.saldo-table {
+  margin-top: var(--space-4);
+}
+
+.ls-remove-col {
+  align-self: flex-end;
+}
+
+.section-hint {
+  color: var(--color-text-muted, #666);
+  font-size: 0.9em;
+  margin-bottom: var(--space-3);
+}

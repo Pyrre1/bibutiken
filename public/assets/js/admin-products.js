@@ -92,4 +92,62 @@ document.addEventListener('DOMContentLoaded', function () {
     originalOrder = null;
     applyRow.style.display = 'none';
   });
+
+  // ── Lagersaldo: show old entries toggle ───────────────────
+  document.getElementById('show-old-saldo-btn')?.addEventListener('click', function () {
+    const tbl = document.getElementById('old-saldo-table');
+    if (tbl) {
+      tbl.style.display = '';
+      this.style.display = 'none';
+    }
+  });
+
+  // ── Local sales: dynamic row add/remove ───────────────────
+  const lsContainer = document.getElementById('local-sales-rows');
+  const lsAddBtn = document.getElementById('ls-add-row-btn');
+
+  function buildProductOptions() {
+    // Clone options from first row's select
+    const firstSelect = lsContainer.querySelector('select[name="ls_product_id[]"]');
+    return firstSelect ? firstSelect.innerHTML : '';
+  }
+
+  function updateRemoveButtons() {
+    const rows = lsContainer.querySelectorAll('.ls-row');
+    rows.forEach(function (row) {
+      const btn = row.querySelector('.ls-remove-btn');
+      if (btn) btn.style.visibility = rows.length > 1 ? 'visible' : 'hidden';
+    });
+  }
+
+  lsAddBtn?.addEventListener('click', function () {
+    const newRow = document.createElement('div');
+    newRow.className = 'ls-row';
+    newRow.innerHTML =
+      '<div class="saldo-field">' +
+      '<label>Produkt</label>' +
+      '<select name="ls_product_id[]" required>' + buildProductOptions() + '</select>' +
+      '</div>' +
+      '<div class="saldo-field">' +
+      '<label>Antal</label>' +
+      '<input type="number" name="ls_quantity[]" min="1" required style="width:80px">' +
+      '</div>' +
+      '<div class="saldo-field">' +
+      '<label>Datum</label>' +
+      '<input type="date" name="ls_date[]" required value="' + new Date().toISOString().slice(0, 10) + '">' +
+      '</div>' +
+      '<div class="saldo-field ls-remove-col">' +
+      '<label>&nbsp;</label>' +
+      '<button type="button" class="btn-icon btn-icon--danger ls-remove-btn" title="Ta bort rad">✕</button>' +
+      '</div>';
+    lsContainer.appendChild(newRow);
+    updateRemoveButtons();
+  });
+
+  lsContainer?.addEventListener('click', function (e) {
+    const removeBtn = e.target.closest('.ls-remove-btn');
+    if (!removeBtn) return;
+    removeBtn.closest('.ls-row').remove();
+    updateRemoveButtons();
+  });
 });

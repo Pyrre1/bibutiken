@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../app/Core/init.php';
 require_once __DIR__ . '/../../app/Models/Product.php';
+require_once __DIR__ . '/../../app/Models/PreOrder.php';
 Auth::requireLogin();
 
 $message = null;
@@ -47,22 +48,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } elseif ($action === 'reorder') {
             $ids = array_map('intval', $_POST['ordered_ids'] ?? []);
-            if (!empty($ids)) {
-                Product::updateProductSortOrder($ids);
-            }
-            // Silent — called via JS fetch
+            if (!empty($ids)) Product::updateProductSortOrder($ids);
             header('Content-Type: application/json');
             echo json_encode(['ok' => true]);
             exit;
+
+        } elseif ($action === 'lagersaldo_create') {
+            $pid      = (int)($_POST['saldo_product_id'] ?? 0);
+            $qty      = (int)($_POST['saldo_quantity'] ?? 0);
+            $date     = trim($_POST['saldo_date'] ?? '');
+            $priceOre = (int) round((float) str_replace(',', '.', $_POST['saldo_price_kr'] ?? '0') * 100);
+            if ($pid <= 0 || $qty <= 0 || $date === '' || $priceOre <= 0) {
+                $error = 'Fyll i alla fält för lagerpåfyllning.';
+            } else {
+                PreOrder::addLagersaldo($pid, $qty, $date, $priceOre);
+                $message = 'Lagerpåfyllning sparad och priser omräknade.';
+            }
+
+        } elseif ($action === 'lagersaldo_delete') {
+            $sid = (int)($_POST['saldo_id'] ?? 0);
+            if ($sid > 0) {
+                PreOrder::deleteLagersaldo($sid);
+                $message = 'Lagerrad borttagen och priser omräknade.';
+            }
+
+        } elseif ($action === 'local_sale_delete') {
+            $lsid = (int)($_POST['ls_id'] ?? 0);
+            if ($lsid > 0) {
+                PreOrder::deleteLocalSale($lsid);
+                $message = 'Butiksförsäljning borttagen och priser omräknade.';
+            }
+
+        } elseif ($action === 'local_sales_create') {
+            $productIds = array_map('intval',   $_POST['ls_product_id'] ?? []);
+            $quantities = array_map('intval',   $_POST['ls_quantity']   ?? []);
+            $dates      = $_POST['ls_date'] ?? [];
+            $rows = [];
+            $valid = true;
+            foreach ($productIds as $i => $pid) {
+                $qty  = $quantities[$i] ?? 0;
+                $date = trim($dates[$i] ?? '');
+                if ($pid <= 0 || $qty <= 0 || $date === '') { $valid = false; break; }
+                $rows[] = ['product_id' => $pid, 'quantity' => $qty, 'sold_at' => $date];
+            }
+            if (!$valid || empty($rows)) {
+                $error = 'Fyll i alla fält för butiksförsäljning.';
+            } else {
+                PreOrder::addLocalSales($rows);
+                $message = 'Butiksförsäljning sparad och priser omräknade.';
+            }
         }
     }
 }
 
-$products  = Product::getAllProductsAdmin();
-
-$pageTitle = 'Produkter – Admin';
+$products    = Product::getAllProductsAdmin();
+$lagersaldo  = PreOrder::getLagersaldo();
+$localSales  = PreOrder::getLocalSales();
+$pageTitle   = 'Produkter – Admin';
 $extraScripts = ['/assets/js/admin-products.js'];
-$extraStyles = ['/assets/css/admin-products.css'];
+$extraStyles  = ['/assets/css/admin-products.css'];
 require __DIR__ . '/../../app/Views/admin/_header.php';
 require __DIR__ . '/../../app/Views/admin/products.php';
 require __DIR__ . '/../../app/Views/admin/_footer.php';

@@ -281,4 +281,302 @@ class PreOrder
         $pdo->prepare('UPDATE pre_orders SET has_manual_work = ? WHERE id = ?')
             ->execute([(int) $count->fetchColumn() > 0 ? 1 : 0, $orderId]);
     }
+
+    
+    // ── FIFO price calculation ─────────────────────────────────
+
+    /**
+     * Recalculates actual_price_ore and actual_price_note for all
+     * pre_order_items of a given product. Call after any lagersaldo
+     * or local_sales change for that product.
+     */
+    public static function recalcProductPrices(int $productId): void
+    {
+        $pdo = Database::getConnection();
+
+        // 1. Reset existing calculations for this product
+        $pdo->prepare(
+            'UPDATE pre_order_items
+            SET actual_price_ore = NULL, actual_price_note = NULL
+            WHERE product_id = ?'
+        )->execute([$productId]);
+
+        // 2. Load lagersaldo (stock in) — sorted by restocked_at, then created_at
+        $stockStmt = $pdo->prepare(
+            'SELECT quantity, calculated_price_ore, restocked_at
+            FROM lagersaldo
+            WHERE product_id = ?
+            ORDER BY restocked_at ASC, created_at ASC'
+        );
+        $stockStmt->execute([$productId]);
+        $batches = $stockStmt->fetchAll(); // each: [quantity, calculated_price_ore, restocked_at]
+
+        if (empty($batches)) return; // no stock entered yet, nothing to calculate
+
+        // 3. Build unified consumption event queue sorted by date
+        // local_sales
+        $lsStmt = $pdo->prepare(
+            'SELECT id, quantity, sold_at AS event_date
+            FROM local_sales
+            WHERE product_id = ?'
+        );
+        $lsStmt->execute([$productId]);
+        $localSales = $lsStmt->fetchAll();
+
+        // pre_order_items (joined to get the order date)
+        $poStmt = $pdo->prepare(
+            'SELECT i.id AS item_id, i.quantity, o.created_at AS event_date,
+                    "preorder" AS event_type, i.id AS ls_id
+            FROM pre_order_items i
+            JOIN pre_orders o ON o.id = i.pre_order_id
+            WHERE i.product_id = ?'
+        );
+        $poStmt->execute([$productId]);
+        $preorderItems = $poStmt->fetchAll();
+
+        // Merge and sort by event_date ASC, preorders before local_sales on same date
+        $events = [];
+        foreach ($localSales as $ls) {
+            $events[] = [
+                'type'     => 'local_sale',
+                'ls_id'    => (int)$ls['id'],
+                'item_id'  => null,
+                'quantity' => (int)$ls['quantity'],
+                'date'     => $ls['event_date'],
+            ];
+        }
+        foreach ($preorderItems as $pi) {
+            $events[] = [
+                'type'     => 'preorder',
+                'item_id'  => (int)$pi['item_id'],
+                'quantity' => (int)$pi['quantity'],
+                'date'     => $pi['event_date'],
+            ];
+        }
+        usort($events, fn($a, $b) => strcmp($a['date'], $b['date']));
+
+        // 4. Build mutable batch queue (FIFO)
+        // Each entry: ['remaining' => int, 'price_ore' => int, 'date' => string]
+        $queue = [];
+        foreach ($batches as $b) {
+            $queue[] = [
+                'remaining' => (int)$b['quantity'],
+                'price_ore' => (int)$b['calculated_price_ore'],
+                'date'      => $b['restocked_at'],
+            ];
+        }
+
+        // 5. Walk events, deplete queue
+        $updateStmt = $pdo->prepare(
+            'UPDATE pre_order_items
+            SET actual_price_ore = ?, actual_price_note = ?
+            WHERE id = ?'
+        );
+
+        foreach ($events as $event) {
+            $needed = $event['quantity'];
+
+            // Consume from queue for local_sales — also record price per unit
+            if ($event['type'] === 'local_sale') {
+                $lsSegments = [];
+                while ($needed > 0 && !empty($queue)) {
+                    $take = min($needed, $queue[0]['remaining']);
+                    $lsSegments[] = ['qty' => $take, 'price_ore' => $queue[0]['price_ore']];
+                    $queue[0]['remaining'] -= $take;
+                    $needed -= $take;
+                    if ($queue[0]['remaining'] === 0) array_shift($queue);
+                }
+                if ($needed > 0) {
+                    $lsSegments[] = ['qty' => $needed, 'price_ore' => null];
+                }
+                // Store price (first segment price — straddle local sales are rare,
+                // store the dominant price or null if unknown)
+                $lsPrice = count($lsSegments) === 1
+                    ? $lsSegments[0]['price_ore']
+                    : null;
+                $pdo->prepare(
+                    'UPDATE local_sales SET calculated_price_ore = ? WHERE id = ?'
+                )->execute([$lsPrice, $event['ls_id']]);
+                continue;
+            }
+
+            // preorder item — consume from FIFO queue regardless of order date.
+            // Orders are already sorted by date in the event queue, so position
+            // in the queue is correct. Batch eligibility is not date-gated.
+            $segments  = [];
+            $remaining = $needed;
+
+            while ($remaining > 0) {
+                if (!empty($queue)) {
+                    $take = min($remaining, $queue[0]['remaining']);
+                    $segments[] = ['qty' => $take, 'price_ore' => $queue[0]['price_ore']];
+                    $queue[0]['remaining'] -= $take;
+                    $remaining -= $take;
+                    if ($queue[0]['remaining'] === 0) array_shift($queue);
+                } else {
+                    // Stock exhausted — no restock entered yet for remaining units
+                    $segments[] = ['qty' => $remaining, 'price_ore' => null];
+                    $remaining = 0;
+                }
+            }
+
+            // Determine what to write
+            if (count($segments) === 1) {
+                $priceOre  = $segments[0]['price_ore'];
+                $note      = null;
+            } else {
+                // Straddle — build note like "3 à 123kr / 2 à okänt pris"
+                $parts = [];
+                $priceOre = null;
+                foreach ($segments as $seg) {
+                    if ($seg['price_ore'] !== null) {
+                        $parts[] = $seg['qty'] . ' à ' . ($seg['price_ore'] / 100) . 'kr';
+                    } else {
+                        $parts[] = $seg['qty'] . ' à okänt pris';
+                    }
+                }
+                $note = implode(' / ', $parts);
+            }
+
+            $updateStmt->execute([$priceOre, $note, $event['item_id']]);
+        }
+    }
+
+    // ── Lagersaldo ─────────────────────────────────────────────
+
+    public static function getLagersaldo(): array
+    {
+        $pdo = Database::getConnection();
+        // Show entries newer than 1 year, OR entries from older batches
+        // that still have stock remaining (consumed < quantity).
+        // "Consumed" = local_sales + pre_order_items for that product after restocked_at.
+        $stmt = $pdo->query(
+            'SELECT l.id, l.product_id, p.name AS product_name,
+                    l.quantity, l.restocked_at, l.calculated_price_ore,
+                    COALESCE(
+                        (SELECT SUM(ls.quantity)
+                        FROM local_sales ls
+                        WHERE ls.product_id = l.product_id
+                            AND ls.sold_at >= l.restocked_at),
+                    0) +
+                    COALESCE(
+                        (SELECT SUM(i.quantity)
+                        FROM pre_order_items i
+                        JOIN pre_orders o ON o.id = i.pre_order_id
+                        WHERE i.product_id = l.product_id
+                            AND DATE(o.created_at) >= l.restocked_at),
+                    0) AS consumed
+            FROM lagersaldo l
+            JOIN products p ON p.id = l.product_id
+            ORDER BY l.restocked_at DESC, l.created_at DESC'
+        );
+        $rows = $stmt->fetchAll();
+
+        $cutoff = date('Y-m-d', strtotime('-1 year'));
+        foreach ($rows as &$row) {
+            $remaining = $row['quantity'] - $row['consumed'];
+            $row['remaining'] = max(0, $remaining);
+            $row['hidden'] = ($row['restocked_at'] < $cutoff && $row['remaining'] <= 0);
+        }
+        unset($row);
+        return $rows;
+    }
+
+    public static function addLagersaldo(int $productId, int $quantity, string $date, int $priceOre): int
+    {
+        $pdo = Database::getConnection();
+        $pdo->prepare(
+            'INSERT INTO lagersaldo (product_id, quantity, restocked_at, calculated_price_ore)
+            VALUES (?, ?, ?, ?)'
+        )->execute([$productId, $quantity, $date, $priceOre]);
+        $id = (int)$pdo->lastInsertId();
+        self::recalcProductPrices($productId);
+        return $id;
+    }
+
+    public static function deleteLagersaldo(int $id): void
+    {
+        $pdo = Database::getConnection();
+        $row = $pdo->prepare('SELECT product_id FROM lagersaldo WHERE id = ?');
+        $row->execute([$id]);
+        $productId = (int)$row->fetchColumn();
+        $pdo->prepare('DELETE FROM lagersaldo WHERE id = ?')->execute([$id]);
+        if ($productId) self::recalcProductPrices($productId);
+    }
+
+    // ── Local sales ────────────────────────────────────────────
+
+    public static function addLocalSales(array $rows): void
+    {
+        // $rows: array of ['product_id'=>int, 'quantity'=>int, 'sold_at'=>'YYYY-MM-DD']
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare(
+            'INSERT INTO local_sales (product_id, quantity, sold_at) VALUES (?, ?, ?)'
+        );
+        $affectedProducts = [];
+        foreach ($rows as $r) {
+            $stmt->execute([(int)$r['product_id'], (int)$r['quantity'], $r['sold_at']]);
+            $affectedProducts[(int)$r['product_id']] = true;
+        }
+        foreach (array_keys($affectedProducts) as $productId) {
+            self::recalcProductPrices($productId);
+        }
+    }
+
+    public static function getLocalSales(): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->query(
+            'SELECT ls.id, ls.product_id, p.name AS product_name,
+                    ls.quantity, ls.sold_at
+            FROM local_sales ls
+            JOIN products p ON p.id = ls.product_id
+            ORDER BY ls.sold_at DESC, ls.created_at DESC'
+        );
+        return $stmt->fetchAll();
+    }
+
+    public static function deleteLocalSale(int $id): void
+    {
+        $pdo = Database::getConnection();
+        $row = $pdo->prepare('SELECT product_id FROM local_sales WHERE id = ?');
+        $row->execute([$id]);
+        $productId = (int)$row->fetchColumn();
+        $pdo->prepare('DELETE FROM local_sales WHERE id = ?')->execute([$id]);
+        if ($productId) self::recalcProductPrices($productId);
+    }
+
+    // ── Export tracking ────────────────────────────────────────
+
+    public static function recordExport(array $orderIds): void
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare(
+            'INSERT INTO orders_exported_at (pre_order_id) VALUES (?)'
+        );
+        foreach ($orderIds as $id) {
+            $stmt->execute([(int)$id]);
+        }
+    }
+
+    public static function getExportCounts(array $orderIds): array
+    {
+        // Returns [order_id => count] for how many times each has been exported
+        if (empty($orderIds)) return [];
+        $pdo = Database::getConnection();
+        $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+        $stmt = $pdo->prepare(
+            "SELECT pre_order_id, COUNT(*) AS cnt
+            FROM orders_exported_at
+            WHERE pre_order_id IN ($placeholders)
+            GROUP BY pre_order_id"
+        );
+        $stmt->execute($orderIds);
+        $result = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $result[(int)$row['pre_order_id']] = (int)$row['cnt'];
+        }
+        return $result;
+    }
+
 }
