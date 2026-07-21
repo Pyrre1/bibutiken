@@ -1,0 +1,149 @@
+/* ============================================================
+   PUBLIC — Lokalproducerat
+   ============================================================ */
+
+/* ── Sections ─────────────────────────────────────────────── */
+.lp-section {
+  margin-bottom: var(--space-6);
+}
+
+.lp-section h2 {
+  margin-bottom: var(--space-4);
+}
+
+/* ── Activity note ────────────────────────────────────────── */
+.lp-activity-note {
+  background: var(--honey-50);
+  border-left: 3px solid var(--honey-300);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.lp-activity-note p {
+  margin-bottom: 0;
+}
+
+/* ── Table ────────────────────────────────────────────────── */
+.lp-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: var(--text-base);
+}
+
+.lp-table thead {
+  background: var(--honey-50);
+}
+
+.lp-table th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--color-heading);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 2px solid var(--honey-200);
+  white-space: nowrap;
+}
+
+.lp-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.lp-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.lp-table tbody tr:nth-child(even) td {
+  background: var(--honey-50);
+}
+
+.lp-size {
+  white-space: nowrap;
+  color: var(--neutral-500);
+  font-size: var(--text-sm);
+  width: 5rem;
+}
+
+.lp-name {
+  font-weight: 600;
+  color: var(--color-heading);
+  width: 10rem;
+}
+
+.lp-desc {
+  color: var(--neutral-500);
+  font-size: var(--text-sm);
+  width: auto;
+}
+
+.lp-price {
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--honey-600);
+  text-align: right;
+  width: 5rem;
+}
+/* ── Empty state ──────────────────────────────────────────── */
+.lp-empty {
+  color: var(--neutral-500);
+  font-style: italic;
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+}
+
+/* ── Disclaimer ───────────────────────────────────────────── */
+.lp-disclaimer {
+  margin-top: var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--neutral-500);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}
+
+/* ── Responsive — stack table on narrow screens ───────────── */
+@media (max-width: 600px) {
+  .lp-table thead {
+    display: none;
+  }
+
+  .lp-table tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .lp-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .lp-table td {
+    padding: var(--space-1) 0;
+    border-bottom: none;
+  }
+
+  .lp-name {
+    grid-column: 1 / -1;
+    font-size: var(--text-base);
+  }
+
+  .lp-desc {
+    grid-column: 1 / -1;
+  }
+
+  .lp-size {
+    color: var(--neutral-500);
+  }
+
+  .lp-price {
+    text-align: right;
+  }
+}

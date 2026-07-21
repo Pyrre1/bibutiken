@@ -4,19 +4,6 @@
     Page-specific styles live in home.css / preorder.css.
    ============================================================ */
 
-/* ── Global ─────────────────────────────────────────────────── */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Avoid sending unsupported properties to browsers (e.g. Safari). Apply
-   scrollbar-gutter only where supported. */
-@supports (scrollbar-gutter: stable) {
-  html {
-    scrollbar-gutter: stable;
-  }
-}
-
 /* ── Buttons ──────────────────────────────────────────────── */
 button,
 input[type="submit"],

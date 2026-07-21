@@ -40,7 +40,7 @@
             <?php
             $publicNav = [
                 'home'     => ['/index.php',    'Hem'],
-                'honung'   => ['/lokalproducerat.php',   'Lokalproducerat'],
+                'lokalproducerat'   => ['/lokalproducerat.php',   'Lokalproducerat'],
                 'bihuset'  => ['/bihuset.php',  'Bihuset'],
                 'preorder' => ['/preorder.php', 'Vinterfoder'],
             ];
