@@ -23,7 +23,7 @@ if (Settings::get('preorder_enabled', '1') !== '1') {
             $reminderMessage = 'Du kommer få ett mejl när beställningen öppnar.';
         }
     }
-
+    $extraStyles = ['/assets/css/preorder.css'];
     require __DIR__ . '/../app/Views/public/_header.php';
     require __DIR__ . '/../app/Views/public/preorder_closed.php';
     require __DIR__ . '/../app/Views/public/_footer.php';
@@ -151,6 +151,7 @@ function self_notifyOwner(string $orderNumber, string $customerName, string $cus
 
 $products = Product::getActiveProducts();
 $pageTitle = 'Förbeställning – Bibutiken';
+$extraStyles = ['/assets/css/preorder.css'];
 $extraScripts = ['/assets/js/preorder.js'];
 require __DIR__ . '/../app/Views/public/_header.php';
 require __DIR__ . '/../app/Views/public/preorder.php';
