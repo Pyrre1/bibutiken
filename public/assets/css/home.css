@@ -1,0 +1,80 @@
+/* ============================================================
+   HOME — styles for index.php (landing page) only.
+   Loaded via $extraStyles in addition to public.css.
+   ============================================================ */
+
+/* ── Banner image ─────────────────────────────────────────── */
+.site-banner {
+  width: 100%;
+  max-height: 120px;
+  aspect-ratio: 6 / 1;
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+}
+
+.site-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 55%;
+  display: block;
+}
+
+/* ── Generic info sections ────────────────────────────────── */
+.info-section {
+  margin-bottom: var(--space-8);
+  scroll-margin-top: calc(var(--nav-height) + var(--space-4));
+}
+
+/* ── Hitta hit ────────────────────────────────────────────── */
+.hitta-hit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.hitta-hit-row p {
+  margin-bottom: 0;
+}
+
+/* ── FAQ anchor list ──────────────────────────────────────── */
+.faq-toc {
+  list-style: disc;
+  padding-left: var(--space-5);
+}
+
+.faq-toc li {
+  margin-bottom: var(--space-1);
+}
+
+.faq-question {
+  margin-bottom: 0px;
+}
+
+/* ── Content list (Vad kan jag köpa) ─────────────────────── */
+.content-list {
+  list-style: disc;
+  padding-left: var(--space-5);
+}
+
+.content-list li {
+  margin-bottom: var(--space-1);
+}
+
+/* ── FAQ Q&A items ────────────────────────────────────────── */
+.faq-item {
+  margin-bottom: var(--space-5);
+}
+
+.faq-item h3 {
+  margin-bottom: var(--space-2);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .hitta-hit-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

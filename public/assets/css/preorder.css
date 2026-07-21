@@ -1,0 +1,234 @@
+/* ============================================================
+   PREORDER — styles for preorder.php and preorder_closed.php.
+   Loaded via $extraStyles in addition to public.css.
+   ============================================================ */
+
+/* ── Preorder info banner ─────────────────────────────────── */
+.info-banner {
+  position: relative;
+  background: var(--honey-100);
+  border: 1px solid var(--honey-300);
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-6) var(--space-4) var(--space-4);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-sm);
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.info-banner p:last-child {
+  margin-bottom: 0;
+}
+
+.info-banner__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: transparent;
+  color: var(--neutral-500);
+  padding: var(--space-1);
+  font-size: var(--text-base);
+  line-height: 1;
+  border-radius: var(--radius);
+}
+
+.info-banner__close:hover {
+  background: var(--honey-200);
+  color: var(--color-heading);
+}
+
+/* ── Preorder form ────────────────────────────────────────── */
+main h1 {
+  text-align: center;
+}
+
+.form-title {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.preorder-form {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cart-add-row {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  grid-template-rows: auto auto;
+  align-items: end;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.cart-add-row legend {
+  grid-column: 1 / -1;
+}
+
+.cart-add-actions {
+  grid-column: 2 / 3;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cart-add-row label {
+  margin-top: 0;
+}
+
+.cart-add-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-add-field label {
+  margin-top: 0;
+}
+
+.cart-add-row input[type="number"] {
+  width: 80px;
+}
+
+.cart-add-field--qty input {
+  width: 100%;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-4) 0;
+  font-size: var(--text-sm);
+}
+
+.cart-table th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--color-heading);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.cart-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.cart-table td button {
+  font-size: var(--text-base);
+  padding: var(--space-1) var(--space-2);
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+}
+
+.cart-table td button:hover {
+  background: var(--honey-100);
+}
+
+.cart-row-editing {
+  opacity: 0.4;
+}
+
+.cart-totals {
+  text-align: right;
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+#submit-order-btn {
+  margin-top: var(--space-5);
+  display: block;
+  margin-left: auto;
+  font-size: var(--text-lg);
+}
+
+#cart-empty-message {
+  color: var(--neutral-500);
+  font-style: italic;
+  margin: var(--space-4) 0;
+}
+
+.cart-fieldset-gap {
+  margin-bottom: var(--space-6);
+}
+
+#cancel-edit-btn {
+  margin-right: 0.8rem;
+}
+
+/* ── Preorder closed ──────────────────────────────────────── */
+.reminder-toggle-wrap {
+  text-align: right;
+  margin-bottom: var(--space-4);
+}
+
+.reminder-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+/* ── Confirmation modal ───────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 27, 0, 0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal-box {
+  background: var(--neutral-0);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(46, 27, 0, 0.18);
+}
+
+.modal-box p {
+  color: var(--color-text);
+  margin-bottom: var(--space-5);
+  white-space: pre-line;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.modal-actions #modal-cancel {
+  background: var(--neutral-100);
+  color: var(--color-heading);
+}
+
+.modal-actions #modal-cancel:hover {
+  filter: brightness(0.95);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .cart-add-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-add-row input[type="number"] {
+    width: 100%;
+  }
+
+  .cart-table th:nth-child(3),
+  .cart-table td:nth-child(3) {
+    display: none;
+  }
+}
