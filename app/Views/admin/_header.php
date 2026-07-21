@@ -18,12 +18,24 @@
 <header class="admin-nav">
     <strong>Bibutiken Admin</strong>
     <nav>
-        <a href="/admin/dashboard.php">Översikt</a>
-        <a href="/admin/hours.php">Öppettider</a>
-        <a href="/admin/orders.php">Beställningar</a>
-        <a href="/admin/products.php">Produkter</a>
-        <a href="/admin/customers.php">Kunder</a>
-        <a href="/admin/logout.php">Logga ut</a>
-    </nav>
+    <?php
+    $adminNav = [
+        'dashboard'  => ['/admin/dashboard.php',        'Översikt'],
+        'hours'      => ['/admin/hours.php',             'Öppettider'],
+        'orders'     => ['/admin/orders.php',            'Beställningar'],
+        'products'   => ['/admin/products.php',          'Produkter'],
+        'local'      => ['/admin/local-products.php',    'Egna produkter'],
+        'customers'  => ['/admin/customers.php',         'Kunder'],
+        'logout'     => ['/admin/logout.php',            'Logga ut'],
+    ];
+    foreach ($adminNav as $key => [$href, $label]):
+        $isCurrent = ($activePage ?? '') === $key;
+    ?>
+        <a href="<?= Security::e($href) ?>"
+            <?= $isCurrent ? 'aria-current="page"' : '' ?>>
+            <?= Security::e($label) ?>
+        </a>
+    <?php endforeach; ?>
+</nav>
 </header>
 <main>

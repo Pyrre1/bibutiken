@@ -37,9 +37,21 @@
     </div>
     <div class="site-header__inner">
         <nav class="site-nav">
-            <a href="/index.php">Hem</a>
-            <a href="/bihuset.php">Bihuset</a>
-            <a href="/preorder.php">Vinterfoder</a>
+            <?php
+            $publicNav = [
+                'home'     => ['/index.php',    'Hem'],
+                'honung'   => ['/lokalproducerat.php',   'Lokalproducerat'],
+                'bihuset'  => ['/bihuset.php',  'Bihuset'],
+                'preorder' => ['/preorder.php', 'Vinterfoder'],
+            ];
+            foreach ($publicNav as $key => [$href, $label]):
+                $isCurrent = ($activePage ?? '') === $key;
+            ?>
+                <a href="<?= Security::e($href) ?>"
+                <?= $isCurrent ? 'aria-current="page"' : '' ?>>
+                    <?= Security::e($label) ?>
+                </a>
+            <?php endforeach; ?>
         </nav>
     </div>
 </header>

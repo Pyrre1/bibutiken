@@ -210,6 +210,7 @@ $weekSpecificPlans = HoursPlan::getAllWeekSpecific();
 
 $extraScripts = ['/assets/js/admin-hours.js'];
 $pageTitle = 'Öppettider – Admin';
+$activePage = 'hours';
 require __DIR__ . '/../../app/Views/admin/_header.php';
 require __DIR__ . '/../../app/Views/admin/hours.php';
 require __DIR__ . '/../../app/Views/admin/_footer.php';

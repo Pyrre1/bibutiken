@@ -83,6 +83,11 @@
 html {
   scroll-behavior: smooth;
 }
+@supports (scrollbar-gutter: stable) {
+  html {
+    scrollbar-gutter: stable;
+  }
+}
 
 /* ── Base elements ────────────────────────────────────────── */
 body {

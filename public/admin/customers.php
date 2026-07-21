@@ -74,6 +74,7 @@ if ($viewId) {
 }
 
 $pageTitle   = 'Kunder – Admin';
+$activePage = 'customers';
 $extraScripts = ['/assets/js/admin-customers.js'];
 $extraStyles = ['/assets/css/admin-customers.css'];
 require __DIR__ . '/../../app/Views/admin/customers.php';

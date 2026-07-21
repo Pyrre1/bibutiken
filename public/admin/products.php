@@ -104,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $products    = Product::getAllProductsAdmin();
 $lagersaldo  = PreOrder::getLagersaldo();
 $localSales  = PreOrder::getLocalSales();
+$activePage = 'products';
 $pageTitle   = 'Produkter – Admin';
 $extraScripts = ['/assets/js/admin-products.js'];
 $extraStyles  = ['/assets/css/admin-products.css'];

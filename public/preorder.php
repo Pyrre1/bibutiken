@@ -8,6 +8,7 @@ require_once __DIR__ . '/../app/Models/Customer.php';
 
 if (Settings::get('preorder_enabled', '1') !== '1') {
     $pageTitle = 'Förbeställning – Bibutiken';
+    $activePage = 'preorder';
     $extraScripts = ['/assets/js/preorder.js'];
     $reminderMessage = null;
     $reminderError = null;
@@ -151,6 +152,7 @@ function self_notifyOwner(string $orderNumber, string $customerName, string $cus
 
 $products = Product::getActiveProducts();
 $pageTitle = 'Förbeställning – Bibutiken';
+$activePage = 'preorder';
 $extraStyles = ['/assets/css/preorder.css'];
 $extraScripts = ['/assets/js/preorder.js'];
 require __DIR__ . '/../app/Views/public/_header.php';

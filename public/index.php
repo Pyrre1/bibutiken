@@ -70,7 +70,7 @@ $nextWeekPlan = HoursResolver::resolveForWeek($nextWeek, $nextYear);
 $sameContent = plansHaveSameContent($thisWeekPlan, $nextWeekPlan);
 
 $pageTitle = 'Bibutiken';
-
+$activePage = 'home';
 $extraStyles = ['/assets/css/home.css'];
 require __DIR__ . '/../app/Views/public/_header.php';
 ?>

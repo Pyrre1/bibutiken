@@ -35,6 +35,11 @@ body.admin h1 {
   gap: var(--space-4);
 }
 
+.admin-nav nav a[aria-current="page"] {
+  background: var(--honey-500);
+  color: var(--neutral-0);
+}
+
 .admin-nav strong {
   font-family: var(--font-display);
   font-size: var(--text-base);

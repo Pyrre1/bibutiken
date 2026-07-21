@@ -3,6 +3,7 @@ require_once __DIR__ . '/../app/Core/init.php';
 require_once __DIR__ . '/../app/Core/Security.php';
 
 $pageTitle = 'Bihuset';
+$activePage = 'bihuset';
 require __DIR__ . '/../app/Views/public/_header.php';
 ?>
     <h1>Bihuset</h1>
