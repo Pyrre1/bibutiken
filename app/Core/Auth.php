@@ -64,6 +64,9 @@ class Auth
 
     public static function requireLogin(): void
     {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+
         if (!self::isLoggedIn()) {
             header('Location: /admin/login.php');
             exit;
