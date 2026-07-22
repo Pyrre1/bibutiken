@@ -150,7 +150,7 @@
                     <td><?= Security::e($order['order_number']) ?></td>
                     <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
                     <td><?= $order['is_delivered'] ? '✅' : ($order['has_manual_work'] ? '🔧' : '📤') ?></td>
-                    <td><a href="/admin/orders.php?order=<?= $order['id'] ?>">Öppna</a></td>
+                    <td><a href="/admin/orders.php?order=<?= $order['id'] ?>&from=customers&customer_id=<?= $customer['id'] ?>">Öppna</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

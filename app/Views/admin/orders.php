@@ -11,7 +11,18 @@
     <p><?= Security::e($detailOrder['customer_name']) ?> — <?= Security::e($detailOrder['customer_email']) ?></p>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-4)">
         <span>Lagd: <?= date('Y-m-d H:i', strtotime($detailOrder['created_at'])) ?></span>
-        <a href="/admin/orders.php" class="btn-secondary-link">← Tillbaka till alla beställningar</a>
+        <?php
+        $from = $_GET['from'] ?? 'orders';
+        if ($from === 'customers') {
+            $customerId = (int)($_GET['customer_id'] ?? 0);
+            $backHref   = '/admin/customers.php' . ($customerId > 0 ? '?id=' . $customerId : '');
+            $backLabel  = '← Tillbaka till kund';
+        } else {
+            $backHref  = '/admin/orders.php?filter=' . Security::e($_GET['filter'] ?? 'all');
+            $backLabel = '← Tillbaka till alla beställningar';
+        }
+        ?>
+        <a href="<?= $backHref ?>" class="btn-secondary-link"><?= $backLabel ?></a>
     </div>
 
     <table class="admin-table" id="orders-table">
@@ -245,7 +256,7 @@
                             data-csrf="<?= Security::e(Security::csrfToken()) ?>">✅</button>
                     <?php endif; ?>
                 </td>
-                <td><a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>">Öppna</a></td>
+                <td><a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>&from=orders">Öppna</a></td>
             </tr>
         <?php endforeach; ?>
         <?php if (empty($orders)): ?>
