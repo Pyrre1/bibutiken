@@ -51,6 +51,10 @@ class Router
             case '/admin/orders.php':
                 AdminOrderController::index();
                 return;
+
+            case '/admin/products.php':
+                AdminProductController::index();
+                return;
             
             default:
                 http_response_code(404);
