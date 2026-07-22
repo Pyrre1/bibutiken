@@ -28,6 +28,10 @@ class Router
                 LoginController::index();
                 return;
 
+            case '/admin/logout.php':
+                LogoutController::index();
+                return;
+
             default:
                 http_response_code(404);
                 echo '404 - Sidan kunde inte hittas.';

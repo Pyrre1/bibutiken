@@ -7,6 +7,7 @@ require_once __DIR__ . '/../app/Controllers/Public/BihusetController.php';
 require_once __DIR__ . '/../app/Controllers/Public/LocalProductController.php';
 require_once __DIR__ . '/../app/Controllers/Public/PreOrderController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/LoginController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/LogoutController.php';
 
 $router = new Router();
 $router->dispatch();

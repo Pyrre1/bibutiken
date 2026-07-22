@@ -1,5 +1,8 @@
 <?php
+
 require_once __DIR__ . '/../../app/Core/init.php';
-Auth::logout();
-header('Location: /admin/login.php');
-exit;
+require_once __DIR__ . '/../../app/Core/Router.php';
+require_once __DIR__ . '/../../app/Controllers/Admin/LogoutController.php';
+
+$router = new Router();
+$router->dispatch();
