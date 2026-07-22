@@ -24,6 +24,10 @@ class Router
                 PreOrderController::index();
                 return;
 
+            case '/admin/login.php':
+                LoginController::index();
+                return;
+
             default:
                 http_response_code(404);
                 echo '404 - Sidan kunde inte hittas.';
