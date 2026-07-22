@@ -38,6 +38,20 @@
   margin-bottom: 0;
 }
 
+.hitta-hit-btn {
+  display: inline-block;
+  background: var(--honey-500);
+  color: var(--neutral-0);
+  font-weight: 700;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.hitta-hit-btn:hover {
+  background: var(--honey-600);
+  color: var(--neutral-0);
+}
 /* ── FAQ anchor list ──────────────────────────────────────── */
 .faq-toc {
   list-style: disc;

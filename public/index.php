@@ -113,7 +113,7 @@ require __DIR__ . '/../app/Views/public/_header.php';
     </section>
 
     <!-- VANLIGA FRÅGOR -->
-    <section class="info-section" id="faq">
+    <section class="info-section" id="faq-menu">
         <h2>Vanliga frågor</h2>
 
         <div class="faq-item">

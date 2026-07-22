@@ -10,7 +10,7 @@
         <p>Vi brukar kunna ha burkar för provsmakning inför köp. Vill du uppleva smaken i
         kombination med ost och kex och dyka ner i smakkombinationernas värld så finns
         <strong>honungssmakning</strong> som aktivitet — att köpa till dig själv eller ge
-        bort som gåva till någon annan honungsintresserad. Plats för 4–8 deltagare.</p>
+        bort som gåva till någon annan honungsintresserad. (Plats för 4–8 deltagare.)</p>
     </div>
 
     <?php if (!empty($grouped['Honung'])): ?>
@@ -30,7 +30,7 @@
                 <td class="lp-name"><?= Security::e($p['name']) ?></td>
                 <td class="lp-desc"><?= Security::e($p['description'] ?? '') ?></td>
                 <td class="lp-price" data-label="Pris">
-                    <?= number_format($p['price_ore'] / 100, 2, ',', '\u{202F}') ?>&nbsp;kr
+                    <?= number_format($p['price_ore'] / 100, 0, ',', '\u{202F}') ?>&nbsp;kr
                 </td>
             </tr>
         <?php endforeach; ?>
@@ -47,8 +47,8 @@
     <h2>Relaterade produkter</h2>
 
     <div class="lp-activity-note">
-        <p><strong>Salva och läppcerat</strong> går att göra själv i bihuset som
-        bokningsbar aktivitet. 3–5 deltagare.</p>
+        <p><strong>Salva och läppcerat m.m.</strong> går att lära siggöra själv i bihuset som
+        bokningsbar aktivitet. Utrustning tillgängligt på plats och material ingår i priset (3–5 deltagare.)</p>
     </div>
 
     <?php if (!empty($grouped['Relaterade produkter'])): ?>

@@ -1,4 +1,4 @@
-<h1 class="form-title">Beställning av vinterfoder</h1>
+<h1 class="form-title">Förbeställning av vinterfoder</h1>
 
 <?php if ($successOrderNumber): ?>
     <div class="form-success">
@@ -15,7 +15,7 @@
 
 <div class="info-banner" id="preorder-info-banner">
     <button class="info-banner__close" id="close-info-banner" aria-label="Stäng meddelande">✕</button>
-    <p><strong>Observera:</strong> alla priser är uppskattade från förra årets leverans och är bara ungefärliga tills dess att årets priser blivit beräknade exakt. Du kommer bli kontaktad när dina varor kommit och då få årets aktuella priser. Det brukar inte vara några större skillnader, men värt att notera.</p>
+    <p><strong>Observera:</strong> priser på vinterfoder är uppskattade från förra årets leverans och är bara ungefärliga tills dess att årets priser blivit beräknade exakt. Du kommer bli kontaktad när dina varor kommit och då få årets aktuella priser. Det brukar inte vara några större skillnader, men värt att notera. Betalning sker efter leverans och detta formulär är avsett som en avsiktsförklaring för att kunna ta hem rätt mängd vinterfoder.</p>
     <p>När du skickar in din beställning av vinterfoder godkänner du att Strängnäs Biredskap AB använder e-postadressen för att kontakta dig när din order går att hämta. Självklart följer vi GDPR och vill du få din e-post raderad, kontakta butiken så raderar vi den.</p>
 </div>
 
