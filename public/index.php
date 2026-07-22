@@ -12,6 +12,7 @@ require_once __DIR__ . '/../app/Controllers/Admin/DashboardController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/HoursController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/CustomerController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/AdminLocalProductController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/AdminOrderController.php';
 
 $router = new Router();
 $router->dispatch();
