@@ -90,7 +90,14 @@ class Customer
     public static function anonymizeEmail(int $customerId): void
     {
         $pdo = Database::getConnection();
-        $pdo->prepare('UPDATE customers SET email = "raderad@begaran.se" WHERE id = ?')
+
+        $pdo->prepare('UPDATE customers SET email = CONCAT("raderad+", ?, "@begaran.se") WHERE id = ?')
+            ->execute([$customerId, $customerId]);
+
+        $pdo->prepare('DELETE FROM customer_role_assignments WHERE customer_id = ?')
+            ->execute([$customerId]);
+
+        $pdo->prepare('INSERT INTO customer_role_assignments (customer_id, role_id) VALUES (?, 5)')
             ->execute([$customerId]);
     }
 
@@ -98,7 +105,14 @@ class Customer
     public static function anonymizeCustomer(int $customerId): void
     {
         $pdo = Database::getConnection();
-        $pdo->prepare('UPDATE customers SET email = "raderad@begaran.se", name = "Raderad på begäran" WHERE id = ?')
+
+        $pdo->prepare('UPDATE customers SET email = CONCAT("raderad+", ?, "@begaran.se"), name = "Raderad på begäran" WHERE id = ?')
+            ->execute([$customerId, $customerId]);
+
+        $pdo->prepare('DELETE FROM customer_role_assignments WHERE customer_id = ?')
+            ->execute([$customerId]);
+
+        $pdo->prepare('INSERT INTO customer_role_assignments (customer_id, role_id) VALUES (?, 5)')
             ->execute([$customerId]);
     }
 
