@@ -40,6 +40,10 @@ class Router
                 HoursController::index();
                 return;
 
+            case '/admin/customers.php':
+                CustomerController::index();
+                return;
+
             default:
                 http_response_code(404);
                 echo '404 - Sidan kunde inte hittas.';
