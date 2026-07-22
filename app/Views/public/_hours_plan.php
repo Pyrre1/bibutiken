@@ -1,8 +1,7 @@
 <?php
 /**
  * Renders one resolved hours plan ($planForBlock) for the public page.
- * Expects $planForBlock (array from HoursResolver::resolveForWeek) and
- * $dayNames (array, day_of_week => Swedish day name) to be set by the caller.
+ * Expects $planForBlock, $dayNames and $weekDates to be set by the caller.
  */
 ?>
 <?php if (!empty($planForBlock['header_text'])): ?>
@@ -17,7 +16,10 @@
     <?php foreach ($planForBlock['days'] as $day): ?>
         <?php if ($day['closed']) continue; ?>
         <li>
-            <span class="hours-day-name"><?= htmlspecialchars($dayNames[$day['day_of_week']]) ?></span>
+            <span class="hours-day-name">
+                <?= htmlspecialchars($dayNames[$day['day_of_week']]) ?>
+                <?= htmlspecialchars($weekDates[$day['day_of_week']]) ?>
+            </span>
             <span class="hours-day-value">
                 <?= htmlspecialchars(substr($day['open_time'], 0, 5)) ?>–<?= htmlspecialchars(substr($day['close_time'], 0, 5)) ?>
             </span>
