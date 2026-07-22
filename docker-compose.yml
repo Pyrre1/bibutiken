@@ -4,7 +4,7 @@ services:
       context: ./docker/php
     container_name: shop_php
     ports:
-      - "8080:80"
+      - "8082:80"
     environment:
       DB_HOST: mariadb
       DB_NAME: shop_db
