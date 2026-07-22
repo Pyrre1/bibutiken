@@ -119,9 +119,9 @@
                     <?php foreach ($plan['days'] as $day):
                         $d = $day['day_of_week'];
                         $isOpen = !$day['closed'];
-                        $openHour = $day['open_time']  ? substr($day['open_time'],  0, 2) : '09';
+                        $openHour = $day['open_time']  ? substr($day['open_time'],  0, 2) : '16';
                         $openMinute = $day['open_time']  ? substr($day['open_time'],  3, 2) : '00';
-                        $closeHour  = $day['close_time'] ? substr($day['close_time'], 0, 2) : '17';
+                        $closeHour  = $day['close_time'] ? substr($day['close_time'], 0, 2) : '18';
                         $closeMinute= $day['close_time'] ? substr($day['close_time'], 3, 2) : '00';
                     ?>
                         <tr>
@@ -130,7 +130,7 @@
                             <td>
                                 <span class="time-pair">
                                     <select name="open_hour_<?= $d ?>">
-                                        <?php for ($h = 0; $h < 24; $h++): $hh = sprintf('%02d', $h); ?>
+                                        <?php for ($h = 10; $h < 21; $h++): $hh = sprintf('%02d', $h); ?>
                                             <option value="<?= $hh ?>" <?= $openHour === $hh ? 'selected' : '' ?>><?= $hh ?></option>
                                         <?php endfor; ?>
                                     </select>
@@ -145,7 +145,7 @@
                             <td>
                                 <span class="time-pair">
                                     <select name="close_hour_<?= $d ?>">
-                                        <?php for ($h = 0; $h < 24; $h++): $hh = sprintf('%02d', $h); ?>
+                                        <?php for ($h = 10; $h < 21; $h++): $hh = sprintf('%02d', $h); ?>
                                             <option value="<?= $hh ?>" <?= $closeHour === $hh ? 'selected' : '' ?>><?= $hh ?></option>
                                         <?php endfor; ?>
                                     </select>
