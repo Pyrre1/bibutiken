@@ -43,7 +43,7 @@
 
 <!-- ── Relaterade produkter ───────────────────────────── -->
 <section class="lp-section">
-  
+
     <h2>Relaterade produkter</h2>
 
     <div class="lp-activity-note">

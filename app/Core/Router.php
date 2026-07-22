@@ -16,6 +16,10 @@ class Router
                 BihusetController::index();
                 return;
 
+            case '/lokalproducerat.php':
+                LocalProductController::index();
+                return;
+
             default:
                 http_response_code(404);
                 echo '404 - Sidan kunde inte hittas.';
