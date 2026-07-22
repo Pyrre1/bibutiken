@@ -1,5 +1,3 @@
-<?php require __DIR__ . '/_header.php'; ?>
-
 <?php if ($stats['manual_pending'] > 0): ?>
 <div class="admin-alert-banner" id="manual-alert">
     <span>⚠️ <?= $stats['manual_pending'] ?> order(ar) väntar på manuell hantering.</span>
@@ -119,12 +117,7 @@
                         <?php endif; ?>
                     </div>
                 </a>
-
             </div>
         </div>
-
     </div><!-- /dashboard-col right -->
-
 </div><!-- /dashboard-grid -->
-
-<?php require __DIR__ . '/_footer.php'; ?>

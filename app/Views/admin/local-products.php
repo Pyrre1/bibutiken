@@ -28,7 +28,7 @@ foreach ($products as $p) {
                 <p class="hint">Inga produkter av den här typen ännu.</p>
             <?php else: ?>
             <table class="admin-table local-products-table"
-                  data-type-id="<?= $type['id'] ?>">
+                    data-type-id="<?= $type['id'] ?>">
                 <thead>
                     <tr>
                         <th>Namn</th>
@@ -47,13 +47,13 @@ foreach ($products as $p) {
                         <td>
                             <span class="item-display"><?= Security::e($p['name']) ?></span>
                             <input class="item-edit" type="text" name="name"
-                                  value="<?= Security::e($p['name']) ?>" style="display:none">
+                                value="<?= Security::e($p['name']) ?>" style="display:none">
                         </td>
                         <!-- Size -->
                         <td>
                             <span class="item-display"><?= Security::e($p['size']) ?></span>
                             <input class="item-edit" type="text" name="size"
-                                  value="<?= Security::e($p['size']) ?>" style="display:none; width:90px">
+                                value="<?= Security::e($p['size']) ?>" style="display:none; width:90px">
                         </td>
                         <!-- Description -->
                         <td class="lp-desc-cell">
@@ -61,7 +61,7 @@ foreach ($products as $p) {
                                 <?= Security::e($p['description'] ?? '–') ?>
                             </span>
                             <textarea class="item-edit" name="description"
-                                      rows="2" style="display:none"><?= Security::e($p['description'] ?? '') ?></textarea>
+                                    rows="2" style="display:none"><?= Security::e($p['description'] ?? '') ?></textarea>
                         </td>
                         <!-- Price -->
                         <td>
@@ -69,9 +69,9 @@ foreach ($products as $p) {
                                 <?= number_format($p['price_ore'] / 100, 2, ',', ' ') ?> kr
                             </span>
                             <input class="item-edit" type="number" name="price_kr"
-                                  step="0.01" min="0"
-                                  value="<?= number_format($p['price_ore'] / 100, 2, '.', '') ?>"
-                                  style="display:none; width:90px">
+                                step="0.01" min="0"
+                                value="<?= number_format($p['price_ore'] / 100, 2, '.', '') ?>"
+                                style="display:none; width:90px">
                         </td>
                         <!-- Sort -->
                         <td class="center">
@@ -84,11 +84,11 @@ foreach ($products as $p) {
                         <td class="center">
                             <form method="post" style="display:inline">
                                 <input type="hidden" name="csrf_token"
-                                      value="<?= Security::e(Security::csrfToken()) ?>">
+                                    value="<?= Security::e(Security::csrfToken()) ?>">
                                 <input type="hidden" name="action" value="toggle_active">
                                 <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
                                 <input type="hidden" name="active"
-                                      value="<?= $p['active'] ? '0' : '1' ?>">
+                                    value="<?= $p['active'] ? '0' : '1' ?>">
                                 <button type="submit" class="btn-icon"
                                         title="<?= $p['active'] ? 'Dölj' : 'Visa' ?>">
                                     <?= $p['active'] ? '✅' : '⏸️' ?>
@@ -101,13 +101,13 @@ foreach ($products as $p) {
                                     title="Redigera">✏️</button>
 
                             <form method="post" class="item-edit lp-save-form"
-                                  style="display:none">
+                                style="display:none">
                                 <input type="hidden" name="csrf_token"
-                                      value="<?= Security::e(Security::csrfToken()) ?>">
+                                    value="<?= Security::e(Security::csrfToken()) ?>">
                                 <input type="hidden" name="action" value="update">
                                 <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
                                 <input type="hidden" name="type_id"
-                                      value="<?= $p['type_id'] ?>">
+                                    value="<?= $p['type_id'] ?>">
                                 <input type="hidden" name="name"     class="save-name">
                                 <input type="hidden" name="size"     class="save-size">
                                 <input type="hidden" name="description" class="save-desc">
@@ -120,7 +120,7 @@ foreach ($products as $p) {
 
                             <form method="post" class="item-display" style="display:inline">
                                 <input type="hidden" name="csrf_token"
-                                      value="<?= Security::e(Security::csrfToken()) ?>">
+                                    value="<?= Security::e(Security::csrfToken()) ?>">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
                                 <button type="submit" class="btn-icon btn-icon--danger"
@@ -143,7 +143,7 @@ foreach ($products as $p) {
         <h2>Lägg till produkt</h2>
         <form method="post" class="lp-add-form">
             <input type="hidden" name="csrf_token"
-                  value="<?= Security::e(Security::csrfToken()) ?>">
+                value="<?= Security::e(Security::csrfToken()) ?>">
             <input type="hidden" name="action" value="create">
 
             <div class="lp-add-field">
@@ -158,12 +158,12 @@ foreach ($products as $p) {
             <div class="lp-add-field">
                 <label for="lp-size">Storlek</label>
                 <input type="text" id="lp-size" name="size"
-                      placeholder="t.ex. 500 g" required>
+                    placeholder="t.ex. 500 g" required>
             </div>
             <div class="lp-add-field lp-add-field--name">
                 <label for="lp-name">Namn</label>
                 <input type="text" id="lp-name" name="name"
-                      placeholder="t.ex. Sommarhonung" required>
+                    placeholder="t.ex. Sommarhonung" required>
             </div>
             <div class="lp-add-field lp-add-field--desc">
                 <label for="lp-desc">Beskrivning <span class="hint-inline">(valfri)</span></label>
@@ -172,7 +172,7 @@ foreach ($products as $p) {
             <div class="lp-add-field">
                 <label for="lp-price">Pris (kr)</label>
                 <input type="number" id="lp-price" name="price_kr"
-                      step="0.01" min="0" required style="width:110px">
+                    step="0.01" min="0" required style="width:110px">
             </div>
             <div class="lp-add-field lp-add-field--submit">
                 <button type="submit">Skapa produkt</button>

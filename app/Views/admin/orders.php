@@ -46,7 +46,7 @@
             <td>
                 <span class="item-display"><?= $item['quantity'] ?></span>
                 <input type="number" class="item-edit" style="display:none;width:70px" 
-                      value="<?= $item['quantity'] ?>" min="1" max="9999">
+                    value="<?= $item['quantity'] ?>" min="1" max="9999">
             </td>
             <td><?= number_format($item['unit_price_ore'] / 100, 2, ',', ' ') ?> kr</td>
             <td>
@@ -234,7 +234,7 @@
                 <td class="center">
                     <?php if ($order['has_manual_work']): ?>
                         <a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>"
-                          class="badge-manual" title="Öppna för manuell hantering">🔧</a>
+                        class="badge-manual" title="Öppna för manuell hantering">🔧</a>
                     <?php elseif (!$order['is_delivered']): ?>
                         <button type="button" class="btn-icon status-deliver-btn"
                             data-order-id="<?= $order['id'] ?>"

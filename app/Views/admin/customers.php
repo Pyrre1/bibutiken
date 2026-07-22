@@ -1,5 +1,3 @@
-<?php require __DIR__ . '/_header.php'; ?>
-
 <?php if ($message): ?>
     <div class="form-success"><p><?= Security::e($message) ?></p></div>
 <?php endif; ?>
@@ -197,5 +195,3 @@
         </details>
     </div>
 <?php endif; ?>
-
-<?php require __DIR__ . '/_footer.php'; ?>
