@@ -3,4 +3,4 @@
 *.log
 .DS_Store
 
-/public/assets/css/old-style.css
+/config/config.php

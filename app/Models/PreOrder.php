@@ -579,4 +579,50 @@ class PreOrder
         return $result;
     }
 
+    // ── Spam protection ────────────────────────────────────────
+
+    public static function hashIp(): string
+    {
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        return hash('sha256', $ip . 'bibutiken-salt-2025');
+    }
+
+    public static function checkRateLimit(string $hashedIp): bool
+    {
+        $pdo = Database::getConnection();
+
+        // Lazy cleanup — remove entries older than 2 hours
+        $pdo->prepare(
+            'DELETE FROM preorder_rate_limit WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 2 HOUR)'
+        )->execute();
+
+        $stmt = $pdo->prepare(
+            'SELECT COUNT(*) FROM preorder_rate_limit
+            WHERE hashed_ip = ? AND attempted_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)'
+        );
+        $stmt->execute([$hashedIp]);
+        return (int) $stmt->fetchColumn() === 0; // true = allowed
+    }
+
+    public static function recordAttempt(string $hashedIp): void
+    {
+        $pdo = Database::getConnection();
+        $pdo->prepare(
+            'INSERT INTO preorder_rate_limit (hashed_ip) VALUES (?)'
+        )->execute([$hashedIp]);
+    }
+
+    public static function logRejected(string $hashedIp, string $reason, ?string $email = null): void
+    {
+        $pdo = Database::getConnection();
+
+        // Lazy cleanup — remove entries older than 30 days
+        $pdo->prepare(
+            'DELETE FROM preorder_rejected_log WHERE rejected_at < DATE_SUB(NOW(), INTERVAL 30 DAY)'
+        )->execute();
+
+        $pdo->prepare(
+            'INSERT INTO preorder_rejected_log (hashed_ip, attempted_email, reason) VALUES (?, ?, ?)'
+        )->execute([$hashedIp, $email, $reason]);
+    } 
 }

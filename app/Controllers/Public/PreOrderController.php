@@ -43,9 +43,24 @@ class PreOrderController
         $cartItems         = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $hashedIp      = PreOrder::hashIp();
+            $attemptedEmail = strtolower(trim($_POST['customer_email'] ?? ''));
+
             if (!Security::validateCsrf($_POST['csrf_token'] ?? null)) {
+                PreOrder::logRejected($hashedIp, 'csrf');
                 $error = 'Ogiltig begäran, försök igen.';
+            } elseif (!empty($_POST['website'])) {
+                PreOrder::logRejected($hashedIp, 'honeypot', $attemptedEmail ?: null);
+                // Silent fake success — do not reveal the honeypot
+                $successOrderNumber = null;
+            } elseif ((int)($_POST['form_loaded_at'] ?? 0) > 0 && (time() - (int)$_POST['form_loaded_at']) < 10) {
+                PreOrder::logRejected($hashedIp, 'timing');
+                $error = 'Formuläret skickades för snabbt. Försök igen.';
+            } elseif (!PreOrder::checkRateLimit($hashedIp)) {
+                PreOrder::logRejected($hashedIp, 'rate_limit');
+                $error = 'Du har redan skickat en förbeställning nyligen. Vänta en stund och försök igen.';
             } else {
+                PreOrder::recordAttempt($hashedIp);
                 $formValues['customer_name']  = trim($_POST['customer_name'] ?? '');
                 $formValues['customer_email'] = trim($_POST['customer_email'] ?? '');
 

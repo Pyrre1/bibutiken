@@ -21,6 +21,11 @@
 
 <form method="post" action="/preorder.php" class="preorder-form" id="preorder-form">
     <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+    <input type="hidden" name="form_loaded_at" id="form_loaded_at" value="">
+    <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;">
+        <label for="website">Lämna detta fält tomt</label>
+        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+    </div>
 
     <label for="customer_name">Namn</label>
     <input type="text" name="customer_name" id="customer_name" required

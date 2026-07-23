@@ -17,6 +17,11 @@
 
   if (!form) return;
 
+  // Stamp load time for minimum-fill-time check
+  const formLoadedAt = Math.floor(Date.now() / 1000);
+  const formLoadedInput = document.getElementById('form_loaded_at');
+  if (formLoadedInput) formLoadedInput.value = formLoadedAt;
+
   function formatKr(ore) {
     return (ore / 100).toLocaleString('sv-SE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' kr';
   }
