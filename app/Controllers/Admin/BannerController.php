@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../Models/Banner.php';
 require_once __DIR__ . '/../../Core/Database.php';
 require_once __DIR__ . '/../../Models/Settings.php';
 
-class NotiserController
+class BannerController
 {
     public static function index(): void
     {

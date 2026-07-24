@@ -227,7 +227,7 @@ class HoursController
         $extraScripts = ['/assets/js/admin-hours.js'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
-        require __DIR__ . '/../../Views/admin/hours.php';
+        require __DIR__ . '/../../Views/admin/oppettider.php';
         require __DIR__ . '/../../Views/admin/_footer.php';
     }
 }

@@ -115,7 +115,7 @@ class AdminProductController
         $extraStyles  = ['/assets/css/admin-products.css'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
-        require __DIR__ . '/../../Views/admin/products.php';
+        require __DIR__ . '/../../Views/admin/produkter.php';
         require __DIR__ . '/../../Views/admin/_footer.php';
     }
 }

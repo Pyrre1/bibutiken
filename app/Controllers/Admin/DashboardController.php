@@ -30,7 +30,7 @@ class DashboardController
         $extraStyles = ['/assets/css/admin-dashboard.css'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
-        require __DIR__ . '/../../Views/admin/dashboard.php';
+        require __DIR__ . '/../../Views/admin/oversikt.php';
         require __DIR__ . '/../../Views/admin/_footer.php';
     }
 }

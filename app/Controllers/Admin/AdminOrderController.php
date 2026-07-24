@@ -116,7 +116,7 @@ class AdminOrderController
         $extraStyles  = ['/assets/css/admin-orders.css'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
-        require __DIR__ . '/../../Views/admin/orders.php';
+        require __DIR__ . '/../../Views/admin/ordrar.php';
         require __DIR__ . '/../../Views/admin/_footer.php';
     }
     

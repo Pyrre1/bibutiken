@@ -85,7 +85,7 @@ class CustomerController
         $extraStyles  = ['/assets/css/admin-customers.css'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
-        require __DIR__ . '/../../Views/admin/customers.php';
+        require __DIR__ . '/../../Views/admin/kunder.php';
         require __DIR__ . '/../../Views/admin/_footer.php';
     }
     

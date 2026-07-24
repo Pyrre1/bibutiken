@@ -4,7 +4,7 @@ class Router
 {
     private const ROUTES = [
         '/'                          => [HomeController::class,               'index'],
-        '/bihuset'                   => [BihusetController::class,            'index'],
+        '/bihuset'                   => [BeehouseController::class,            'index'],
         '/lokalproducerat'           => [LocalProductController::class,       'index'],
         '/vinterfoder'               => [PreOrderController::class,           'index'],
         '/admin'                     => [DashboardController::class,          'index'],
@@ -16,7 +16,7 @@ class Router
         '/admin/ordrar'              => [AdminOrderController::class,         'index'],
         '/admin/produkter'           => [AdminProductController::class,       'index'],
         '/admin/lokalproducerat'     => [AdminLocalProductController::class,  'index'],
-        '/admin/notiser'             => [NotiserController::class,            'index'],
+        '/admin/notiser'             => [BannerController::class,            'index'],
         '/admin/exportera/ordrar'    => [AdminOrderController::class,         'exportCsv'],
         '/admin/exportera/kunder'    => [CustomerController::class,           'exportCsv'],
     ];

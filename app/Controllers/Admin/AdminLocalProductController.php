@@ -76,7 +76,7 @@ class AdminLocalProductController
         $extraScripts = ['/assets/js/admin-local-products.js'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
-        require __DIR__ . '/../../Views/admin/local-products.php';
+        require __DIR__ . '/../../Views/admin/lokalproducerat.php';
         require __DIR__ . '/../../Views/admin/_footer.php';
     }
 }

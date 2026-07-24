@@ -34,7 +34,7 @@ class HomeController
         $extraStyles = ['/assets/css/home.css'];
 
         require __DIR__ . '/../../Views/public/_header.php';
-        require __DIR__ . '/../../Views/public/home.php';
+        require __DIR__ . '/../../Views/public/hem.php';
         require __DIR__ . '/../../Views/public/_footer.php';
     }
 }

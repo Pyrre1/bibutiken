@@ -1,6 +1,6 @@
 <?php
 
-class BihusetController
+class BeehouseController
 {
     public static function index(): void
     {

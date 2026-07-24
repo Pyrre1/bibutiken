@@ -32,7 +32,7 @@ class PreOrderController
             }
 
             require __DIR__ . '/../../Views/public/_header.php';
-            require __DIR__ . '/../../Views/public/preorder_closed.php';
+            require __DIR__ . '/../../Views/public/vinterfoder_stangd.php';
             require __DIR__ . '/../../Views/public/_footer.php';
             return;
         }
@@ -142,7 +142,7 @@ class PreOrderController
         $products = Product::getActiveProducts();
 
         require __DIR__ . '/../../Views/public/_header.php';
-        require __DIR__ . '/../../Views/public/preorder.php';
+        require __DIR__ . '/../../Views/public/vinterfoder.php';
         require __DIR__ . '/../../Views/public/_footer.php';
     }
 
