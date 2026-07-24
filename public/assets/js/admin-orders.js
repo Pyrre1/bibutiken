@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function submitStatusChange(btn, orderId, csrf, delivered) {
     const cell = btn.closest('td');
-    fetch('/admin/orders.php', {
+    fetch('/admin/ordrar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: 'csrf_token=' + encodeURIComponent(csrf) +
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // ── Export "Alla" confirm popup ───────────────────────────
-  document.querySelector('a[href="/admin/export_orders.php?type=all"]')
+  document.querySelector('a[href="/admin/exportera/ordrar?type=all"]')
     ?.addEventListener('click', function (e) {
       e.preventDefault();
       const href = this.href;

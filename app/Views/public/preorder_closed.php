@@ -8,10 +8,10 @@
         <p>Har du beställt via hemsidan tidigare år kommer du automatiskt få en påminnelse när nästa säsongs vinterfoder går att beställa.</p>
         <p class="reminder-note">Ny kund från 2026? Har du inte beställt via den nya hemsidan tidigare – skriv upp dig nedan för att få ett mejl när beställningen öppnar.</p>
         <div class="reminder-toggle-wrap">
-          <button type="button" class="btn btn--secondary" id="show-reminder-form">Meddela mig när beställningen öppnar</button>
+            <button type="button" class="btn btn--secondary" id="show-reminder-form">Meddela mig när beställningen öppnar</button>
         </div>
 
-        <form class="reminder-form" method="post" action="/preorder.php" id="reminder-form" hidden>
+        <form class="reminder-form" method="post" action="/vinterfoder" id="reminder-form" hidden>
             <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
             <?php if ($reminderError): ?>
                 <p class="reminder-error"><?= Security::e($reminderError) ?></p>
@@ -19,14 +19,14 @@
             <div class="reminder-form__row">
                 <label for="reminder_name">Namn</label>
                 <input type="text" id="reminder_name" name="reminder_name"
-                      value="<?= Security::e($_POST['reminder_name'] ?? '') ?>"
-                      required autocomplete="name">
+                    value="<?= Security::e($_POST['reminder_name'] ?? '') ?>"
+                    required autocomplete="name">
             </div>
             <div class="reminder-form__row">
                 <label for="reminder_email">E-postadress</label>
                 <input type="email" id="reminder_email" name="reminder_email"
-                      value="<?= Security::e($_POST['reminder_email'] ?? '') ?>"
-                      required autocomplete="email">
+                    value="<?= Security::e($_POST['reminder_email'] ?? '') ?>"
+                    required autocomplete="email">
             </div>
             <div class="reminder-form__actions">
                 <button type="submit" name="reminder_submit" class="btn btn--primary">Meddela mig</button>

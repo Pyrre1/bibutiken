@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
   applyBtn?.addEventListener('click', function () {
     const ids = getRows().map(r => r.dataset.id);
     const csrf = document.querySelector('input[name="csrf_token"]')?.value;
-    fetch('/admin/products.php', {
+    fetch('/admin/produkter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: 'action=reorder&csrf_token=' + encodeURIComponent(csrf) + '&' +

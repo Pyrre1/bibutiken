@@ -62,7 +62,7 @@
     <h2>Vad kan jag köpa här?</h2>
     <ul class="content-list">
         <h3>Är du inte biodlare, utan är intresserad av bigårdens produkter?</h3>
-        <li> För köp av honung, pollen eller andra produkter från biodlingen, se <a href="/lokalproducerat.php">tillgängliga produkter</a>.</li>
+        <li> För köp av honung, pollen eller andra produkter från biodlingen, se <a href="/lokalproducerat">tillgängliga produkter</a>.</li>
         <h3>Är du biodlare och vill köpa biredskap?</h3>
         <li>Vi har nästan alltid honungsburkar i de vanligaste storlekarna hemma. Vax, kupor och ramar till LN och HLS är också sådant vi alltid försöker ha hemma. Om du vill ha isolerade träkupor eller ramar/vax i andra storlekar kan vi ta hem efter önskemål. <br>Du kan se sortimentet på Biredskapsfabrikens hemsida <a href="https://www.biredskapsfabriken.se/" target="_blank" rel="noopener noreferrer">https://www.biredskapsfabriken.se/</a></li>
         <li>I bibutiken kan du också hyra en tvåramars slunga (som tar 4 HLS ramar) samt en ångvaxsmältare. Här finns en refraktometer om du vill ta med dig honung för att kolla vattnehalten i honungen.</li>

@@ -60,7 +60,7 @@
 <?php if (!empty($allCustomers) && !$customer): ?>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--space-3)">
         <span class="muted"><?= count($allCustomers) ?> kunder</span>
-        <a href="/admin/export_customers.php<?= $roleFilter ? '?role='.urlencode($roleFilter) : '' ?>">
+        <a href="/admin/exportera/kunder<?= $roleFilter ? '?role='.urlencode($roleFilter) : '' ?>">
             Exportera som CSV
         </a>
     </div>
@@ -150,7 +150,7 @@
                     <td><?= Security::e($order['order_number']) ?></td>
                     <td><?= date('Y-m-d', strtotime($order['created_at'])) ?></td>
                     <td><?= $order['is_delivered'] ? '✅' : ($order['has_manual_work'] ? '🔧' : '📤') ?></td>
-                    <td><a href="/admin/orders.php?order=<?= $order['id'] ?>&from=customers&customer_id=<?= $customer['id'] ?>">Öppna</a></td>
+                    <td><a href="/admin/ordrar?order=<?= $order['id'] ?>&from=customers&customer_id=<?= $customer['id'] ?>">Öppna</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

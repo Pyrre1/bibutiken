@@ -68,7 +68,7 @@ class Auth
         header('Pragma: no-cache');
 
         if (!self::isLoggedIn()) {
-            header('Location: /admin/login.php');
+            header('Location: /admin/login');
             exit;
         }
     }

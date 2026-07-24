@@ -15,10 +15,10 @@
         $from = $_GET['from'] ?? 'orders';
         if ($from === 'customers') {
             $customerId = (int)($_GET['customer_id'] ?? 0);
-            $backHref   = '/admin/customers.php' . ($customerId > 0 ? '?id=' . $customerId : '');
+            $backHref   = '/admin/kunder' . ($customerId > 0 ? '?id=' . $customerId : '');
             $backLabel  = '← Tillbaka till kund';
         } else {
-            $backHref  = '/admin/orders.php?filter=' . Security::e($_GET['filter'] ?? 'all');
+            $backHref  = '/admin/ordrar?filter=' . Security::e($_GET['filter'] ?? 'all');
             $backLabel = '← Tillbaka till alla beställningar';
         }
         ?>
@@ -219,8 +219,8 @@
     <!-- CSV export -->
     <div class="admin-export-row">
         <span>Exportera ordrar:</span>
-        <a href="/admin/export_orders.php?type=all">Alla</a>
-        <a href="/admin/export_orders.php?type=unpicked">Ej hämtade</a>
+        <a href="/admin/exportera/ordrar?type=all">Alla</a>
+        <a href="/admin/exportera/ordrar?type=unpicked">Ej hämtade</a>
     </div>
 
     <!-- Orders table -->

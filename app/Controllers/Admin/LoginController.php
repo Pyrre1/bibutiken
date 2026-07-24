@@ -5,7 +5,7 @@ class LoginController
     public static function index(): void
     {
         if (Auth::isLoggedIn()) {
-            header('Location: /admin/dashboard.php');
+            header('Location: /admin');
             exit;
         }
 
@@ -17,7 +17,7 @@ class LoginController
             } else {
                 $result = Auth::attemptLogin($_POST['username'] ?? '', $_POST['password'] ?? '');
                 if ($result['success']) {
-                    header('Location: /admin/dashboard.php');
+                    header('Location: /admin');
                     exit;
                 }
                 $error = $result['message'];

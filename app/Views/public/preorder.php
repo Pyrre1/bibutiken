@@ -19,7 +19,7 @@
     <p>När du skickar in din beställning av vinterfoder godkänner du att Strängnäs Biredskap AB använder e-postadressen för att kontakta dig när din order går att hämta. Självklart följer vi GDPR och vill du få din e-post raderad, kontakta butiken så raderar vi den.</p>
 </div>
 
-<form method="post" action="/preorder.php" class="preorder-form" id="preorder-form">
+<form method="post" action="/vinterfoder" class="preorder-form" id="preorder-form">
     <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
     <input type="hidden" name="form_loaded_at" id="form_loaded_at" value="">
     <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;">

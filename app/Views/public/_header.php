@@ -30,8 +30,8 @@
         <span class="site-wordmark__eu">
             <span class="site-wordmark__eu-label">I samarbete med</span>
             <span class="site-wordmark__eu-logos">
-                <a href="/bihuset.php#leader-project"><img src="/assets/images/Leader.jpg" alt="Leader"></a>
-                <a href="/bihuset.php#eu-fonden"><img src="/assets/images/EU-flagga.jpg" alt="EU Jordbruksfond för landsbygdsutveckling"></a>
+                <a href="/bihuset#leader-project"><img src="/assets/images/Leader.jpg" alt="Leader"></a>
+                <a href="/bihuset#eu-fonden"><img src="/assets/images/EU-flagga.jpg" alt="EU Jordbruksfond för landsbygdsutveckling"></a>
             </span>
         </span>
     </div>
@@ -39,10 +39,10 @@
         <nav class="site-nav">
             <?php
             $publicNav = [
-                'home'     => ['/index.php',    'Hem'],
-                'lokalproducerat'   => ['/lokalproducerat.php',   'Lokalproducerat'],
-                'bihuset'  => ['/bihuset.php',  'Bihuset'],
-                'preorder' => ['/preorder.php', 'Vinterfoder'],
+                'home'            => ['/',                'Hem'],
+                'lokalproducerat' => ['/lokalproducerat', 'Lokalproducerat'],
+                'bihuset'         => ['/bihuset',         'Bihuset'],
+                'preorder'        => ['/vinterfoder',     'Vinterfoder'],
             ];
             foreach ($publicNav as $key => [$href, $label]):
                 $isCurrent = ($activePage ?? '') === $key;

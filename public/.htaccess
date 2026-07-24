@@ -1,0 +1,21 @@
+RewriteEngine On
+DirectorySlash Off
+
+# Route everything through index.php except real files and assets
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
+
+# 301 redirects from old .php URLs to new clean Swedish URLs
+Redirect 301 /bihuset.php /bihuset
+Redirect 301 /lokalproducerat.php /lokalproducerat
+Redirect 301 /preorder.php /vinterfoder
+Redirect 301 /admin/dashboard.php /admin
+Redirect 301 /admin/hours.php /admin/oppettider
+Redirect 301 /admin/customers.php /admin/kunder
+Redirect 301 /admin/orders.php /admin/ordrar
+Redirect 301 /admin/products.php /admin/produkter
+Redirect 301 /admin/local-products.php /admin/lokalproducerat
+Redirect 301 /admin/login.php /admin/login
+Redirect 301 /admin/logout.php /admin/logout
+Redirect 301 /admin/export_orders.php /admin/exportera/ordrar
+Redirect 301 /admin/export_customers.php /admin/exportera/kunder

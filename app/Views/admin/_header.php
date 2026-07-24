@@ -20,13 +20,13 @@
     <nav>
     <?php
     $adminNav = [
-        'dashboard'  => ['/admin/dashboard.php',        'Översikt'],
-        'hours'      => ['/admin/hours.php',             'Öppettider'],
-        'orders'     => ['/admin/orders.php',            'Beställningar'],
-        'products'   => ['/admin/products.php',          'Produkter'],
-        'local'      => ['/admin/local-products.php',    'Egna produkter'],
-        'customers'  => ['/admin/customers.php',         'Kunder'],
-        'logout'     => ['/admin/logout.php',            'Logga ut'],
+        'dashboard'  => ['/admin',                    'Översikt'],
+        'hours'      => ['/admin/oppettider',         'Öppettider'],
+        'orders'     => ['/admin/ordrar',             'Beställningar'],
+        'products'   => ['/admin/produkter',          'Produkter'],
+        'local'      => ['/admin/lokalproducerat',    'Egna produkter'],
+        'customers'  => ['/admin/kunder',             'Kunder'],
+        'logout'     => ['/admin/logout',             'Logga ut'],
     ];
     foreach ($adminNav as $key => [$href, $label]):
         $isCurrent = ($activePage ?? '') === $key;

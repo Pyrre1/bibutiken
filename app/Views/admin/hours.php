@@ -1,11 +1,11 @@
 <div class="hours-admin-layout">
     <div class="col-left">
         <div class="actions">
-            <a href="/admin/hours.php?mode=default" class="button">Redigera standard</a>
+            <a href="/admin/oppettider?mode=default" class="button">Redigera standard</a>
             <?php if (count($longTermOptions) < 3): ?>
-                <a href="/admin/hours.php?mode=long&id=new" class="button">Lägg till periodplan</a>
+                <a href="/admin/oppettider?mode=long&id=new" class="button">Lägg till periodplan</a>
             <?php endif; ?>
-            <a href="/admin/hours.php?mode=week&id=new" class="button">Lägg till veckoplan</a>
+            <a href="/admin/oppettider?mode=week&id=new" class="button">Lägg till veckoplan</a>
         </div>
 
         <?php if ($message): ?><p class="success"><?= Security::e($message) ?></p><?php endif; ?>
@@ -20,7 +20,7 @@
                     'week_specific' => 'Veckoplan',
                 ];
                 $modeParam = $displayPlan['type'] === 'week_specific' ? 'week' : ($displayPlan['type'] === 'long_term' ? 'long' : 'default');
-                $editHref = "/admin/hours.php?mode={$modeParam}&id={$displayPlan['id']}";
+                $editHref = "/admin/oppettider?mode={$modeParam}&id={$displayPlan['id']}";
                 ?>
                 <div class="preview-heading-row">
                     <p class="preview-heading">
@@ -37,9 +37,9 @@
                         $nextShort = $nextWeekPlan['type'] === 'week_specific' ? 'Veckoplan' : $nextLabel;
                         ?>
                         <?php if ($previewNext): ?>
-                            , liveplanen nu: <a href="/admin/hours.php"><?= Security::e($sourceLabels[$activePlan['type']] ?? '') ?></a>
+                            , liveplanen nu: <a href="/admin/oppettider"><?= Security::e($sourceLabels[$activePlan['type']] ?? '') ?></a>
                         <?php else: ?>
-                            , nästa vecka: <a href="/admin/hours.php?preview=next"><?= Security::e($nextShort) ?></a>
+                            , nästa vecka: <a href="/admin/oppettider?preview=next"><?= Security::e($nextShort) ?></a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </p>
@@ -170,7 +170,7 @@
 
                 <div class="form-submit-row">
                 <?php if (($plan['id'] ?? null) !== null): ?>
-                    <a href="/admin/hours.php" class="btn-secondary-link">Avbryt</a>
+                    <a href="/admin/oppettider" class="btn-secondary-link">Avbryt</a>
                 <?php endif; ?>
                 <button type="submit">
                     <?= ($plan['id'] ?? null) !== null ? 'Uppdatera' : 'Spara' ?>
@@ -206,7 +206,7 @@
                                 <button type="submit" class="btn-toggle">Aktivera</button>
                                 </form>
                             <?php endif; ?>
-                            <a class="btn-icon" href="/admin/hours.php?mode=long&id=<?= (int) $opt['id'] ?>" title="Redigera">✎</a>
+                            <a class="btn-icon" href="/admin/oppettider?mode=long&id=<?= (int) $opt['id'] ?>" title="Redigera">✎</a>
                             <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna periodplan?');">
                                 <input type="hidden" name="csrf_token" value=<?= Security::e(Security::csrfToken()) ?>>
                                 <input type="hidden" name="action" value="delete_long">
@@ -238,7 +238,7 @@
                                 <?php if ($wp['header_text']): ?> – <?= Security::e($wp['header_text']) ?><?php endif; ?>
                             </span>
                             <div class="plan-actions">
-                                <a class="btn-icon" href="/admin/hours.php?mode=week&id=<?= (int) $wp['id'] ?>" title="Redigera">✎</a>
+                                <a class="btn-icon" href="/admin/oppettider?mode=week&id=<?= (int) $wp['id'] ?>" title="Redigera">✎</a>
                                 <form method="post" style="display:inline" onsubmit="return confirm('Ta bort denna veckoplan?');">
                                     <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
                                     <input type="hidden" name="action" value="delete_week">
