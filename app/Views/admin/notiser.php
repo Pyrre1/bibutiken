@@ -96,14 +96,16 @@
                         </button>
                     </form>
                 </td>
-                <td style="display:flex; gap: var(--space-2);">
-                    <a href="/admin/notiser?edit=<?= (int) $b['id'] ?>" class="btn-icon" title="Redigera">✏️</a>
-                    <form method="post" action="/admin/notiser"
-                        onsubmit="return confirm('Ta bort denna banner?')">
-                        <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="<?= (int) $b['id'] ?>">
-                        <button class="btn-icon btn-icon--danger" title="Radera">🗑</button>
-                    </form>
+                <td style="white-space:nowrap;">
+                    <div style="display:flex; gap: var(--space-2);">
+                      <a href="/admin/notiser?edit=<?= (int) $b['id'] ?>" class="btn-icon" title="Redigera">✏️</a>
+                      <form method="post" action="/admin/notiser"
+                          onsubmit="return confirm('Ta bort denna banner?')">
+                          <input type="hidden" name="action" value="delete">
+                          <input type="hidden" name="id" value="<?= (int) $b['id'] ?>">
+                          <button class="btn-icon btn-icon--danger" title="Radera">🗑</button>
+                      </form>
+                    </div>
                 </td>
             </tr>
         <?php endforeach; ?>

@@ -96,39 +96,41 @@ foreach ($products as $p) {
                             </form>
                         </td>
                         <!-- Edit / Save / Delete -->
-                        <td style="display:flex; gap:var(--space-2); align-items:center">
-                            <button type="button" class="btn-icon btn-edit-lp"
-                                    title="Redigera">✏️</button>
+                        <td style="white-space:nowrap; vertical-align:middle;">
+                            <div style="display:flex; gap:var(--space-2); align-items:center;">
+                                <button type="button" class="btn-icon btn-edit-lp"
+                                        title="Redigera">✏️</button>
 
-                            <form method="post" class="item-edit lp-save-form"
-                                style="display:none">
-                                <input type="hidden" name="csrf_token"
-                                    value="<?= Security::e(Security::csrfToken()) ?>">
-                                <input type="hidden" name="action" value="update">
-                                <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-                                <input type="hidden" name="type_id"
-                                    value="<?= $p['type_id'] ?>">
-                                <input type="hidden" name="name"     class="save-name">
-                                <input type="hidden" name="size"     class="save-size">
-                                <input type="hidden" name="description" class="save-desc">
-                                <input type="hidden" name="price_kr" class="save-price">
-                                <button type="submit" class="btn-icon" title="Spara">💾</button>
-                            </form>
-                            <button type="button"
-                                    class="btn-icon btn-cancel-lp item-edit"
-                                    style="display:none" title="Avbryt">✕</button>
+                                <form method="post" class="item-edit lp-save-form"
+                                    style="display:none">
+                                    <input type="hidden" name="csrf_token"
+                                        value="<?= Security::e(Security::csrfToken()) ?>">
+                                    <input type="hidden" name="action" value="update">
+                                    <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
+                                    <input type="hidden" name="type_id"
+                                        value="<?= $p['type_id'] ?>">
+                                    <input type="hidden" name="name"     class="save-name">
+                                    <input type="hidden" name="size"     class="save-size">
+                                    <input type="hidden" name="description" class="save-desc">
+                                    <input type="hidden" name="price_kr" class="save-price">
+                                    <button type="submit" class="btn-icon" title="Spara">💾</button>
+                                </form>
+                                <button type="button"
+                                        class="btn-icon btn-cancel-lp item-edit"
+                                        style="display:none" title="Avbryt">✕</button>
 
-                            <form method="post" class="item-display" style="display:inline">
-                                <input type="hidden" name="csrf_token"
-                                    value="<?= Security::e(Security::csrfToken()) ?>">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-                                <button type="submit" class="btn-icon btn-icon--danger"
-                                        title="Ta bort"
-                                        onclick="return confirm('Ta bort <?= Security::e(addslashes($p['name'])) ?>?')">
-                                    🗑️
-                                </button>
-                            </form>
+                                <form method="post" class="item-display" style="display:inline">
+                                    <input type="hidden" name="csrf_token"
+                                        value="<?= Security::e(Security::csrfToken()) ?>">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
+                                    <button type="submit" class="btn-icon btn-icon--danger"
+                                            title="Ta bort"
+                                            onclick="return confirm('Ta bort <?= Security::e(addslashes($p['name'])) ?>?')">
+                                        🗑️
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>

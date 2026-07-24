@@ -64,30 +64,32 @@
                             </button>
                         </form>
                     </td>
-                    <td style="display:flex; gap:var(--space-2); align-items:center">
-                        <!-- Edit button -->
-                        <button type="button" class="btn-icon btn-edit-row" title="Redigera">✏️</button>
+                    <td style="white-space:nowrap; vertical-align:middle;">
+                        <div style="display:flex; gap:var(--space-2); align-items:center;">
+                            <!-- Edit button -->
+                            <button type="button" class="btn-icon btn-edit-row" title="Redigera">✏️</button>
 
-                        <!-- Save/cancel (edit mode) -->
-                        <form method="post" class="item-edit" style="display:none">
-                            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
-                            <input type="hidden" name="action" value="update">
-                            <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-                            <input type="hidden" name="name" class="save-name" value="<?= Security::e($p['name']) ?>">
-                            <input type="hidden" name="price_kr" class="save-price" value="<?= number_format($p['price_ore'] / 100, 2, '.', '') ?>">
-                            <input type="hidden" name="needs_manual_work" class="save-manual" value="<?= $p['needs_manual_work'] ?>">
-                            <button type="submit" class="btn-icon" title="Spara">💾</button>
-                        </form>
-                        <button type="button" class="btn-icon btn-cancel-row item-edit" style="display:none" title="Avbryt">✕</button>
+                            <!-- Save/cancel (edit mode) -->
+                            <form method="post" class="item-edit" style="display:none">
+                                <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                                <input type="hidden" name="action" value="update">
+                                <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
+                                <input type="hidden" name="name" class="save-name" value="<?= Security::e($p['name']) ?>">
+                                <input type="hidden" name="price_kr" class="save-price" value="<?= number_format($p['price_ore'] / 100, 2, '.', '') ?>">
+                                <input type="hidden" name="needs_manual_work" class="save-manual" value="<?= $p['needs_manual_work'] ?>">
+                                <button type="submit" class="btn-icon" title="Spara">💾</button>
+                            </form>
+                            <button type="button" class="btn-icon btn-cancel-row item-edit" style="display:none" title="Avbryt">✕</button>
 
-                        <!-- Delete -->
-                        <form method="post" class="item-display" style="display:inline">
-                            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
-                            <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-                            <button type="submit" class="btn-icon btn-icon--danger" title="Ta bort"
-                                onclick="return confirm('Ta bort <?= Security::e(addslashes($p['name'])) ?>?')">🗑️</button>
-                        </form>
+                            <!-- Delete -->
+                            <form method="post" class="item-display" style="display:inline">
+                                <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
+                                <button type="submit" class="btn-icon btn-icon--danger" title="Ta bort"
+                                    onclick="return confirm('Ta bort <?= Security::e(addslashes($p['name'])) ?>?')">🗑️</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
