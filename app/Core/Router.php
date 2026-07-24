@@ -16,6 +16,7 @@ class Router
         '/admin/ordrar'              => [AdminOrderController::class,         'index'],
         '/admin/produkter'           => [AdminProductController::class,       'index'],
         '/admin/lokalproducerat'     => [AdminLocalProductController::class,  'index'],
+        '/admin/notiser'             => [NotiserController::class,            'index'],
         '/admin/exportera/ordrar'    => [AdminOrderController::class,         'exportCsv'],
         '/admin/exportera/kunder'    => [CustomerController::class,           'exportCsv'],
     ];

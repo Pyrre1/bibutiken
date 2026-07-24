@@ -14,6 +14,7 @@ require_once __DIR__ . '/../app/Controllers/Admin/CustomerController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/AdminLocalProductController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/AdminOrderController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/AdminProductController.php';
+require_once __DIR__ . '/../app/Controllers/Admin/NotiserController.php';
 
 $router = new Router();
 $router->dispatch();

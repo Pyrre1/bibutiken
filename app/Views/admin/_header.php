@@ -22,6 +22,7 @@
     $adminNav = [
         'dashboard'  => ['/admin',                    'Översikt'],
         'hours'      => ['/admin/oppettider',         'Öppettider'],
+        'notiser'    => ['/admin/notiser',            'Notiser'],
         'orders'     => ['/admin/ordrar',             'Beställningar'],
         'products'   => ['/admin/produkter',          'Produkter'],
         'local'      => ['/admin/lokalproducerat',    'Egna produkter'],

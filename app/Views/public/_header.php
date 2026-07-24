@@ -56,3 +56,4 @@
     </div>
 </header>
 <main>
+<?php require_once __DIR__ . '/_banners.php'; ?>

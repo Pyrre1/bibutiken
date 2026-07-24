@@ -3,8 +3,8 @@
    Loaded via $extraStyles in addition to public.css.
    ============================================================ */
 
-/* ── Banner image ─────────────────────────────────────────── */
-.site-banner {
+/* ── Hero image ───────────────────────────────────────────── */
+.home-hero {
   width: 100%;
   max-height: 120px;
   aspect-ratio: 6 / 1;
@@ -12,7 +12,7 @@
   margin-bottom: var(--space-5);
 }
 
-.site-banner img {
+.home-hero__image {
   width: 100%;
   height: 100%;
   object-fit: cover;

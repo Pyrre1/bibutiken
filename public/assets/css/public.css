@@ -117,6 +117,38 @@ legend {
   padding: 0 var(--space-5);
 }
 
+/* ── Site banners (public) ───────────────────────── */
+.site-banners {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px var(--space-4) var(--space-4);
+}
+
+.site-banner {
+  padding: var(--space-sm) var(--space-lg);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  border-radius: var(--radius);
+  color: #1a1a1a;
+}
+
+.site-banner--info {
+  background: color-mix(in srgb, var(--info) 14%, white);
+  border: 2px solid var(--info);
+}
+
+.site-banner--warning {
+  background: color-mix(in srgb, var(--warning) 14%, white);
+  border: 2px solid var(--warning);
+}
+
+.site-banner--success {
+  background: color-mix(in srgb, var(--success) 14%, white);
+  border: 2px solid var(--success);
+}
+
 /* ── Wordmark row ─────────────────────────────────────────── */
 .site-wordmark {
   display: flex;

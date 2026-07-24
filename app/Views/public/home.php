@@ -1,6 +1,6 @@
 <!-- BANNER IMAGE — full width, decorative -->
-<div class="site-banner">
-    <img src="/assets/images/Bibutik-med-bi.jpg" alt="Bibutiken med bi i förgrunden" class="site-banner__image">
+<div class="home-hero">
+    <img src="/assets/images/Bibutik-med-bi.jpg" alt="Bibutiken med bi i förgrunden" class="home-hero__image">
 </div>
 
 <!-- ÖPPETTIDER -->
