@@ -198,6 +198,69 @@ legend {
   color: var(--color-link-hover);
 }
 
+/* Email label swap 700–800px */
+.email-short {
+  display: none;
+}
+
+@media (max-width: 800px) and (min-width: 701px) {
+  .email-full {
+    display: none;
+  }
+
+  .email-short {
+    display: inline;
+  }
+}
+
+/* ── Info toggle button (mobile only) ────────────────────── */
+.site-header__info-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: var(--text-lg);
+  color: var(--color-heading);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  margin-left: auto;
+  line-height: 1;
+}
+
+.site-header__info-toggle:hover {
+  background: var(--honey-100);
+  color: var(--honey-600);
+}
+
+/* ── Info panel (mobile dropdown) ────────────────────────── */
+.site-info-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-nav-border);
+  background: var(--color-nav-bg);
+  font-size: var(--text-sm);
+}
+
+.site-info-panel a {
+  color: var(--color-heading);
+  text-decoration: none;
+}
+
+.site-info-panel a:hover {
+  color: var(--color-link-hover);
+}
+
+.site-info-panel__eu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--neutral-500);
+}
+
 /* ── EU/Leader logos (right) ──────────────────────────────── */
 .site-wordmark__eu {
   display: flex;
@@ -340,46 +403,40 @@ legend {
   border-top: 1px solid var(--color-border);
 }
 
-/* ── Footer ───────────────────────────────────────────────── */
-.site-footer {
-  background: var(--honey-700);
-  color: var(--honey-200);
-  text-align: center;
-  padding: var(--space-5);
-  font-size: var(--text-sm);
-  margin-top: auto;
-}
-
-.site-footer a {
-  color: var(--honey-200);
-}
-
-.site-footer a:hover {
-  color: var(--neutral-0);
-}
-
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 700px) {
-  .site-wordmark {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-2);
-  }
 
-  .site-wordmark__contact {
-    align-items: center;
-  }
-
+  .site-wordmark__contact,
   .site-wordmark__eu {
+    display: none;
+  }
+
+  .site-wordmark {
+    position: relative;
+    justify-content: center;
+  }
+
+  .site-wordmark__name {
+    text-align: center;
+  }
+
+  .site-header__info-toggle {
+    display: inline-flex;
     align-items: center;
+    position: absolute;
+    right: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .site-info-panel[hidden] {
+    display: none;
   }
 }
 
 @media (max-width: 600px) {
   :root {
     --text-3xl: 1.75rem;
-    --text-2xl: 1.4rem;
   }
 
   main {
