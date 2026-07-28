@@ -7,9 +7,9 @@ services:
       - "8082:80"
     environment:
       DB_HOST: mariadb
-      DB_NAME: shop_db
-      DB_USER: shop_user
-      DB_PASS: shop_pass
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
     volumes:
       - ./public:/var/www/html/public
       - ./app:/var/www/html/app
@@ -22,10 +22,10 @@ services:
     container_name: shop_mariadb
     restart: unless-stopped
     environment:
-      MARIADB_DATABASE: shop_db
-      MARIADB_USER: shop_user
-      MARIADB_PASSWORD: shop_pass
-      MARIADB_ROOT_PASSWORD: root_pass
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASS}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS}
     ports:
       - "3306:3306"
     volumes:

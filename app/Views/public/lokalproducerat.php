@@ -47,7 +47,7 @@
     <h2>Relaterade produkter</h2>
 
     <div class="lp-activity-note">
-        <p><strong>Salva och läppcerat m.m.</strong> går att lära siggöra själv i bihuset som
+        <p><strong>Salva och läppcerat m.m.</strong> går att lära sig göra själv i bihuset som
         bokningsbar aktivitet. Utrustning tillgängligt på plats och material ingår i priset (3–5 deltagare.)</p>
     </div>
 

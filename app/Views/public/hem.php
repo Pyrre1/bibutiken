@@ -64,6 +64,7 @@
         <h3>Är du inte biodlare, utan är intresserad av bigårdens produkter?</h3>
         <li> För köp av honung, pollen eller andra produkter från biodlingen, se <a href="/lokalproducerat">tillgängliga produkter</a>.</li>
         <h3>Är du biodlare och vill köpa biredskap?</h3>
+        <li>Under säsong går det att köpa invintringsfoder. För att säkerställa att vi beställer tillräckligt mycket foder går det att fylla i en förbeställning på <a href="/vinterfoder">vinterfoder</a>. När fodret kommit till butiken får du mejl om att hämta och fakturan kommer efter att produkterna hämtats.</li>
         <li>Vi har nästan alltid honungsburkar i de vanligaste storlekarna hemma. Vax, kupor och ramar till LN och HLS är också sådant vi alltid försöker ha hemma. Om du vill ha isolerade träkupor eller ramar/vax i andra storlekar kan vi ta hem efter önskemål. <br>Du kan se sortimentet på Biredskapsfabrikens hemsida <a href="https://www.biredskapsfabriken.se/" target="_blank" rel="noopener noreferrer">https://www.biredskapsfabriken.se/</a></li>
         <li>I bibutiken kan du också hyra en tvåramars slunga (som tar 4 HLS ramar) samt en ångvaxsmältare. Här finns en refraktometer om du vill ta med dig honung för att kolla vattnehalten i honungen.</li>
     </ul>
@@ -80,13 +81,13 @@
     <h2>Vanliga frågor</h2>
 
     <div class="faq-item">
-        <h3>Gäller samma priser som i Törebodas katalog?</h3>
-        <p id="faq-priser">Nej, priset ligger något högre för att täcka transportkostnader.</p>
+        <h3 id="faq-priser">Gäller samma priser som i Törebodas katalog?</h3>
+        <p>Nej, priset ligger något högre för att täcka transportkostnader.</p>
     </div>
 
     <div class="faq-item">
-        <h3>Kan man lämna in vax i butiken?</h3>
-        <p id="faq-vax">Ja, utsmält vax som är grovrensat och där pollen och skräp är bortskuret kan man lämna året om. Du kan välja mellan
+        <h3 id="faq-vax">Kan man lämna in vax i butiken?</h3>
+        <p>Ja, utsmält vax som är grovrensat och där pollen och skräp är bortskuret kan man lämna året om. Du kan välja mellan
             att byta till motsvarande mängd mellanväggar (du betalar för valsningen) eller sälja vaxet (till aktuellt dagspris). 
             Täckvax och vax i ram kan man lämna in 1 oktober-1 mars, <strong>utanför dessa tider  får du inte flytta ramar som inte är besiktigade av bitillsyningsman.</strong>. Då betalar du för rengöring av ramar, rensning och valsning 
             av vax och en mindre peng för transporten. 
@@ -94,7 +95,7 @@
     </div>
 
     <div class="faq-item">
-        <h3>Kan man köpa drottningar eller bisamhällen i butiken?</h3>
-        <p id="faq-drottningar">Nej inte drottningar, men ibland finns avläggare att köpa. </p>
+        <h3 id="faq-drottningar">Kan man köpa drottningar eller bisamhällen i butiken?</h3>
+        <p>Nej inte drottningar, men ibland finns avläggare att köpa. </p>
     </div>
 </section>
