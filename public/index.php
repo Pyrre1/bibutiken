@@ -6,6 +6,7 @@ require_once __DIR__ . '/../app/Controllers/Public/HomeController.php';
 require_once __DIR__ . '/../app/Controllers/Public/BeehouseController.php';
 require_once __DIR__ . '/../app/Controllers/Public/LocalProductController.php';
 require_once __DIR__ . '/../app/Controllers/Public/PreOrderController.php';
+require_once __DIR__ . '/../app/Controllers/Public/PrivacyController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/LoginController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/LogoutController.php';
 require_once __DIR__ . '/../app/Controllers/Admin/DashboardController.php';

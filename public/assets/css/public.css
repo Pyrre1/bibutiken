@@ -391,3 +391,43 @@ legend {
     grid-template-columns: 1fr;
   }
 }
+
+/* Footer */
+.site-footer {
+  margin-top: var(--space-8);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.site-footer__inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+/* Privacy policy page */
+.privacy-policy {
+  padding: var(--space-6) var(--space-4);
+}
+
+.privacy-policy__inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.privacy-policy h1 {
+  margin-bottom: var(--space-5);
+}
+
+.privacy-policy h2 {
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-2);
+}
+
+.privacy-policy p {
+  margin-bottom: var(--space-3);
+}

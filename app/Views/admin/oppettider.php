@@ -55,7 +55,7 @@
                             <li>
                                 <?= $dayNames[$d] ?>:
                                 <?php if ($day['closed']): ?>Stängt<?php else: ?>
-                                    <?= Security::e(substr($day['open_time'], 0, 5)) ?>–<?= Security::e(substr($day['close_time'], 0, 5)) ?>
+                                    <?= Security::e(substr($day['open_time'], 0, 5)) ?>-<?= Security::e(substr($day['close_time'], 0, 5)) ?>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -235,7 +235,7 @@
                         <div class="plan-item">
                             <span class="plan-name">
                                 Vecka <?= (int) $wp['week_number'] ?>, <?= (int) $wp['year'] ?>
-                                <?php if ($wp['header_text']): ?> – <?= Security::e($wp['header_text']) ?><?php endif; ?>
+                                <?php if ($wp['header_text']): ?> - <?= Security::e($wp['header_text']) ?><?php endif; ?>
                             </span>
                             <div class="plan-actions">
                                 <a class="btn-icon" href="/admin/oppettider?mode=week&id=<?= (int) $wp['id'] ?>" title="Redigera">✎</a>

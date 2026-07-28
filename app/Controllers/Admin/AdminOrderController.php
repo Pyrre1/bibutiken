@@ -110,7 +110,7 @@ class AdminOrderController
             $detailOrder = PreOrder::getOrderWithItems((int)$_GET['order']);
         }
 
-        $pageTitle    = 'Beställningar – Admin';
+        $pageTitle    = 'Beställningar - Admin';
         $activePage   = 'orders';
         $extraScripts = ['/assets/js/admin-orders.js'];
         $extraStyles  = ['/assets/css/admin-orders.css'];

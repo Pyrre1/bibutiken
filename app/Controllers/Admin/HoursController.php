@@ -222,7 +222,7 @@ class HoursController
         $longTermOptions   = HoursPlan::getLongTermOptions();
         $weekSpecificPlans = HoursPlan::getAllWeekSpecific();
 
-        $pageTitle    = 'Öppettider – Admin';
+        $pageTitle    = 'Öppettider - Admin';
         $activePage   = 'hours';
         $extraScripts = ['/assets/js/admin-hours.js'];
 

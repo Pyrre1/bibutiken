@@ -7,6 +7,7 @@ class Router
         '/bihuset'                   => [BeehouseController::class,            'index'],
         '/lokalproducerat'           => [LocalProductController::class,       'index'],
         '/vinterfoder'               => [PreOrderController::class,           'index'],
+        '/integritetspolicy'         => [PrivacyController::class,            'index'],
         '/admin'                     => [DashboardController::class,          'index'],
         '/admin/'                    => [DashboardController::class,          'index'],
         '/admin/login'               => [LoginController::class,              'index'],

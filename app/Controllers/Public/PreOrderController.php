@@ -10,7 +10,7 @@ class PreOrderController
         require_once __DIR__ . '/../../Models/Customer.php';
         require_once __DIR__ . '/../../Core/Security.php';
 
-        $pageTitle    = 'Förbeställning – Bibutiken';
+        $pageTitle    = 'Förbeställning - Bibutiken';
         $activePage   = 'preorder';
         $extraStyles  = ['/assets/css/preorder.css'];
         $extraScripts = ['/assets/js/preorder.js'];

@@ -10,7 +10,7 @@
         <p>Vi brukar kunna ha burkar för provsmakning inför köp. Vill du uppleva smaken i
         kombination med ost och kex och dyka ner i smakkombinationernas värld så finns
         <strong>honungssmakning</strong> som aktivitet — att köpa till dig själv eller ge
-        bort som gåva till någon annan honungsintresserad. (Plats för 4–8 deltagare.)</p>
+        bort som gåva till någon annan honungsintresserad. (Plats för 4-8 deltagare.)</p>
     </div>
 
     <?php if (!empty($grouped['Honung'])): ?>
@@ -48,7 +48,7 @@
 
     <div class="lp-activity-note">
         <p><strong>Salva och läppcerat m.m.</strong> går att lära sig göra själv i bihuset som
-        bokningsbar aktivitet. Utrustning tillgängligt på plats och material ingår i priset (3–5 deltagare.)</p>
+        bokningsbar aktivitet. Utrustning tillgängligt på plats och material ingår i priset (3-5 deltagare.)</p>
     </div>
 
     <?php if (!empty($grouped['Relaterade produkter'])): ?>

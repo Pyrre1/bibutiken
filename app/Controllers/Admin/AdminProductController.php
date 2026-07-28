@@ -109,7 +109,7 @@ class AdminProductController
         $products     = Product::getAllProductsAdmin();
         $lagersaldo   = PreOrder::getLagersaldo();
         $localSales   = PreOrder::getLocalSales();
-        $pageTitle    = 'Produkter – Admin';
+        $pageTitle    = 'Produkter - Admin';
         $activePage   = 'products';
         $extraScripts = ['/assets/js/admin-products.js'];
         $extraStyles  = ['/assets/css/admin-products.css'];

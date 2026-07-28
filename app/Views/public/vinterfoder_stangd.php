@@ -6,7 +6,7 @@
         <p class="reminder-success"><?= Security::e($reminderMessage) ?></p>
     <?php else: ?>
         <p>Har du beställt via hemsidan tidigare år kommer du automatiskt få en påminnelse när nästa säsongs vinterfoder går att beställa.</p>
-        <p class="reminder-note">Ny kund från 2026? Har du inte beställt via den nya hemsidan tidigare – skriv upp dig nedan för att få ett mejl när beställningen öppnar.</p>
+        <p class="reminder-note">Ny kund från 2026? Har du inte beställt via den nya hemsidan tidigare - skriv upp dig nedan för att få ett mejl när beställningen öppnar.</p>
         <div class="reminder-toggle-wrap">
             <button type="button" class="btn btn--secondary" id="show-reminder-form">Meddela mig när beställningen öppnar</button>
         </div>

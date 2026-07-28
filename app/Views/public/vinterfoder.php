@@ -16,7 +16,7 @@
 <div class="info-banner" id="preorder-info-banner">
     <button class="info-banner__close" id="close-info-banner" aria-label="Stäng meddelande">✕</button>
     <p><strong>Observera:</strong> priser på vinterfoder är uppskattade från förra årets leverans och är bara ungefärliga tills dess att årets priser blivit beräknade exakt. Du kommer bli kontaktad när dina varor kommit och då få årets aktuella priser. Det brukar inte vara några större skillnader, men värt att notera. Betalning sker efter leverans och detta formulär är avsett som en avsiktsförklaring för att kunna ta hem rätt mängd vinterfoder.</p>
-    <p>När du skickar in din beställning av vinterfoder godkänner du att Strängnäs Biredskap AB använder e-postadressen för att kontakta dig när din order går att hämta. Självklart följer vi GDPR och vill du få din e-post raderad, kontakta butiken så raderar vi den.</p>
+    <p>När du skickar in din förbokning sparar vi ditt namn och din e-postadress så att vi kan hantera din beställning och kontakta dig när nästa förbokning öppnar. Vi använder inte dina uppgifter för reklam eller nyhetsbrev. Du kan när som helst kontakta oss på <a href="mailto:info@strangnas-biredskap.se">info@strangnas-biredskap.se</a> om du vill att vi raderar dina uppgifter. Läs mer i vår <a href="/integritetspolicy">integritetspolicy</a>.</p>
 </div>
 
 <form method="post" action="/vinterfoder" class="preorder-form" id="preorder-form">

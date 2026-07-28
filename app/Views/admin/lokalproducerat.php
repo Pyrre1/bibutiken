@@ -58,7 +58,7 @@ foreach ($products as $p) {
                         <!-- Description -->
                         <td class="lp-desc-cell">
                             <span class="item-display lp-desc-display">
-                                <?= Security::e($p['description'] ?? '–') ?>
+                                <?= Security::e($p['description'] ?? '-') ?>
                             </span>
                             <textarea class="item-edit" name="description"
                                     rows="2" style="display:none"><?= Security::e($p['description'] ?? '') ?></textarea>
@@ -151,7 +151,7 @@ foreach ($products as $p) {
             <div class="lp-add-field">
                 <label for="lp-type">Typ av produkt</label>
                 <select id="lp-type" name="type_id" required>
-                    <option value="">– välj –</option>
+                    <option value="">- välj -</option>
                     <?php foreach ($types as $t): ?>
                         <option value="<?= $t['id'] ?>"><?= Security::e($t['name']) ?></option>
                     <?php endforeach; ?>

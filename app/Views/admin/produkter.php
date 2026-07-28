@@ -136,7 +136,7 @@
             <div class="saldo-field">
                 <label for="saldo-product">Produkt</label>
                 <select id="saldo-product" name="saldo_product_id" required>
-                    <option value="">– välj –</option>
+                    <option value="">- välj -</option>
                     <?php foreach ($products as $p): ?>
                         <?php if ($p['active'] && !$p['deprecated']): ?>
                         <option value="<?= $p['id'] ?>"><?= Security::e($p['name']) ?></option>
@@ -256,7 +256,7 @@
                 <div class="saldo-field">
                     <label>Produkt</label>
                     <select name="ls_product_id[]" required>
-                        <option value="">– välj –</option>
+                        <option value="">- välj -</option>
                         <?php foreach ($products as $p): ?>
                             <?php if ($p['active'] && !$p['deprecated']): ?>
                             <option value="<?= $p['id'] ?>"><?= Security::e($p['name']) ?></option>

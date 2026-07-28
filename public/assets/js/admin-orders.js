@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       const href = this.href;
       showConfirmPopup(e,
-        'Denna export är för prisöversikt – inte för att mejla kunder. ' +
+        'Denna export är för prisöversikt - inte för att mejla kunder. ' +
         'Mejl skickas via "Ej hämtade". Vill du fortsätta?',
         function () { window.location.href = href; }
       );

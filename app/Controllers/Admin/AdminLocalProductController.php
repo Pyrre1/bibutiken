@@ -70,7 +70,7 @@ class AdminLocalProductController
 
         $products     = LocalProduct::getAllAdmin();
         $types        = LocalProduct::getAllTypes();
-        $pageTitle    = 'Egna produkter – Admin';
+        $pageTitle    = 'Egna produkter - Admin';
         $activePage   = 'local';
         $extraStyles  = ['/assets/css/admin-local-products.css'];
         $extraScripts = ['/assets/js/admin-local-products.js'];

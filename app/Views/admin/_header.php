@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= Security::e($pageTitle ?? 'Admin') ?> – Bibutiken Admin</title>
+    <title><?= Security::e($pageTitle ?? 'Admin') ?> - Bibutiken Admin</title>
     <link rel="stylesheet" href="/assets/css/tokens.css">
     <link rel="stylesheet" href="/assets/css/shared.css">
     <link rel="stylesheet" href="/assets/css/admin.css">

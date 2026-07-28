@@ -21,7 +21,7 @@
                 <?= htmlspecialchars($weekDates[$day['day_of_week']]) ?>
             </span>
             <span class="hours-day-value">
-                <?= htmlspecialchars(substr($day['open_time'], 0, 5)) ?>–<?= htmlspecialchars(substr($day['close_time'], 0, 5)) ?>
+                <?= htmlspecialchars(substr($day['open_time'], 0, 5)) ?>-<?= htmlspecialchars(substr($day['close_time'], 0, 5)) ?>
             </span>
         </li>
     <?php endforeach; ?>

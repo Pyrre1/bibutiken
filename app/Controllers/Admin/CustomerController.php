@@ -79,7 +79,7 @@ class CustomerController
             $customer = Customer::getCustomerById($viewId);
         }
 
-        $pageTitle    = 'Kunder – Admin';
+        $pageTitle    = 'Kunder - Admin';
         $activePage   = 'customers';
         $extraScripts = ['/assets/js/admin-customers.js'];
         $extraStyles  = ['/assets/css/admin-customers.css'];

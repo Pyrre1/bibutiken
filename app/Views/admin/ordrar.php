@@ -72,7 +72,7 @@
                         </select>
                     </form>
                 <?php else: ?>
-                    <span class="muted">–</span>
+                    <span class="muted">-</span>
                 <?php endif; ?>
             </td>
             <td>
