@@ -62,7 +62,7 @@
     <h2>Vad kan jag köpa här?</h2>
     <ul class="content-list">
         <h3>Är du inte biodlare, utan är intresserad av bigårdens produkter?</h3>
-        <li> För köp av honung, pollen eller andra produkter från biodlingen, se <a href="/lokalproducerat">tillgängliga produkter</a>.</li>
+        <li> För köp av honung, pollen eller andra produkter från biodlingen, se <a href="/biprodukter">tillgängliga produkter</a>.</li>
         <h3>Är du biodlare och vill köpa biredskap?</h3>
         <li>Under säsong går det att köpa invintringsfoder. För att säkerställa att vi beställer tillräckligt mycket foder går det att fylla i en förbeställning på <a href="/vinterfoder">vinterfoder</a>. När fodret kommit till butiken får du mejl om att hämta och fakturan kommer efter att produkterna hämtats.</li>
         <li>Vi har nästan alltid honungsburkar i de vanligaste storlekarna hemma. Vax, kupor och ramar till LN och HLS är också sådant vi alltid försöker ha hemma. Om du vill ha isolerade träkupor eller ramar/vax i andra storlekar kan vi ta hem efter önskemål. <br>Du kan se sortimentet på Biredskapsfabrikens hemsida <a href="https://www.biredskapsfabriken.se/" target="_blank" rel="noopener noreferrer">https://www.biredskapsfabriken.se/</a></li>

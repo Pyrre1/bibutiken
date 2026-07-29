@@ -1,7 +1,7 @@
 <?php
 /** Expects $pageTitle and $activePage to be set before including. */
 
-$butikPages  = ['lokalproducerat', 'preorder', 'butik'];
+$butikPages  = ['biprodukter', 'preorder', 'butik'];
 $upplevPages = ['bihuset', 'upplev'];
 $active      = $activePage ?? '';
 $inButik     = in_array($active, $butikPages);
@@ -98,7 +98,7 @@ $inUpplev    = in_array($active, $upplevPages);
                 class="site-nav-mobile__parent <?= $inButik ? 'is-open' : '' ?>"
                 <?= $inButik ? 'aria-current="page"' : '' ?>>Butik</a>
             <div class="site-nav-mobile__sub <?= $inButik ? 'is-open' : '' ?>">
-                <a href="/lokalproducerat" <?= $active === 'lokalproducerat' ? 'aria-current="page"' : '' ?>>Lokalproducerat</a>
+                <a href="/biprodukter" <?= $active === 'biprodukter' ? 'aria-current="page"' : '' ?>>Biprodukter</a>
                 <a href="/vinterfoder"     <?= $active === 'preorder'        ? 'aria-current="page"' : '' ?>>Vinterfoder</a>
             </div>
         </div>
@@ -116,7 +116,7 @@ $inUpplev    = in_array($active, $upplevPages);
 <main>
 <?php if ($inButik): ?>
 <div class="site-subnav site-subnav--inline" aria-label="Butik undermeny">
-    <a href="/lokalproducerat" <?= $active === 'lokalproducerat' ? 'aria-current="page"' : '' ?>>Lokalproducerat</a>
+    <a href="/biprodukter" <?= $active === 'biprodukter' ? 'aria-current="page"' : '' ?>>Biprodukter</a>
     <a href="/vinterfoder"     <?= $active === 'preorder'        ? 'aria-current="page"' : '' ?>>Vinterfoder</a>
 </div>
 <?php elseif ($inUpplev): ?>

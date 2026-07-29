@@ -25,7 +25,7 @@
         'notiser'    => ['/admin/notiser',            'Notiser'],
         'orders'     => ['/admin/ordrar',             'Beställningar'],
         'products'   => ['/admin/produkter',          'Produkter'],
-        'local'      => ['/admin/lokalproducerat',    'Egna produkter'],
+        'local'      => ['/admin/biprodukter',    'Egna produkter'],
         'customers'  => ['/admin/kunder',             'Kunder'],
         'logout'     => ['/admin/logout',             'Logga ut'],
     ];

@@ -1,10 +1,10 @@
 <?php
 
-class AdminLocalProductController
+class AdminBeeProductController
 {
     public static function index(): void
     {
-        require_once __DIR__ . '/../../Models/LocalProduct.php';
+        require_once __DIR__ . '/../../Models/BeeProduct.php';
 
         Auth::requireLogin();
 
@@ -29,7 +29,7 @@ class AdminLocalProductController
                     if ($typeId <= 0 || $size === '' || $name === '' || $priceOre <= 0) {
                         $error = 'Fyll i typ, storlek, namn och ett giltigt pris.';
                     } else {
-                        LocalProduct::create($typeId, $size, $name, $description, $priceOre);
+                        BeeProduct::create($typeId, $size, $name, $description, $priceOre);
                         $message = 'Produkt skapad.';
                     }
 
@@ -44,22 +44,22 @@ class AdminLocalProductController
                     if ($id <= 0 || $typeId <= 0 || $size === '' || $name === '' || $priceOre <= 0) {
                         $error = 'Fyll i alla fält.';
                     } else {
-                        LocalProduct::update($id, $typeId, $size, $name, $description, $priceOre);
+                        BeeProduct::update($id, $typeId, $size, $name, $description, $priceOre);
                         $message = 'Produkt uppdaterad.';
                     }
 
                 } elseif ($action === 'toggle_active') {
                     $active = (bool) (int) ($_POST['active'] ?? 0);
-                    LocalProduct::setActive($id, $active);
+                    BeeProduct::setActive($id, $active);
 
                 } elseif ($action === 'delete') {
-                    LocalProduct::delete($id);
+                    BeeProduct::delete($id);
                     $message = 'Produkt borttagen.';
 
                 } elseif ($action === 'reorder') {
                     $ids = array_map('intval', $_POST['ordered_ids'] ?? []);
                     if (!empty($ids)) {
-                        LocalProduct::updateSortOrder($ids);
+                        BeeProduct::updateSortOrder($ids);
                     }
                     header('Content-Type: application/json');
                     echo json_encode(['ok' => true]);
@@ -68,15 +68,15 @@ class AdminLocalProductController
             }
         }
 
-        $products     = LocalProduct::getAllAdmin();
-        $types        = LocalProduct::getAllTypes();
+        $products     = BeeProduct::getAllAdmin();
+        $types        = BeeProduct::getAllTypes();
         $pageTitle    = 'Egna produkter - Admin';
         $activePage   = 'local';
         $extraStyles  = ['/assets/css/admin-local-products.css'];
         $extraScripts = ['/assets/js/admin-local-products.js'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
-        require __DIR__ . '/../../Views/admin/lokalproducerat.php';
+        require __DIR__ . '/../../Views/admin/biprodukter.php';
         require __DIR__ . '/../../Views/admin/_footer.php';
     }
 }

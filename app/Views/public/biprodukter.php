@@ -1,4 +1,4 @@
-<h1>Lokalproducerat</h1>
+<h1>Biprodukter</h1>
 
 <!-- ── Honung ─────────────────────────────────────────── -->
 <section class="lp-section">
