@@ -156,6 +156,76 @@ class Customer
         return $customer;
     }
 
+    /**
+     * Remove a single role from a customer by role name.
+     * Logs the unsubscribe timestamp on the role assignment row.
+     * Returns true if role was present and removed, false if not found.
+     */
+    public static function removeRole(int $customerId, string $roleName): bool
+    {
+        $pdo = Database::getConnection();
+
+        $stmt = $pdo->prepare(
+            'SELECT cr.id FROM customer_roles cr
+            JOIN customer_role_assignments cra ON cra.role_id = cr.id
+            WHERE cra.customer_id = ? AND cr.name = ?'
+        );
+        $stmt->execute([$customerId, $roleName]);
+        $role = $stmt->fetch();
+
+        if (!$role) {
+            return false;
+        }
+
+        $roleId = (int)$role['id'];
+
+        $pdo->prepare(
+            'DELETE FROM customer_role_assignments
+            WHERE customer_id = ? AND role_id = ?'
+        )->execute([$customerId, $roleId]);
+
+        $pdo->prepare(
+            'INSERT INTO customer_role_unsubscribed (customer_id, role_id)
+            VALUES (?, ?)'
+        )->execute([$customerId, $roleId]);
+
+        return true;
+    }
+
+    /**
+     * Returns role names that are allowed to be unsubscribed via email link.
+     * Driven by the unsubscribable column in customer_roles — no hardcoding.
+     */
+    public static function getUnsubscribableRoles(): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->query(
+            'SELECT name FROM customer_roles WHERE unsubscribable = 1'
+        );
+        return $stmt->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Check if a customer exists and has a specific role.
+     * Returns the customer row or null.
+     */
+    public static function getCustomerWithRole(int $customerId, string $roleName): ?array
+    {
+        $pdo = Database::getConnection();
+
+        $stmt = $pdo->prepare(
+            'SELECT c.id, c.name, c.email
+            FROM customers c
+            JOIN customer_role_assignments cra ON cra.customer_id = c.id
+            JOIN customer_roles cr ON cr.id = cra.role_id
+            WHERE c.id = ? AND cr.name = ?'
+        );
+        $stmt->execute([$customerId, $roleName]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
     public static function getAllRoles(): array
     {
         $pdo = Database::getConnection();

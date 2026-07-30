@@ -10,6 +10,7 @@ class Router
         '/butik'                     => [BeeProductController::class,       'index'],
         '/upplev'                    => [BeehouseController::class,           'index'],
         '/integritetspolicy'         => [PrivacyController::class,            'index'],
+        '/avregistrera'              => [UnsubscribeController::class,        'index'],
         '/admin'                     => [DashboardController::class,          'index'],
         '/admin/'                    => [DashboardController::class,          'index'],
         '/admin/login'               => [LoginController::class,              'index'],
