@@ -64,7 +64,7 @@ INSERT INTO mail_templates (namn, amne, brodtext, roll) VALUES
 -- 4. Timestamps on role assignments + unsubscribe history table
 -- ─────────────────────────────────────────────
 ALTER TABLE customer_role_assignments
-  ADD COLUMN IF NOT EXISTS subscribed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  ADD COLUMN IF NOT EXISTS subscribed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TABLE IF NOT EXISTS customer_role_unsubscribed (
   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
