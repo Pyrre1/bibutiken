@@ -4,6 +4,7 @@ class PreOrderController
 {
     public static function index(): void
     {
+        require_once __DIR__ . '/../../Core/Database.php';
         require_once __DIR__ . '/../../Models/PreOrder.php';
         require_once __DIR__ . '/../../Models/Product.php';
         require_once __DIR__ . '/../../Models/Settings.php';
@@ -122,15 +123,17 @@ class PreOrderController
                     $successOrderNumber = $order['order_number'];
 
                     try {
-                        self::notifyOwner(
-                            $order['order_number'],
+                        self::sendConfirmation(
+                            $order['customer_id'],
                             $formValues['customer_name'],
                             $formValues['customer_email'],
+                            $order['id'],
                             $orderItems,
-                            $activeProducts
+                            $activeProducts,
+                            $order
                         );
                     } catch (Throwable $e) {
-                        error_log('Pre-order owner notification failed: ' . $e->getMessage());
+                        error_log('Pre-order confirmation email failed: ' . $e->getMessage());
                     }
 
                     $formValues = ['customer_name' => '', 'customer_email' => ''];
@@ -146,39 +149,72 @@ class PreOrderController
         require __DIR__ . '/../../Views/public/_footer.php';
     }
 
-    private static function notifyOwner(
-        string $orderNumber,
+    private static function sendConfirmation(
+        int $customerId,
         string $customerName,
         string $customerEmail,
+        int $orderId,
         array $orderItems,
-        array $activeProducts
+        array $activeProducts,
+        array $order = []
     ): void {
-        $config = require __DIR__ . '/../../../config/config.php';
-        $to     = $config['mail']['owner_notify_email'];
-        $from   = $config['mail']['site_from_email'];
+        // Respect ingen_mejl master opt-out
+        $customer = Customer::getCustomerById($customerId);
+        if (!$customer) return;
+        $roles = array_column($customer['roles'], 'name');
+        if (in_array('ingen_mejl', $roles, true)) return;
 
-        $subject = 'Ny förbeställning: ' . $orderNumber;
-
+        // Build {vara} — product list lines
         $lines    = [];
         $totalOre = 0;
         foreach ($orderItems as $item) {
             $name      = $activeProducts[$item['product_id']]['name'] ?? 'Okänd produkt';
             $lineTotal = $item['quantity'] * $item['unit_price_ore'];
             $totalOre += $lineTotal;
-            $lines[]   = sprintf('- %s x%d (%.2f kr/st)', $name, $item['quantity'], $item['unit_price_ore'] / 100);
+            $lines[]   = sprintf('%s × %d st', $name, $item['quantity']);
+        }
+        $varaPlain = implode("\n", $lines);
+        $varaHtml  = implode('<br>', array_map('htmlspecialchars', $lines));
+
+        // Fetch confirmation template from DB
+        $pdo      = Database::getConnection();
+        $tmplStmt = $pdo->prepare(
+            "SELECT amne, brodtext FROM mail_templates
+             WHERE namn = 'Orderbekräftelse' AND roll = 'vinterfoder'
+             LIMIT 1"
+        );
+        $tmplStmt->execute();
+        $tmpl = $tmplStmt->fetch();
+
+        if (!$tmpl) {
+            error_log('sendConfirmation: Orderbekräftelse template not found in mail_templates');
+            return;
         }
 
-        $body = "Ny förbeställning har kommit in.\n\n"
-            . "Ordernummer: {$orderNumber}\n"
-            . "Namn: {$customerName}\n"
-            . "E-post: {$customerEmail}\n\n"
-            . "Produkter:\n" . implode("\n", $lines) . "\n\n"
-            . sprintf("Totalt: %.2f kr\n", $totalOre / 100);
+        $vars = [
+            'namn'    => $customerName,
+            'vara'    => $varaPlain,
+            'pris'    => number_format($totalOre / 100, 2, ',', ' '),
+            'ordernr' => $order['order_number'] ?? '',
+        ];
 
-        $headers = "From: {$from}\r\n"
-            . "Reply-To: {$from}\r\n"
-            . "Content-Type: text/plain; charset=UTF-8\r\n";
+        // For HTML body, swap plain newline product list for <br> separated version
+        $bodyHtml  = nl2br(htmlspecialchars($tmpl['brodtext']));
+        $bodyHtml  = str_replace('{vara}', $varaHtml, $bodyHtml);
+        $bodyPlain = $tmpl['brodtext'];
 
-        @mail($to, $subject, $body, $headers);
+        require_once __DIR__ . '/../../Core/MailService.php';
+        $mailer = new MailService();
+        $mailer->send(
+            $customerEmail,
+            $customerName,
+            $tmpl['amne'],
+            $bodyHtml,
+            $bodyPlain,
+            $vars,
+            'vinterfoder',
+            $customerId,
+            $orderId
+        );
     }
 }

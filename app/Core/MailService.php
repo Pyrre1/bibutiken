@@ -59,13 +59,20 @@ class MailService
             $cfg = $this->config['mail'];
 
             $mail->isSMTP();
-            $mail->Host       = $cfg['smtp_host'];
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $cfg['smtp_user'];
-            $mail->Password   = $cfg['smtp_pass'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = $cfg['smtp_port'];
-            $mail->CharSet    = 'UTF-8';
+            $mail->Host    = $cfg['smtp_host'];
+            $mail->Port    = $cfg['smtp_port'];
+            $mail->CharSet = 'UTF-8';
+
+            // Mailpit (local dev) needs no auth or encryption
+            if ($cfg['smtp_host'] === 'mailpit') {
+                $mail->SMTPAuth   = false;
+                $mail->SMTPSecure = '';
+            } else {
+                $mail->SMTPAuth   = true;
+                $mail->Username   = $cfg['smtp_user'];
+                $mail->Password   = $cfg['smtp_pass'];
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
 
             $mail->setFrom($cfg['from_email'], $cfg['from_name']);
             $mail->addAddress($toEmail, $toName);

@@ -64,7 +64,7 @@ class PreOrder
                 }
 
                 $pdo->commit();
-                return ['id' => $orderId, 'order_number' => $orderNumber];
+                return ['id' => $orderId, 'order_number' => $orderNumber, 'customer_id' => $customerId];
 
             } catch (PDOException $e) {
                 $pdo->rollBack();
