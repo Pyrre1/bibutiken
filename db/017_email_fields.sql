@@ -44,19 +44,19 @@ INSERT INTO mail_templates (namn, amne, brodtext, roll) VALUES
 (
   'Orderbekräftelse',
   'Tack för din föranmälan – Strängnäs Biredskap',
-  'Hej {namn},\n\nTack för din föranmälan! Vi bekräftar att vi tagit emot din beställning:\n\n{vara}\n\nDu kommer att bli kontaktad när varorna finns tillgängliga för avhämtning.\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
+  'Hej {namn},\n\nTack för din föranmälan! Vi bekräftar att vi tagit emot din beställning:\n\nOrdernummer: {ordernr}\n\n{vara}\n\nDu kommer att bli kontaktad när varorna finns tillgängliga för avhämtning.\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
   'vinterfoder'
 ),
 (
   'Varor anlända',
   'Dina varor har anlänt – Strängnäs Biredskap',
-  'Hej {namn},\n\nDina föranmälda varor har nu anlänt och är redo för avhämtning.\n\nDin beställning:\n{vara}\n\nTotalt pris: {pris} kr\n\nKontakta oss för att boka tid för avhämtning.\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
+  'Hej {namn},\n\nDina föranmälda varor har nu anlänt och är redo för avhämtning.\n\nFör denna beställning landade priset på \n{vara}\n\n på {pris} kr\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
   'vinterfoder'
 ),
 (
   'Påminnelse',
   'Påminnelse: Dina varor väntar – Strängnäs Biredskap',
-  'Hej {namn},\n\nDetta är en påminnelse om att dina föranmälda varor fortfarande väntar på avhämtning.\n\nDin beställning:\n{vara}\n\nTotalt pris: {pris} kr\n\nKontakta oss snarast för att hämta dina varor.\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
+  'Hej {namn},\n\nDetta är en påminnelse om att dina föranmälda varor fortfarande väntar på avhämtning.\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
   'vinterfoder'
 );
 
