@@ -658,3 +658,37 @@ body.admin #hours-form>button[type="submit"] {
   background: var(--honey-700);
   border-color: var(--honey-700);
 }
+
+/* ── Mejlmallar ─────────────────────────────────────────── */
+.mail-template-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-3);
+  background: var(--color-surface);
+}
+
+.mail-template-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  list-style: none;
+  gap: var(--space-4);
+}
+
+.mail-template-summary::-webkit-details-marker {
+  display: none;
+}
+
+.mail-template-summary .tmpl-name {
+  font-weight: 600;
+}
+
+.mail-template-form {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}

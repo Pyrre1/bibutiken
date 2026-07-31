@@ -87,13 +87,14 @@ class AdminOrderController
                             'namn'  => $first['customer_name'],
                             'vara'  => $first['vara'],
                             'pris'  => number_format($first['total_ore'] / 100, 2, ',', ' '),
+                            'ordernr' => $first['order_number'] ?? '',
                         ];
                     }
                     echo json_encode(['count' => count($recipients), 'preview' => $preview]);
                     exit;
 
                 } elseif ($action === 'send_info_mail') {
-                    $excludeSent = ($_POST['exclude_sent'] ?? '1') === '1';
+                    $excludeSent = isset($_POST['exclude_sent']);
                     $subject     = trim($_POST['mail_subject'] ?? '');
                     $body        = trim($_POST['mail_body'] ?? '');
                     $recipients  = PreOrder::getInfoMailRecipients($excludeSent);
@@ -108,13 +109,15 @@ class AdminOrderController
                         $failed   = 0;
                         $sentIds  = [];
                         foreach ($recipients as $r) {
+                            error_log('DEBUG order row: ' . print_r($r, true));
                             $varaHtml = implode('<br>', array_map('htmlspecialchars', explode("\n", $r['vara'])));
                             $vars = [
-                                'namn' => $r['customer_name'],
-                                'vara' => $r['vara'],
-                                'pris' => number_format($r['total_ore'] / 100, 2, ',', ' '),
+                                'namn'    => $r['customer_name'],
+                                'vara'    => $r['vara'],
+                                'pris'    => number_format($r['total_ore'] / 100, 2, ',', ' '),
+                                'ordernr' => $r['order_number'] ?? '',
                             ];
-                            $bodyHtml = str_replace('{vara}', $varaHtml, nl2br(htmlspecialchars($body)));
+                            $bodyHtml = str_replace('{varor}', $varaHtml, nl2br(htmlspecialchars($body)));
                             try {
                                 $mailer->send(
                                     $r['customer_email'],
@@ -158,11 +161,12 @@ class AdminOrderController
                         foreach ($recipients as $r) {
                             $varaHtml = implode('<br>', array_map('htmlspecialchars', explode("\n", $r['vara'])));
                             $vars = [
-                                'namn' => $r['customer_name'],
-                                'vara' => $r['vara'],
-                                'pris' => number_format($r['total_ore'] / 100, 2, ',', ' '),
+                                'namn'    => $r['customer_name'],
+                                'vara'    => $r['vara'],
+                                'pris'    => number_format($r['total_ore'] / 100, 2, ',', ' '),
+                                'ordernr' => $r['order_number'] ?? '',
                             ];
-                            $bodyHtml = str_replace('{vara}', $varaHtml, nl2br(htmlspecialchars($body)));
+                            $bodyHtml = str_replace('{varor}', $varaHtml, nl2br(htmlspecialchars($body)));
                             try {
                                 $mailer->send(
                                     $r['customer_email'],

@@ -211,8 +211,9 @@ document.addEventListener('DOMContentLoaded', function () {
           [subject, body].forEach((_, i) => {
             const s = [subject, body][i]
               .replaceAll('{namn}', data.preview.namn)
-              .replaceAll('{vara}', data.preview.vara)
-              .replaceAll('{pris}', data.preview.pris);
+              .replaceAll('{varor}', data.preview.vara)
+              .replaceAll('{pris}', data.preview.pris)
+              .replaceAll('{ordernr}', data.preview.ordernr ?? '');
             if (i === 0) subject = s; else body = s;
           });
 

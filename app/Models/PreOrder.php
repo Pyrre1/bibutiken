@@ -592,24 +592,24 @@ class PreOrder
         $pdo = Database::getConnection();
 
         $sql = 'SELECT o.id AS order_id, o.order_number, o.info_sent_at,
-                       c.id AS customer_id, c.name AS customer_name, c.email AS customer_email,
-                       GROUP_CONCAT(DISTINCT p.name, " × ", i.quantity, " st" ORDER BY p.sort_order SEPARATOR "\n") AS vara,
-                       SUM(i.quantity * i.unit_price_ore) AS total_ore
+                        c.id AS customer_id, c.name AS customer_name, c.email AS customer_email,
+                        GROUP_CONCAT(DISTINCT p.name, " × ", i.quantity, " st" ORDER BY p.sort_order SEPARATOR "\n") AS vara,
+                        SUM(i.quantity * i.unit_price_ore) AS total_ore
                 FROM pre_orders o
                 JOIN customers c ON c.id = o.customer_id
                 JOIN pre_order_items i ON i.pre_order_id = o.id
                 JOIN products p ON p.id = i.product_id
                 WHERE o.is_delivered = 0
-                  AND c.id IN (
-                      SELECT customer_id FROM customer_role_assignments ra
-                      JOIN customer_roles cr ON cr.id = ra.role_id
-                      WHERE cr.name = "vinterfoder"
-                  )
-                  AND c.id NOT IN (
-                      SELECT customer_id FROM customer_role_assignments ra
-                      JOIN customer_roles cr ON cr.id = ra.role_id
-                      WHERE cr.name = "ingen_mejl"
-                  )';
+                    AND c.id IN (
+                        SELECT customer_id FROM customer_role_assignments ra
+                        JOIN customer_roles cr ON cr.id = ra.role_id
+                        WHERE cr.name = "vinterfoder"
+                    )
+                    AND c.id NOT IN (
+                        SELECT customer_id FROM customer_role_assignments ra
+                        JOIN customer_roles cr ON cr.id = ra.role_id
+                        WHERE cr.name = "ingen_mejl"
+                    )';
 
         if ($excludeAlreadySent) {
             $sql .= ' AND o.info_sent_at IS NULL';
@@ -630,29 +630,29 @@ class PreOrder
         $pdo = Database::getConnection();
 
         $sql = 'SELECT o.id AS order_id, o.order_number,
-                       o.info_sent_at, o.paminnelse_sent_at, o.reminders_count,
-                       c.id AS customer_id, c.name AS customer_name, c.email AS customer_email,
-                       GROUP_CONCAT(DISTINCT p.name, " × ", i.quantity, " st" ORDER BY p.sort_order SEPARATOR "\n") AS vara,
+                        o.info_sent_at, o.paminnelse_sent_at, o.reminders_count,
+                        c.id AS customer_id, c.name AS customer_name, c.email AS customer_email,
+                        GROUP_CONCAT(DISTINCT p.name, " × ", i.quantity, " st" ORDER BY p.sort_order SEPARATOR "\n") AS vara,
                        SUM(i.quantity * i.unit_price_ore) AS total_ore
                 FROM pre_orders o
                 JOIN customers c ON c.id = o.customer_id
                 JOIN pre_order_items i ON i.pre_order_id = o.id
                 JOIN products p ON p.id = i.product_id
                 WHERE o.is_delivered = 0
-                  AND c.id IN (
-                      SELECT customer_id FROM customer_role_assignments ra
-                      JOIN customer_roles cr ON cr.id = ra.role_id
-                      WHERE cr.name = "vinterfoder"
-                  )
-                  AND c.id NOT IN (
-                      SELECT customer_id FROM customer_role_assignments ra
-                      JOIN customer_roles cr ON cr.id = ra.role_id
-                      WHERE cr.name = "ingen_mejl"
-                  )
-                  AND (
-                      o.info_sent_at IS NULL
-                      OR o.info_sent_at <= DATE_SUB(NOW(), INTERVAL ? DAY)
-                  )
+                    AND c.id IN (
+                        SELECT customer_id FROM customer_role_assignments ra
+                        JOIN customer_roles cr ON cr.id = ra.role_id
+                        WHERE cr.name = "vinterfoder"
+                    )
+                    AND c.id NOT IN (
+                        SELECT customer_id FROM customer_role_assignments ra
+                        JOIN customer_roles cr ON cr.id = ra.role_id
+                        WHERE cr.name = "ingen_mejl"
+                    )
+                    AND (
+                        o.info_sent_at IS NULL
+                        OR o.info_sent_at <= DATE_SUB(NOW(), INTERVAL ? DAY)
+                    )
                 GROUP BY o.id, c.id
                 ORDER BY o.created_at ASC';
 
@@ -677,9 +677,9 @@ class PreOrder
         $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
         $pdo->prepare(
             "UPDATE pre_orders
-             SET paminnelse_sent_at = NOW(),
-                 reminders_count = reminders_count + 1
-             WHERE id IN ($placeholders)"
+            SET paminnelse_sent_at = NOW(),
+                reminders_count = reminders_count + 1
+            WHERE id IN ($placeholders)"
         )->execute($orderIds);
     }
 

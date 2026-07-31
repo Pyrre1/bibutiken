@@ -44,13 +44,13 @@ INSERT INTO mail_templates (namn, amne, brodtext, roll) VALUES
 (
   'Orderbekräftelse',
   'Tack för din föranmälan – Strängnäs Biredskap',
-  'Hej {namn},\n\nTack för din föranmälan! Vi bekräftar att vi tagit emot din beställning:\n\nOrdernummer: {ordernr}\n\n{vara}\n\nDu kommer att bli kontaktad när varorna finns tillgängliga för avhämtning.\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
+  'Hej {namn},\n\nTack för din föranmälan! Vi bekräftar att vi tagit emot din beställning:\n\nOrdernummer: {ordernr}\n\n{varor}\n\nDu kommer att bli kontaktad när varorna finns tillgängliga för avhämtning.\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
   'vinterfoder'
 ),
 (
   'Varor anlända',
   'Dina varor har anlänt – Strängnäs Biredskap',
-  'Hej {namn},\n\nDina föranmälda varor har nu anlänt och är redo för avhämtning.\n\nFör denna beställning landade priset på \n{vara}\n\n på {pris} kr\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
+  'Hej {namn},\n\nDina föranmälda varor har nu anlänt och är redo för avhämtning.\n\nFör denna beställning landade priset på \n{varor}\n\n på {pris} kr\n\nMed vänliga hälsningar,\nSträngnäs Biredskap',
   'vinterfoder'
 ),
 (

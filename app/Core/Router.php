@@ -4,10 +4,10 @@ class Router
 {
     private const ROUTES = [
         '/'                          => [HomeController::class,               'index'],
-        '/bihuset'                   => [BeehouseController::class,            'index'],
-        '/biprodukter'           => [BeeProductController::class,       'index'],
+        '/bihuset'                   => [BeehouseController::class,           'index'],
+        '/biprodukter'               => [BeeProductController::class,         'index'],
         '/vinterfoder'               => [PreOrderController::class,           'index'],
-        '/butik'                     => [BeeProductController::class,       'index'],
+        '/butik'                     => [BeeProductController::class,         'index'],
         '/upplev'                    => [BeehouseController::class,           'index'],
         '/integritetspolicy'         => [PrivacyController::class,            'index'],
         '/avregistrera'              => [UnsubscribeController::class,        'index'],
@@ -19,10 +19,11 @@ class Router
         '/admin/kunder'              => [CustomerController::class,           'index'],
         '/admin/ordrar'              => [AdminOrderController::class,         'index'],
         '/admin/produkter'           => [AdminProductController::class,       'index'],
-        '/admin/biprodukter'     => [AdminBeeProductController::class,  'index'],
-        '/admin/notiser'             => [BannerController::class,            'index'],
-        '/admin/exportera/ordrar'    => [AdminOrderController::class,         'exportCsv'],
-        '/admin/exportera/kunder'    => [CustomerController::class,           'exportCsv'],
+        '/admin/biprodukter'         => [AdminBeeProductController::class,    'index'],
+        '/admin/notiser'             => [BannerController::class,             'index'],
+        '/admin/mejl'                => [AdminMailController::class,          'index'],
+        '/admin/exportera/ordrar'    => [AdminOrderController::class,     'exportCsv'],
+        '/admin/exportera/kunder'    => [CustomerController::class,       'exportCsv'],
     ];
 
     public function dispatch(): void

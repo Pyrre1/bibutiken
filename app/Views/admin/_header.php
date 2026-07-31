@@ -27,6 +27,7 @@
         'products'   => ['/admin/produkter',          'Produkter'],
         'local'      => ['/admin/biprodukter',    'Egna produkter'],
         'customers'  => ['/admin/kunder',             'Kunder'],
+        'mail'       => ['/admin/mejl',               'Mejl'],
         'logout'     => ['/admin/logout',             'Logga ut'],
     ];
     foreach ($adminNav as $key => [$href, $label]):

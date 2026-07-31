@@ -164,7 +164,7 @@ class PreOrderController
         $roles = array_column($customer['roles'], 'name');
         if (in_array('ingen_mejl', $roles, true)) return;
 
-        // Build {vara} — product list lines
+        // Build {varor} — product list lines
         $lines    = [];
         $totalOre = 0;
         foreach ($orderItems as $item) {
@@ -180,8 +180,8 @@ class PreOrderController
         $pdo      = Database::getConnection();
         $tmplStmt = $pdo->prepare(
             "SELECT amne, brodtext FROM mail_templates
-             WHERE namn = 'Orderbekräftelse' AND roll = 'vinterfoder'
-             LIMIT 1"
+            WHERE namn = 'Orderbekräftelse' AND roll = 'vinterfoder'
+            LIMIT 1"
         );
         $tmplStmt->execute();
         $tmpl = $tmplStmt->fetch();
@@ -200,7 +200,7 @@ class PreOrderController
 
         // For HTML body, swap plain newline product list for <br> separated version
         $bodyHtml  = nl2br(htmlspecialchars($tmpl['brodtext']));
-        $bodyHtml  = str_replace('{vara}', $varaHtml, $bodyHtml);
+        $bodyHtml  = str_replace('{varor}', $varaHtml, $bodyHtml);
         $bodyPlain = $tmpl['brodtext'];
 
         require_once __DIR__ . '/../../Core/MailService.php';

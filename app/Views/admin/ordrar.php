@@ -255,12 +255,13 @@
 
             <label class="modal-label">
                 Brödtext
-                <span class="modal-hint">— använd <code>{namn}</code> <code>{vara}</code></span>
+                <span class="modal-hint">— använd <code>{namn}</code> <code>{varor}</code></span>
             </label>
 
             <div class="modal-var-btns">
                 <button type="button" class="btn-secondary-link insert-var-btn" data-target="info-body" data-var="{namn}">+ namn</button>
-                <button type="button" class="btn-secondary-link insert-var-btn" data-target="info-body" data-var="{vara}">+ vara</button>
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="info-body" data-var="{varor}">+ varor</button>
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="info-body" data-var="{ordernr}">+ ordernr</button>
             </div>
 
             <textarea name="mail_body" id="info-body" rows="10" required
@@ -304,12 +305,13 @@
 
             <label class="modal-label">
                 Brödtext
-                <span class="modal-hint">— använd <code>{namn}</code> <code>{vara}</code></span>
+                <span class="modal-hint">- använd <code>{namn}</code> <code>{varor}</code></span>
             </label>
 
             <div class="modal-var-btns">
                 <button type="button" class="btn-secondary-link insert-var-btn" data-target="reminder-body" data-var="{namn}">+ namn</button>
-                <button type="button" class="btn-secondary-link insert-var-btn" data-target="reminder-body" data-var="{vara}">+ vara</button>
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="reminder-body" data-var="{varor}">+ varor</button>
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="reminder-body" data-var="{ordernr}">+ ordernr</button>
             </div>
 
             <textarea name="mail_body" id="reminder-body" rows="10" required
