@@ -467,10 +467,6 @@ legend {
 
 /* ── Opening hours ────────────────────────────────────────── */
 .opening-hours {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--space-5);
   margin-bottom: var(--space-6);
 }
 
@@ -516,14 +512,16 @@ legend {
 }
 
 .hours-week-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
   margin-bottom: var(--space-5);
 }
 
 .hours-week-block+.hours-week-block {
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-4);
 }
-
 /* ── Responsive: ≤700px (mobile header) ──────────────────── */
 @media (max-width: 700px) {
 
@@ -619,6 +617,7 @@ legend {
   display: flex;
   gap: var(--space-4);
   align-items: center;
+  justify-content: center;
 }
 
 /* ── Privacy policy ───────────────────────────────────────── */

@@ -1,6 +1,6 @@
 /* ============================================================
-   HOME — styles for index.php (landing page) only.
-   Loaded via $extraStyles in addition to public.css.
+    HOME — styles for index.php (landing page) only.
+    Loaded via $extraStyles in addition to public.css.
    ============================================================ */
 
 /* ── Hero image ───────────────────────────────────────────── */
@@ -83,6 +83,10 @@
 
 .faq-item h3 {
   margin-bottom: var(--space-2);
+}
+
+.biodlare-intresse {
+  margin-top: var(--space-6);
 }
 
 /* ── Responsive ───────────────────────────────────────────── */
