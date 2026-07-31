@@ -649,10 +649,8 @@ class PreOrder
                         JOIN customer_roles cr ON cr.id = ra.role_id
                         WHERE cr.name = "ingen_mejl"
                     )
-                    AND (
-                        o.info_sent_at IS NULL
-                        OR o.info_sent_at <= DATE_SUB(NOW(), INTERVAL ? DAY)
-                    )
+                    AND o.info_sent_at IS NOT NULL
+                    AND o.info_sent_at <= DATE_SUB(NOW(), INTERVAL ? DAY)
                 GROUP BY o.id, c.id
                 ORDER BY o.created_at ASC';
 

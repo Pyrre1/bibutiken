@@ -4,4 +4,3 @@ composer.phar
 *.log
 .DS_Store
 
-/config/config.php
