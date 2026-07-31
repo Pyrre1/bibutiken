@@ -7,6 +7,8 @@ class AdminOrderController
         require_once __DIR__ . '/../../Models/PreOrder.php';
         require_once __DIR__ . '/../../Models/Product.php';
         require_once __DIR__ . '/../../Models/Settings.php';
+        require_once __DIR__ . '/../../Models/Customer.php';
+        require_once __DIR__ . '/../../Core/MailService.php';
 
         Auth::requireLogin();
 
@@ -67,6 +69,125 @@ class AdminOrderController
                     header('Location: /admin/ordrar?filter=' . urlencode($_GET['filter'] ?? 'all') . '&msg=' . $msg);
                     exit;
 
+                } elseif ($action === 'get_recipient_count') {
+                    // AJAX — returns JSON recipient count for modal preview
+                    $type             = $_POST['mail_type'] ?? 'info';
+                    $minDays          = (int)($_POST['min_days'] ?? 7);
+                    $excludeSent      = ($_POST['exclude_sent'] ?? '1') === '1';
+                    if ($type === 'reminder') {
+                        $recipients = PreOrder::getReminderMailRecipients($minDays);
+                    } else {
+                        $recipients = PreOrder::getInfoMailRecipients($excludeSent);
+                    }
+                    header('Content-Type: application/json');
+                    $preview = null;
+                    if (!empty($recipients)) {
+                        $first   = $recipients[0];
+                        $preview = [
+                            'namn'  => $first['customer_name'],
+                            'vara'  => $first['vara'],
+                            'pris'  => number_format($first['total_ore'] / 100, 2, ',', ' '),
+                        ];
+                    }
+                    echo json_encode(['count' => count($recipients), 'preview' => $preview]);
+                    exit;
+
+                } elseif ($action === 'send_info_mail') {
+                    $excludeSent = ($_POST['exclude_sent'] ?? '1') === '1';
+                    $subject     = trim($_POST['mail_subject'] ?? '');
+                    $body        = trim($_POST['mail_body'] ?? '');
+                    $recipients  = PreOrder::getInfoMailRecipients($excludeSent);
+
+                    if (empty($subject) || empty($body)) {
+                        $error = 'Ämne och brödtext krävs.';
+                    } elseif (empty($recipients)) {
+                        $error = 'Inga mottagare matchade filtren.';
+                    } else {
+                        $mailer   = new MailService();
+                        $sent     = 0;
+                        $failed   = 0;
+                        $sentIds  = [];
+                        foreach ($recipients as $r) {
+                            $varaHtml = implode('<br>', array_map('htmlspecialchars', explode("\n", $r['vara'])));
+                            $vars = [
+                                'namn' => $r['customer_name'],
+                                'vara' => $r['vara'],
+                                'pris' => number_format($r['total_ore'] / 100, 2, ',', ' '),
+                            ];
+                            $bodyHtml = str_replace('{vara}', $varaHtml, nl2br(htmlspecialchars($body)));
+                            try {
+                                $mailer->send(
+                                    $r['customer_email'],
+                                    $r['customer_name'],
+                                    $subject,
+                                    $bodyHtml,
+                                    $body,
+                                    $vars,
+                                    'vinterfoder',
+                                    $r['customer_id'],
+                                    $r['order_id']
+                                );
+                                $sentIds[] = $r['order_id'];
+                                $sent++;
+                            } catch (Throwable $e) {
+                                $failed++;
+                                error_log('send_info_mail failed for order ' . $r['order_id'] . ': ' . $e->getMessage());
+                            }
+                        }
+                        if (!empty($sentIds)) {
+                            PreOrder::markInfoSent($sentIds);
+                        }
+                        $message = "Varumail skickat till {$sent} kunder." . ($failed > 0 ? " {$failed} misslyckades." : '');
+                    }
+
+                } elseif ($action === 'send_reminder_mail') {
+                    $minDays    = (int)($_POST['min_days'] ?? 7);
+                    $subject    = trim($_POST['mail_subject'] ?? '');
+                    $body       = trim($_POST['mail_body'] ?? '');
+                    $recipients = PreOrder::getReminderMailRecipients($minDays);
+
+                    if (empty($subject) || empty($body)) {
+                        $error = 'Ämne och brödtext krävs.';
+                    } elseif (empty($recipients)) {
+                        $error = 'Inga mottagare matchade filtren.';
+                    } else {
+                        $mailer  = new MailService();
+                        $sent    = 0;
+                        $failed  = 0;
+                        $sentIds = [];
+                        foreach ($recipients as $r) {
+                            $varaHtml = implode('<br>', array_map('htmlspecialchars', explode("\n", $r['vara'])));
+                            $vars = [
+                                'namn' => $r['customer_name'],
+                                'vara' => $r['vara'],
+                                'pris' => number_format($r['total_ore'] / 100, 2, ',', ' '),
+                            ];
+                            $bodyHtml = str_replace('{vara}', $varaHtml, nl2br(htmlspecialchars($body)));
+                            try {
+                                $mailer->send(
+                                    $r['customer_email'],
+                                    $r['customer_name'],
+                                    $subject,
+                                    $bodyHtml,
+                                    $body,
+                                    $vars,
+                                    'vinterfoder',
+                                    $r['customer_id'],
+                                    $r['order_id']
+                                );
+                                $sentIds[] = $r['order_id'];
+                                $sent++;
+                            } catch (Throwable $e) {
+                                $failed++;
+                                error_log('send_reminder_mail failed for order ' . $r['order_id'] . ': ' . $e->getMessage());
+                            }
+                        }
+                        if (!empty($sentIds)) {
+                            PreOrder::markReminderSent($sentIds);
+                        }
+                        $message = "Påminnelse skickat till {$sent} kunder." . ($failed > 0 ? " {$failed} misslyckades." : '');
+                    }
+
                 } elseif ($action === 'delete_order') {
                     $confirmNumber = trim($_POST['confirm_order_number'] ?? '');
                     $confirmName   = trim($_POST['confirm_customer_name'] ?? '');
@@ -110,10 +231,18 @@ class AdminOrderController
             $detailOrder = PreOrder::getOrderWithItems((int)$_GET['order']);
         }
 
+        // Fetch mail templates for compose modals
+        $pdo            = Database::getConnection();
+        $tmplStmt       = $pdo->query("SELECT namn, amne, brodtext FROM mail_templates WHERE roll = 'vinterfoder'");
+        $mailTemplates  = [];
+        foreach ($tmplStmt->fetchAll() as $t) {
+            $mailTemplates[$t['namn']] = $t;
+        }
+
         $pageTitle    = 'Beställningar - Admin';
         $activePage   = 'orders';
         $extraScripts = ['/assets/js/admin-orders.js'];
-        $extraStyles  = ['/assets/css/admin-orders.css'];
+        $extraStyles  = ['/assets/css/admin-orders.css', '/assets/css/admin-modal.css'];
 
         require __DIR__ . '/../../Views/admin/_header.php';
         require __DIR__ . '/../../Views/admin/ordrar.php';

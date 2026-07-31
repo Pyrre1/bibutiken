@@ -1,0 +1,129 @@
+/* ============================================================
+   ADMIN MODAL — shared styles for all <dialog> modals.
+   Loaded on pages that use modals via $extraStyles.
+   ============================================================ */
+
+/* ── Backdrop ─────────────────────────────────────────────── */
+dialog::backdrop {
+  background: rgba(46, 27, 0, 0.45);
+}
+
+/* ── Dialog base ──────────────────────────────────────────── */
+dialog {
+  position: relative;
+  margin: auto;
+  padding: var(--space-6);
+  max-width: 640px;
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--neutral-0);
+  color: var(--color-text);
+  box-shadow: 0 4px 24px rgba(46, 27, 0, 0.12);
+}
+
+dialog h2 {
+  font-size: var(--text-xl);
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+  color: var(--color-heading);
+}
+
+/* ── Filter row ───────────────────────────────────────────── */
+.modal-filter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
+  flex-wrap: wrap;
+}
+
+.modal-filter-row input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.modal-filter-row input[type="number"] {
+  width: 60px;
+  margin: 0 var(--space-1);
+}
+
+/* ── Recipient count bar ──────────────────────────────────── */
+.modal-recipient-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.modal-recipient-bar strong {
+  color: var(--color-heading);
+}
+
+/* ── Preview box ──────────────────────────────────────────── */
+.modal-preview-box {
+  background: var(--honey-50);
+  border: 1px solid var(--honey-200);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
+  white-space: pre-wrap;
+  color: var(--color-text);
+}
+
+/* ── Label + hint ─────────────────────────────────────────── */
+.modal-label {
+  display: block;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--color-heading);
+  margin-bottom: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.modal-hint {
+  font-size: var(--text-sm);
+  color: var(--neutral-500);
+  font-weight: 400;
+}
+
+.modal-hint code {
+  background: var(--neutral-100);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+/* ── Variable insert buttons ──────────────────────────────── */
+.modal-var-btns {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* ── Subject input ────────────────────────────────────────── */
+.modal-subject-input {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+/* ── Body textarea ────────────────────────────────────────── */
+.modal-textarea {
+  width: 100%;
+  font-family: monospace;
+  font-size: var(--text-sm);
+  resize: vertical;
+}
+
+/* ── Footer actions ───────────────────────────────────────── */
+.modal-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  justify-content: flex-end;
+}

@@ -83,6 +83,7 @@ class PreOrder
         $stmt = $pdo->query(
             'SELECT o.id, o.order_number, c.name AS customer_name, c.email AS customer_email,
                     o.created_at, o.is_delivered, o.has_manual_work,
+                    o.info_sent_at, o.reminders_count,
                     EXISTS (
                         SELECT 1 FROM pre_order_items i
                         WHERE i.pre_order_id = o.id AND i.needs_manual_work = 1
@@ -577,6 +578,109 @@ class PreOrder
             $result[(int)$row['pre_order_id']] = (int)$row['cnt'];
         }
         return $result;
+    }
+
+    // ── Email send queries ─────────────────────────────────────
+
+    /**
+     * Fetch orders eligible for "varor anlända" info mail.
+     * Excludes: already sent (info_sent_at IS NOT NULL), ingen_mejl role,
+     * no vinterfoder role, delivered orders.
+     */
+    public static function getInfoMailRecipients(bool $excludeAlreadySent = true): array
+    {
+        $pdo = Database::getConnection();
+
+        $sql = 'SELECT o.id AS order_id, o.order_number, o.info_sent_at,
+                       c.id AS customer_id, c.name AS customer_name, c.email AS customer_email,
+                       GROUP_CONCAT(DISTINCT p.name, " × ", i.quantity, " st" ORDER BY p.sort_order SEPARATOR "\n") AS vara,
+                       SUM(i.quantity * i.unit_price_ore) AS total_ore
+                FROM pre_orders o
+                JOIN customers c ON c.id = o.customer_id
+                JOIN pre_order_items i ON i.pre_order_id = o.id
+                JOIN products p ON p.id = i.product_id
+                WHERE o.is_delivered = 0
+                  AND c.id IN (
+                      SELECT customer_id FROM customer_role_assignments ra
+                      JOIN customer_roles cr ON cr.id = ra.role_id
+                      WHERE cr.name = "vinterfoder"
+                  )
+                  AND c.id NOT IN (
+                      SELECT customer_id FROM customer_role_assignments ra
+                      JOIN customer_roles cr ON cr.id = ra.role_id
+                      WHERE cr.name = "ingen_mejl"
+                  )';
+
+        if ($excludeAlreadySent) {
+            $sql .= ' AND o.info_sent_at IS NULL';
+        }
+
+        $sql .= ' GROUP BY o.id, c.id ORDER BY o.created_at ASC';
+
+        return $pdo->query($sql)->fetchAll();
+    }
+
+    /**
+     * Fetch orders eligible for reminder mail.
+     * Excludes: ingen_mejl, no vinterfoder role, delivered,
+     * and optionally orders where info was sent within $minDaysSinceInfo days.
+     */
+    public static function getReminderMailRecipients(int $minDaysSinceInfo = 7): array
+    {
+        $pdo = Database::getConnection();
+
+        $sql = 'SELECT o.id AS order_id, o.order_number,
+                       o.info_sent_at, o.paminnelse_sent_at, o.reminders_count,
+                       c.id AS customer_id, c.name AS customer_name, c.email AS customer_email,
+                       GROUP_CONCAT(DISTINCT p.name, " × ", i.quantity, " st" ORDER BY p.sort_order SEPARATOR "\n") AS vara,
+                       SUM(i.quantity * i.unit_price_ore) AS total_ore
+                FROM pre_orders o
+                JOIN customers c ON c.id = o.customer_id
+                JOIN pre_order_items i ON i.pre_order_id = o.id
+                JOIN products p ON p.id = i.product_id
+                WHERE o.is_delivered = 0
+                  AND c.id IN (
+                      SELECT customer_id FROM customer_role_assignments ra
+                      JOIN customer_roles cr ON cr.id = ra.role_id
+                      WHERE cr.name = "vinterfoder"
+                  )
+                  AND c.id NOT IN (
+                      SELECT customer_id FROM customer_role_assignments ra
+                      JOIN customer_roles cr ON cr.id = ra.role_id
+                      WHERE cr.name = "ingen_mejl"
+                  )
+                  AND (
+                      o.info_sent_at IS NULL
+                      OR o.info_sent_at <= DATE_SUB(NOW(), INTERVAL ? DAY)
+                  )
+                GROUP BY o.id, c.id
+                ORDER BY o.created_at ASC';
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$minDaysSinceInfo]);
+        return $stmt->fetchAll();
+    }
+
+    public static function markInfoSent(array $orderIds): void
+    {
+        if (empty($orderIds)) return;
+        $pdo          = Database::getConnection();
+        $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+        $pdo->prepare("UPDATE pre_orders SET info_sent_at = NOW() WHERE id IN ($placeholders)")
+            ->execute($orderIds);
+    }
+
+    public static function markReminderSent(array $orderIds): void
+    {
+        if (empty($orderIds)) return;
+        $pdo          = Database::getConnection();
+        $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
+        $pdo->prepare(
+            "UPDATE pre_orders
+             SET paminnelse_sent_at = NOW(),
+                 reminders_count = reminders_count + 1
+             WHERE id IN ($placeholders)"
+        )->execute($orderIds);
     }
 
     // ── Spam protection ────────────────────────────────────────

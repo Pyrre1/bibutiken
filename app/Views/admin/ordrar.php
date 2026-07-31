@@ -216,6 +216,111 @@
         <a href="?filter=manual_any" class="<?= $filter==='manual_any' ?'active':'' ?>">🔧:✅+❌</a>
     </nav>
 
+    <!-- Mail send buttons -->
+    <div class="admin-mail-row" style="margin:var(--space-4) 0;display:flex;gap:var(--space-3)">
+        <button type="button" class="btn-primary" id="btn-open-info-mail">
+            📧 Skicka info
+        </button>
+        <button type="button" class="btn-secondary" id="btn-open-reminder-mail">
+            🔔 Skicka påminnelse
+        </button>
+    </div>
+
+    <!-- Info mail modal -->
+    <dialog id="modal-info-mail">
+        <h2>Skicka info</h2>
+        <form method="post" id="form-info-mail">
+            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+            <input type="hidden" name="action" value="send_info_mail">
+
+            <div class="modal-filter-row">
+                <input type="checkbox" name="exclude_sent" value="1" checked id="info-exclude-sent">
+                <label for="info-exclude-sent" style="margin:0;font-weight:400">Skicka ej till kunder som redan fått varumail</label>
+            </div>
+
+            <div class="modal-recipient-bar">
+                <strong>Mottagare: <span id="info-recipient-count">–</span> kunder</strong>
+                <button type="button" id="btn-info-preview" class="btn-secondary-link">
+                    Förhandsgranska för första kunden →
+                </button>
+                <button type="button" id="btn-info-send" style="display:none">Skicka nu</button>
+            </div>
+
+            <div id="info-preview-box" class="modal-preview-box"></div>
+
+            <label class="modal-label" for="info-subject">Ämne</label>
+            <input type="text" name="mail_subject" id="info-subject" required
+                class="modal-subject-input"
+                value="<?= Security::e($mailTemplates['Varor anlända']['amne'] ?? '') ?>">
+
+            <label class="modal-label">
+                Brödtext
+                <span class="modal-hint">— använd <code>{namn}</code> <code>{vara}</code></span>
+            </label>
+
+            <div class="modal-var-btns">
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="info-body" data-var="{namn}">+ namn</button>
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="info-body" data-var="{vara}">+ vara</button>
+            </div>
+
+            <textarea name="mail_body" id="info-body" rows="10" required
+                class="modal-textarea"><?= Security::e($mailTemplates['Varor anlända']['brodtext'] ?? '') ?></textarea>
+
+            <div class="modal-actions">
+                <button type="button" id="btn-info-cancel" class="btn-secondary">Avbryt</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Reminder mail modal -->
+    <dialog id="modal-reminder-mail">
+        <h2>Skicka påminnelse</h2>
+        <form method="post" id="form-reminder-mail">
+            <input type="hidden" name="csrf_token" value="<?= Security::e(Security::csrfToken()) ?>">
+            <input type="hidden" name="action" value="send_reminder_mail">
+
+            <div class="modal-filter-row">
+                <label style="margin:0;font-weight:400">
+                    Skicka ej till kunder som fått varumail för mindre än
+                </label>
+                <input type="number" name="min_days" id="reminder-min-days" value="7" min="0" max="365">
+                <span>dagar sedan</span>
+            </div>
+
+            <div class="modal-recipient-bar">
+                <strong>Mottagare: <span id="reminder-recipient-count">–</span> kunder</strong>
+                <button type="button" id="btn-reminder-preview" class="btn-secondary-link">
+                    Förhandsgranska för första kunden →
+                </button>
+                <button type="button" id="btn-reminder-send" style="display:none">Skicka nu</button>
+            </div>
+
+            <div id="reminder-preview-box" class="modal-preview-box"></div>
+
+            <label class="modal-label" for="reminder-subject">Ämne</label>
+            <input type="text" name="mail_subject" id="reminder-subject" required
+                class="modal-subject-input"
+                value="<?= Security::e($mailTemplates['Påminnelse']['amne'] ?? '') ?>">
+
+            <label class="modal-label">
+                Brödtext
+                <span class="modal-hint">— använd <code>{namn}</code> <code>{vara}</code></span>
+            </label>
+
+            <div class="modal-var-btns">
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="reminder-body" data-var="{namn}">+ namn</button>
+                <button type="button" class="btn-secondary-link insert-var-btn" data-target="reminder-body" data-var="{vara}">+ vara</button>
+            </div>
+
+            <textarea name="mail_body" id="reminder-body" rows="10" required
+                class="modal-textarea"><?= Security::e($mailTemplates['Påminnelse']['brodtext'] ?? '') ?></textarea>
+
+            <div class="modal-actions">
+                <button type="button" id="btn-reminder-cancel" class="btn-secondary">Avbryt</button>
+            </div>
+        </form>
+    </dialog>
+
     <!-- CSV export -->
     <div class="admin-export-row">
         <span>Exportera ordrar:</span>
@@ -232,6 +337,7 @@
                 <th>E-post</th>
                 <th>Datum</th>
                 <th>Status</th>
+                <th>📧</th>
                 <th></th>
             </tr>
         </thead>
@@ -254,6 +360,16 @@
                         <button type="button" class="btn-icon status-undeliver-btn"
                             data-order-id="<?= $order['id'] ?>"
                             data-csrf="<?= Security::e(Security::csrfToken()) ?>">✅</button>
+                    <?php endif; ?>
+                </td>
+                <td class="center muted" style="font-size:.85em">
+                    <?php if ($order['info_sent_at']): ?>
+                        ✉ <?= date('d/m', strtotime($order['info_sent_at'])) ?>
+                        <?php if ($order['reminders_count'] > 0): ?>
+                            <br><span title="Antal påminnelser">🔔×<?= $order['reminders_count'] ?></span>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <span class="muted">–</span>
                     <?php endif; ?>
                 </td>
                 <td><a href="?order=<?= $order['id'] ?>&filter=<?= Security::e($filter) ?>&from=orders">Öppna</a></td>
