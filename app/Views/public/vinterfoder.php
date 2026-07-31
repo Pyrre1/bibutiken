@@ -3,7 +3,7 @@
 <?php if ($successOrderNumber): ?>
     <div class="form-success">
         <p>Tack för din förbeställning! Ditt ordernummer är: <strong><?= Security::e($successOrderNumber) ?></strong></p>
-        <p>Om du inte får ett bekräftelsemejl inom kort har beställningen <strong>inte</strong> gått igenom — vänligen kontakta oss direkt via e-post eller sms.</p>
+        <p>Om du inte får ett bekräftelsemejl inom någon timma har beställningen <strong>inte</strong> gått igenom - vänligen kontakta oss via e-post eller sms.</p>
     </div>
 <?php endif; ?>
 

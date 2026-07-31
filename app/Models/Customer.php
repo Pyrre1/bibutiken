@@ -99,6 +99,9 @@ class Customer
 
         $pdo->prepare('INSERT INTO customer_role_assignments (customer_id, role_id) VALUES (?, 5)')
             ->execute([$customerId]);
+
+        $pdo->prepare('UPDATE mail_log SET recipient = CONCAT("raderad+", ?, "@begaran.se") WHERE customer_id = ?')
+            ->execute([$customerId, $customerId]);
     }
 
     // Full anonymize - keep record but remove all personal info
@@ -114,6 +117,9 @@ class Customer
 
         $pdo->prepare('INSERT INTO customer_role_assignments (customer_id, role_id) VALUES (?, 5)')
             ->execute([$customerId]);
+
+        $pdo->prepare('UPDATE mail_log SET recipient = CONCAT("raderad+", ?, "@begaran.se") WHERE customer_id = ?')
+            ->execute([$customerId, $customerId]);
     }
 
     // Edit customer info
